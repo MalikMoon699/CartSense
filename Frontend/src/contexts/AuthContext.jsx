@@ -12,34 +12,34 @@ export const AuthProvider = ({ children }) => {
 
   const navigate = useNavigate();
 
- const fetchMe = async () => {
-   const token = localStorage.getItem("token");
+  const fetchMe = async () => {
+    const token = localStorage.getItem("token");
 
-   if (!token) {
-     setCurrentUser(null);
-     setAuthAllow(false);
-     setIsDetail(false);
-     setLoading(false);
-     return;
-   }
+    if (!token) {
+      setCurrentUser(null);
+      setAuthAllow(false);
+      setIsDetail(false);
+      setLoading(false);
+      return;
+    }
 
-   try {
-     const res = await API.get("/auth/user");
-     setCurrentUser(res.data.user);
-     setAuthAllow(true);
-     setIsDetail(Boolean(res.data.user.name && res.data.user.email));
-   } catch (err) {
-     console.error(
-       "[AuthContext] Auth check failed, but KEEPING token for debugging"
-     );
-     console.error("❌ Error details:", err.response?.data);
-     setCurrentUser(null);
-     setAuthAllow(false);
-     setIsDetail(false);
-   } finally {
-     setLoading(false);
-   }
- };
+    try {
+      const res = await API.get("/auth/user");
+      setCurrentUser(res.data.user);
+      setAuthAllow(true);
+      setIsDetail(Boolean(res.data.user.name && res.data.user.email));
+    } catch (err) {
+      console.error(
+        "[AuthContext] Auth check failed, but KEEPING token for debugging"
+      );
+      console.error("❌ Error details:", err.response?.data);
+      setCurrentUser(null);
+      setAuthAllow(false);
+      setIsDetail(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const logout = (redirect = true) => {
     localStorage.removeItem("token");

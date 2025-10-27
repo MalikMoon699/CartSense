@@ -1,0 +1,147 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  width: 340px;
+  height: 100vh;
+  background: rgba(10, 25, 47, 0.95);
+  color: #fff;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  z-index: 999;
+}
+
+.left-sidebar {
+  left: 0px;
+}
+
+.right-sidebar {
+  right: 0px;
+}
+
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-header h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.profile-section {
+  text-align: center;
+  margin: 24px 0;
+}
+
+.profile-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #1c2a4a;
+  margin-bottom: 10px;
+}
+
+.profile-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+.profile-section p {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.update-section {
+  margin: 20px 0px;
+}
+
+.update-section h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #dedede;
+}
+
+.update-section input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  margin-bottom: 10px;
+  background: #0d1b36;
+  color: #fff;
+}
+
+.update-section input:focus {
+  border: 1px solid #4a90e2;
+}
+
+.upload-label {
+  display: inline-block;
+  color: #9ecfff;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: 0.3s ease;
+}
+
+.upload-label:hover {
+  text-decoration: underline;
+}
+
+.btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.save-btn {
+  background-color: #1a73e8;
+  color: #fff;
+}
+
+.save-btn:hover {
+  background-color: #1664c0;
+}
+
+.update-btn {
+  background-color: #1a73e8;
+  color: #fff;
+}
+
+.update-btn:hover {
+  background-color: #1664c0;
+}
+
+.logout-section {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.logout-btn {
+  background-color: #e63b3b;
+  color: #fff;
+}
+
+.logout-btn:hover {
+  background-color: #c42d2d;
+}
