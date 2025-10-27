@@ -1,11 +1,13 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
 import { Toaster } from "sonner";
 import App from "./App";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
+    <AuthProvider>
       <App />
       <Toaster
         richColors
@@ -16,5 +18,6 @@ createRoot(document.getElementById("root")).render(
           duration: 4000,
         }}
       />
+    </AuthProvider>
   </BrowserRouter>
 );
