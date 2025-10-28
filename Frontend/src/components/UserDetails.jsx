@@ -37,30 +37,6 @@ const UserDetails = ({ setSidebarType }) => {
     }
   };
 
-  const handleSaveChanges = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await API.put(
-        `/auth/updateUser/${currentUser._id}`,
-        { name, profileImg },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (res.status === 200) {
-        toast.success("Profile updated successfully!");
-      } else {
-        toast.error(res.data.message || "Failed to update profile");
-        console.error(res.data.message || "Failed to update profile");
-      }
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error("An error occurred");
-    }
-  };
-
   const handlePasswordUpdate = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
       toast.error("Please fill all password fields");
@@ -98,6 +74,40 @@ const UserDetails = ({ setSidebarType }) => {
         error.response?.data?.message ||
           "An error occurred while updating your password"
       );
+    }
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+
+      formData.append("name", name);
+
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput && fileInput.files[0]) {
+        formData.append("profileImg", fileInput.files[0]);
+      }
+
+      const res = await API.put(
+        `/auth/updateUser/${currentUser._id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (res.status === 200) {
+        toast.success("Profile updated successfully!");
+      } else {
+        toast.error(res.data.message || "Failed to update profile");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("An error occurred while updating profile");
     }
   };
 

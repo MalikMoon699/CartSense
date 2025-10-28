@@ -4,6 +4,26 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import dotenv from "dotenv";
 import { JWT_SECRET } from "../config/env.js";
+import multer from "multer";
+import cloudinary from "../config/cloudinary.js";
+import { Readable } from "stream";
+
+const storage = multer.memoryStorage();
+export const uploadProfileImage = multer({ storage }).single("profileImg");
+
+const uploadFromBuffer = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "user_profiles" },
+      (error, result) => {
+        if (result) resolve(result);
+        else reject(error);
+      }
+    );
+    Readable.from(fileBuffer).pipe(stream);
+  });
+};
+
 dotenv.config();
 
 export const signUp = async (req, res) => {
@@ -55,7 +75,6 @@ export const getUserData = async (req, res) => {
       JSON.stringify(req.user, null, 2)
     );
 
-    // Try multiple possible ID locations
     let userId =
       req.user.id || req.user.user?.id || req.user._id || req.user.user?._id;
 
@@ -86,34 +105,6 @@ export const getUserData = async (req, res) => {
   }
 };
 
-export const updateUserData = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, profileImg } = req.body;
-
-    const user = await User.findById(id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    if (name) user.name = name;
-    if (profileImg) user.profileImg = profileImg;
-
-    await user.save();
-
-    res.status(200).json({
-      message: "Profile updated successfully",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        profileImg: user.profileImg,
-      },
-    });
-  } catch (error) {
-    console.error("Error updating profile:", error);
-    res.status(500).json({ message: "Failed to update user data" });
-  }
-};
-
 export const updatePassword = async (req, res) => {
   try {
     const { id } = req.params;
@@ -134,5 +125,44 @@ export const updatePassword = async (req, res) => {
   } catch (error) {
     console.error("Error updating password:", error);
     res.status(500).json({ message: "Failed to update password" });
+  }
+};
+
+export const updateUserData = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (req.file) {
+      try {
+        const uploadResult = await uploadFromBuffer(req.file.buffer);
+        user.profileImg = uploadResult.secure_url;
+      } catch (uploadErr) {
+        console.error("❌ Cloudinary upload failed:", uploadErr);
+        return res
+          .status(500)
+          .json({ message: "Image upload failed", error: uploadErr.message });
+      }
+    }
+
+    if (name) user.name = name;
+
+    await user.save();
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profileImg: user.profileImg,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Error updating user data:", error);
+    res.status(500).json({ message: "Failed to update user data" });
   }
 };
