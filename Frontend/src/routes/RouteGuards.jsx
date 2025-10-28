@@ -4,19 +4,26 @@ import Loader from "../components/Loader";
 
 export const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { authAllow, loading, currentUser } = useAuth();
-    const outletContext = useOutletContext?.() || {};
-    const { setAcountState } = outletContext;
+  const outletContext = useOutletContext?.() || {};
+  const { acountState, setAcountState } = outletContext;
 
   if (loading) {
-    return <Loader size="100" className="create-resume-loading" stroke="6" />;
+    return (
+      <Loader
+        size="100"
+        style={{ width: "100%" }}
+        className="layout-loading"
+        stroke="6"
+      />
+    );
   }
 
- if (!authAllow) {
-   if (setAcountState) {
-     setAcountState("login");
-   }
-   return null;
- }
+  if (!authAllow) {
+    if (setAcountState && acountState !== "signUp") {
+      setAcountState("login");
+    }
+    return null;
+  }
   if (adminOnly && currentUser?.role !== "admin") {
     return <Navigate to="/" replace />;
   }

@@ -26,22 +26,40 @@ const Signup = ({ setAcountState }) => {
       const res = await API.post("/auth/register", form);
       localStorage.setItem("token", res.data.token);
       navigate("/");
+      setAcountState(null);
       toast.success("User Registered successfully.");
     } catch (err) {
-      toast.error(err.response?.data?.msg || "Registration failed");
+      console.error("Registration failed:", err);
+      toast.error("Registration failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div
+      onClick={() => {
+        navigate("/");
+        setTimeout(() => {
+          setAcountState(null);
+        }, 100);
+      }}
+      className="modal-overlay"
+    >
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        className="modal-content"
+      >
         <div className="modal-header">
           <h2 className="modal-title">Create Account</h2>
           <button
             onClick={() => {
-              setAcountState(null);
+              navigate("/");
+              setTimeout(() => {
+                setAcountState(null);
+              }, 100);
             }}
             className="modal-close-btn"
           >

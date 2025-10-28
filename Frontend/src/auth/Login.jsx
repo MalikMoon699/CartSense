@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Eye, EyeClosed, X } from "lucide-react";
 import "../assets/style/Auth.css";
 import { useAuth } from "../contexts/AuthContext";
 import Loader from "../components/Loader";
+import { toast } from "sonner";
+import API from "../utils/api";
 
 const Login = ({ setAcountState }) => {
   const navigate = useNavigate();
@@ -24,26 +26,43 @@ const Login = ({ setAcountState }) => {
         localStorage.setItem("token", res.data.token);
         setTimeout(async () => {
           await refresh();
-          navigate("/dashboard", { replace: true });
+          navigate("/", { replace: true });
+          setAcountState(null);
         }, 100);
       }
       toast.success("Login successfully.");
     } catch (err) {
       console.error("[Login] Login error:", err);
-      toast.error(err.response?.data?.msg || "Login failed");
+      toast.error("Login failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div
+      onClick={() => {
+        navigate("/");
+        setTimeout(() => {
+          setAcountState(null);
+        }, 100);
+      }}
+      className="modal-overlay"
+    >
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        className="modal-content"
+      >
         <div className="modal-header">
           <h2 className="modal-title">Welcome Back</h2>
           <button
             onClick={() => {
-              setAcountState(null);
+              navigate("/");
+              setTimeout(() => {
+                setAcountState(null);
+              }, 100);
             }}
             className="modal-close-btn"
           >

@@ -5,7 +5,7 @@ import "ldrs/react/Spiral.css";
 const Loader = ({
   size = "40",
   className = "loaderWrapper",
-  color = "#00af4e",
+  color = "#2563eb",
   speed = "1.75",
   stroke = "5",
   style = {

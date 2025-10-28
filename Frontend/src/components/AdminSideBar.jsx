@@ -8,9 +8,11 @@ import {
   Users,
 } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../contexts/AuthContext";
 
 const AdminSideBar = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   return (
     <div className="admin-sidebar">
@@ -85,7 +87,7 @@ const AdminSideBar = () => {
         </div>
       </div>
       <div className="admin-sidebar-footer">
-        <button>
+        <button onClick={logout}>
           <span className="icon">
             <LogOut size={18} />
           </span>
