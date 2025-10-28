@@ -1,28 +1,28 @@
 .sidebar {
   position: fixed;
   top: 0;
-  width: 340px;
   height: 100vh;
-  background: rgba(10, 25, 47, 0.95);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2rem 2.5rem;
   color: #fff;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 0px 20px rgb(0 0 0 / 6%);
+  backdrop-filter: saturate(-0.5);
+  -webkit-backdrop-filter: saturate(-0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  text-align: center;
   z-index: 999;
+  overflow: hidden auto;
 }
 
 .left-sidebar {
   left: 0px;
+  width: 260px;
 }
 
 .right-sidebar {
   right: 0px;
+  width: 300px;
 }
-
 
 .sidebar-header {
   display: flex;

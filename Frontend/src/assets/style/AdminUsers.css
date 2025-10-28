@@ -46,9 +46,13 @@
 }
 
 .add-user-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   background-color: #2563eb;
   color: #fff;
-  padding: 0.6rem 1.25rem;
+  padding: 10px 12px;
   border: none;
   border-radius: 8px;
   cursor: pointer;

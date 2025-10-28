@@ -1,0 +1,202 @@
+.products-table {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  font-family: "Inter", sans-serif;
+  width: 100%;
+}
+
+.products-table-header {
+  display: grid;
+  grid-template-columns: 1fr 2fr 2fr 1fr 1fr 1fr 2fr;
+  align-items: center;
+  background-color: #d6ebfd;
+  padding: 1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.products-table-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-table-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 2fr 1fr 1fr 1fr 2fr;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.2s ease;
+}
+
+.product-table-row:hover {
+  background-color: #f9fafb;
+}
+
+.product-avatar img {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+}
+
+.product-name {
+  font-weight: 500;
+  color: #111827;
+}
+
+.product-category,
+.product-price,
+.product-rating {
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.update-btn {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: 0.2s ease;
+  margin-right: 0.5rem;
+}
+
+.update-btn:hover {
+  background-color: #059669;
+}
+
+/* ============ Add Products ============= */
+
+.addproduct-category-manager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.addproduct-category-input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.addproduct-category-input > .login-input {
+  margin: 0px;
+}
+
+.addproduct-add-category-btn {
+  background-color: #2563eb;
+  color: #fff;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.addproduct-add-category-btn:hover {
+  background-color: #1e40af;
+}
+
+.addproduct-category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0px 2px;
+}
+
+.addproduct-select-category-btn {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.addproduct-select-category-btn:hover {
+  background-color: #bae6fd;
+}
+
+.addproduct-selected-category-btn {
+  background-color: #0369a1;
+  color: #e0f2fe;
+}
+
+.addproduct-upload-img-btn {
+  border: 1.5px dashed #ccc;
+  border-radius: 10px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  color: white;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+
+.addproduct-selected-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 10px;
+}
+
+.addproduct-image-preview {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.addproduct-image-preview:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.addproduct-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.remove-img-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: rgba(0, 0, 0, 0.55);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.remove-img-btn:hover {
+  background-color: #ef4444;
+  transform: scale(1.1);
+}

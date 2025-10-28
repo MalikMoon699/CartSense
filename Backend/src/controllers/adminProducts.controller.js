@@ -1,0 +1,172 @@
+
+import Product from "../models/product.model.js";
+import shopDetailsModel from "../models/shopDetails.model.js";
+import cloudinary from "../config/cloudinary.js";
+
+export const getProducts = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const query = {};
+
+    const products = await Product.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+    const total = await Product.countDocuments(query);
+
+    res.status(200).json({
+      success: true,
+      products,
+      total,
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ message: "Server error while fetching products" });
+  }
+};
+
+export const addProduct = async (req, res) => {
+  try {
+    const { name, description, price, stock, category, filleds, user } =
+      req.body;
+
+    if (!name || !price || !category) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required fields" });
+    }
+
+    let imageUrls = [];
+
+    if (req.files && req.files.length > 0) {
+      const uploadPromises = req.files.map((file) => {
+        return new Promise((resolve, reject) => {
+          cloudinary.uploader
+            .upload_stream(
+              {
+                folder: "CartSense_Products",
+                resource_type: "image",
+              },
+              (error, result) => {
+                if (error) return reject(error);
+                resolve(result.secure_url);
+              }
+            )
+            .end(file.buffer);
+        });
+      });
+
+      imageUrls = await Promise.all(uploadPromises);
+    }
+
+    const product = new Product({
+      user,
+      name,
+      description,
+      price,
+      stock,
+      category,
+      filleds: filleds ? JSON.parse(filleds) : [],
+      images: imageUrls,
+    });
+
+    await product.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Product added successfully",
+      product,
+    });
+  } catch (error) {
+    console.error("Error adding product:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error while adding product" });
+  }
+};
+
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedProduct = await Product.findByIdAndDelete(id);
+    if (!deletedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      product: updatedProduct,
+    });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).json({ message: "Server error while updating product" });
+  }
+};
+
+export const getCategories = async (req, res) => {
+  try {
+    const shop = await shopDetailsModel.findOne();
+    if (!shop) {
+      return res.status(404).json({ message: "Shop details not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      categories: shop.categories || [],
+    });
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    res.status(500).json({ message: "Server error while fetching categories" });
+  }
+};
+
+export const updateCategories = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newCategories } = req.body;
+
+    const shop = await shopDetailsModel.findById(id);
+    if (!shop) {
+      return res.status(404).json({ message: "Shop not found" });
+    }
+
+    const updatedCategories = [
+      ...new Set([...shop.categories, ...newCategories]),
+    ];
+
+    shop.categories = updatedCategories;
+    await shop.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Categories updated successfully",
+      categories: updatedCategories,
+    });
+  } catch (error) {
+    console.error("Error updating categories:", error);
+    res.status(500).json({ message: "Server error while updating categories" });
+  }
+};

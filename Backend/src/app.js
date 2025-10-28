@@ -6,6 +6,7 @@ import cors from "cors";
 import morgan from "morgan";
 import authRoutes from "./routes/auth.routes.js";
 import adminUsersRoutes from "./routes/adminUsers.routes.js";
+import adminProductsRoutes from "./routes/adminProducts.routes.js";
 import connectToDB from "./database/mongodb.js";
 
 connectToDB();
@@ -20,6 +21,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/adminUser", adminUsersRoutes);
+app.use("/api/adminProduct", adminProductsRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Server API");

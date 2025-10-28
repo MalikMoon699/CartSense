@@ -1,6 +1,5 @@
-
-
-.login-input {
+.login-input,
+.login-textarea {
   width: 100%;
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
@@ -12,8 +11,15 @@
   font-size: 0.95rem;
 }
 
-.login-input::placeholder {
+.login-input::placeholder,
+.login-textarea::placeholder {
   color: rgba(255, 255, 255, 0.6);
+}
+
+.login-textarea {
+  resize: none;
+  height: 150px;
+  width: 100%;
 }
 
 .login-password-collection {

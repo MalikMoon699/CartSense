@@ -112,76 +112,85 @@ const UserDetails = ({ setSidebarType }) => {
   };
 
   return (
-    <div className="right-sidebar sidebar">
-      <div className="sidebar-header">
-        <h2>Profile</h2>
-        <button className="close-btn" onClick={() => setSidebarType(null)}>
-          <X size={20} />
-        </button>
-      </div>
+    <div
+      onClick={() => setSidebarType(null)}
+      style={{ backdropFilter: "blur(2px)" }}
+      className="modal-overlay"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="right-sidebar sidebar"
+      >
+        <div className="sidebar-header">
+          <h2>Profile</h2>
+          <button className="close-btn" onClick={() => setSidebarType(null)}>
+            <X size={20} />
+          </button>
+        </div>
 
-      <div className="profile-section">
-        <img
-          src={profileImg || IMAGES.PlaceHolder}
-          alt="User Avatar"
-          className="profile-avatar"
-        />
-        <h3>{name}</h3>
-        <p>{email}</p>
-      </div>
-
-      <div className="update-section">
-        <h3>Update Profile</h3>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Full Name"
-        />
-        <input type="email" value={email} readOnly />
-        <label className="upload-label">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            hidden
+        <div className="profile-section">
+          <img
+            src={profileImg || IMAGES.PlaceHolder}
+            alt="User Avatar"
+            className="profile-avatar"
           />
-          ⬆ Upload Avatar
-        </label>
-        <button onClick={handleSaveChanges} className="btn save-btn">
-          Save Changes
-        </button>
-      </div>
+          <h3>{name}</h3>
+          <p>{email}</p>
+        </div>
 
-      <div className="update-section">
-        <h3>Update Password</h3>
-        <input
-          type="password"
-          placeholder="Current Password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="New Password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        <button className="btn update-btn" onClick={handlePasswordUpdate}>
-          Update Password
-        </button>
-      </div>
+        <div className="update-section">
+          <h3>Update Profile</h3>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Full Name"
+          />
+          <input type="email" value={email} readOnly />
+          <label className="upload-label">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              hidden
+            />
+            ⬆ Upload Avatar
+          </label>
+          <button onClick={handleSaveChanges} className="btn save-btn">
+            Save Changes
+          </button>
+        </div>
 
-      <div className="logout-section">
-        <button onClick={logout} className="btn logout-btn">
-          Logout
-        </button>
+        <div className="update-section">
+          <h3>Update Password</h3>
+          <input
+            type="password"
+            placeholder="Current Password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="New Password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <button className="btn update-btn" onClick={handlePasswordUpdate}>
+            Update Password
+          </button>
+        </div>
+
+        <div className="logout-section">
+          <button onClick={logout} className="btn logout-btn">
+            Logout
+          </button>
+        </div>
       </div>
     </div>
   );
