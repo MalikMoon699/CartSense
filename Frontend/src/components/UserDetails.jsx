@@ -74,34 +74,30 @@ const UserDetails = ({ setSidebarType }) => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${API}/auth/updateUserPassword/${currentUser._id}`,
+
+      const res = await API.put(
+        `/auth/updateUserPassword/${currentUser._id}`,
         {
-          method: "PUT",
+          currentPassword,
+          newPassword,
+        },
+        {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            currentPassword,
-            newPassword,
-          }),
         }
       );
 
-      const data = await res.json();
-
-      if (res.ok) {
-        toast.success("Password updated successfully!");
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-      } else {
-        toast.error(data.message || "Failed to update password");
-      }
+      toast.success(res.data.message || "Password updated successfully!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
     } catch (error) {
       console.error("Error updating password:", error);
-      toast.error("An error occurred while updating your password");
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred while updating your password"
+      );
     }
   };
 
@@ -109,7 +105,7 @@ const UserDetails = ({ setSidebarType }) => {
     <div className="right-sidebar sidebar">
       <div className="sidebar-header">
         <h2>Profile</h2>
-        <button className="close-btn" onClick={()=> setSidebarType(null)}>
+        <button className="close-btn" onClick={() => setSidebarType(null)}>
           <X size={20} />
         </button>
       </div>

@@ -1,7 +1,7 @@
 // components/TopBar.jsx
 import React from "react";
 import "../assets/style/TopBar.css";
-import { Menu, Search, ShoppingCart, User } from "lucide-react";
+import { LayoutDashboard, Menu, Search, ShoppingCart, User } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 import { IMAGES } from "../services/Constants";
@@ -20,7 +20,6 @@ const TopBar = ({ setAcountState, setSidebarType, setIsSearch }) => {
       >
         <Menu />
       </span>
-
       <h2
         onClick={() => {
           navigate("/");
@@ -29,6 +28,19 @@ const TopBar = ({ setAcountState, setSidebarType, setIsSearch }) => {
         Cart Sense
       </h2>
       <div>
+        {currentUser?.role === "admin" && (
+          <button
+            onClick={() => {
+              navigate("admin/dashboard");
+            }}
+            className="go-dashboard-btn"
+          >
+            <span className="icon">
+              <LayoutDashboard size={16} />
+            </span>
+            DashBoard
+          </button>
+        )}
         <span
           onClick={() => {
             setIsSearch(true);

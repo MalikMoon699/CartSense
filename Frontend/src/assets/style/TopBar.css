@@ -12,6 +12,37 @@
   font-size: 0px;
 }
 
+.go-dashboard-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 8px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.go-dashboard-btn:hover {
+  background-color: #45a049;
+}
+
+.topbar > h2 {
+  cursor: pointer;
+  border: 1px solid black;
+  border-radius: 4px;
+  padding: 1px 6px;
+  transition: background 0.3s ease-in-out;
+}
+
+.topbar > h2:hover {
+  border: 1px solid black;
+  background: black;
+  color: white;
+}
+
 .topbar-profile {
   background: #e8e8e88c;
   border: 1px solid #bababa;
