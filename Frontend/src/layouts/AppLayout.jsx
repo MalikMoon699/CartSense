@@ -34,7 +34,10 @@ const AppLayout = () => {
         {sidebarType === "userDetails" ? (
           <UserDetails setSidebarType={setSidebarType} />
         ) : sidebarType === "sidebar" ? (
-          <SideBar setSidebarType={setSidebarType} />
+          <SideBar
+            setAcountState={setAcountState}
+            setSidebarType={setSidebarType}
+          />
         ) : null}
 
         <Outlet

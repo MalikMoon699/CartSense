@@ -13,6 +13,11 @@ import { ProtectedRoute } from "./routes/RouteGuards.jsx";
 import AdminOrders from "./components/AdminOrders.jsx";
 import AdminProducts from "./components/AdminProducts.jsx";
 import AdminUsers from "./components/AdminUsers.jsx";
+import Products from "./pages/Products.jsx";
+import ContactUs from "./pages/ContactUs.jsx";
+import AboutUs from "./pages/AboutUs.jsx";
+import FAQ from "./pages/FAQ.jsx";
+import MyOrders from "./pages/MyOrders.jsx";
 
 const App = () => {
   return (
@@ -20,6 +25,18 @@ const App = () => {
       <Routes>
         <Route element={<AppLayout />}>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route
+            path="/my-orders/:id"
+            element={
+              <ProtectedRoute>
+                <MyOrders />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/cart"
             element={

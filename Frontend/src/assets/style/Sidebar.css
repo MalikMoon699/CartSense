@@ -36,10 +36,13 @@
 }
 
 .close-btn {
-  background: none;
-  border: none;
+  background: #ffffff30;
+  border: 1px solid #fff;
   color: #fff;
   cursor: pointer;
+  font-size: 0px;
+  padding: 4px;
+  border-radius: 4px;
 }
 
 .profile-section {
@@ -78,21 +81,6 @@
   text-align: start;
 }
 
-.update-section input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  margin-bottom: 10px;
-  background: #0d1b36;
-  color: #fff;
-}
-
-.update-section input:focus {
-  border: 1px solid #4a90e2;
-}
-
 .upload-label {
   display: inline-block;
   color: #ffffff;
@@ -101,7 +89,7 @@
   transition: 0.3s ease;
   text-align: start;
   border: 1px dashed;
-  background: #0d1b36;
+  background: rgba(255, 255, 255, 0.15);
   padding: 40px;
   width: 100%;
   border-radius: 10px;
@@ -151,4 +139,41 @@
 
 .logout-btn:hover {
   background-color: #c42d2d;
+}
+
+/* ======= Normal Sidebar ======== */
+
+.normalSidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 40px;
+}
+
+.normalSidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgb(255 255 255 / 29%);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.normalSidebar-link:hover {
+  background-color: #f5f5f5;
+  color: #000;
+  transform: translateX(3px);
+}
+
+.normalSidebar-link.active {
+  background-color: #000;
+  color: #fff;
+  font-weight: 600;
+  transform: none;
 }

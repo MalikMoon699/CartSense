@@ -124,7 +124,7 @@ const UserDetails = ({ setSidebarType }) => {
         <div className="sidebar-header">
           <h2>Profile</h2>
           <button className="close-btn" onClick={() => setSidebarType(null)}>
-            <X size={20} />
+            <X size={15} />
           </button>
         </div>
 
@@ -143,10 +143,11 @@ const UserDetails = ({ setSidebarType }) => {
           <input
             type="text"
             value={name}
+            className="login-input"
             onChange={(e) => setName(e.target.value)}
             placeholder="Full Name"
           />
-          <input type="email" value={email} readOnly />
+          <input type="email" className="login-input" value={email} readOnly />
           <label className="upload-label">
             <input
               type="file"
@@ -167,18 +168,21 @@ const UserDetails = ({ setSidebarType }) => {
             type="password"
             placeholder="Current Password"
             value={currentPassword}
+            className="login-input"
             onChange={(e) => setCurrentPassword(e.target.value)}
           />
           <input
             type="password"
             placeholder="New Password"
             value={newPassword}
+            className="login-input"
             onChange={(e) => setNewPassword(e.target.value)}
           />
           <input
             type="password"
             placeholder="Confirm Password"
             value={confirmPassword}
+            className="login-input"
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <button className="btn update-btn" onClick={handlePasswordUpdate}>
