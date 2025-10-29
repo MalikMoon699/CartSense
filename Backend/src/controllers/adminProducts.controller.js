@@ -121,36 +121,67 @@ export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
+    const product = await Product.findById(id);
+    if (!product)
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
 
-    const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
+    let imageUrls = product.images || [];
 
-    if (!updatedProduct) {
-      return res.status(404).json({ message: "Product not found" });
+    if (req.files && req.files.length > 0) {
+      const uploadedImages = await Promise.all(
+        req.files.map((file) => {
+          return new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+              { folder: "products" },
+              (error, result) => {
+                if (error) reject(error);
+                else resolve(result.secure_url);
+              }
+            );
+            stream.end(file.buffer);
+          });
+        })
+      );
+      imageUrls = [...imageUrls, ...uploadedImages];
     }
+    const updated = await Product.findByIdAndUpdate(
+      id,
+      {
+        name: updateData.name,
+        price: updateData.price,
+        stock: updateData.stock,
+        description: updateData.description,
+        categories: Array.isArray(updateData.categories)
+          ? updateData.categories
+          : [updateData.categories],
+        filleds: updateData.specifications
+          ? Object.values(updateData.specifications)
+          : product.filleds,
+        images: imageUrls,
+      },
+      { new: true }
+    );
 
     res.status(200).json({
       success: true,
       message: "Product updated successfully",
-      product: updatedProduct,
+      product: updated,
     });
   } catch (error) {
     console.error("Error updating product:", error);
-    res.status(500).json({ message: "Server error while updating product" });
+    res
+      .status(500)
+      .json({ success: false, message: "Server error while updating product" });
   }
 };
 
 export const getCategories = async (req, res) => {
   try {
-    console.log("➡️ Fetching categories...");
-
     let shop = await shopDetailsModel.findOne();
-    console.log("🔍 Found shop:", shop);
-
     if (!shop) {
       shop = await shopDetailsModel.create({});
-      console.log("✅ Created default ShopDetails document:", shop);
     }
 
     res.status(200).json({

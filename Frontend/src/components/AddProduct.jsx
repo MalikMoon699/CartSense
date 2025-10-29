@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import Loader from "./Loader";
 import API from "../utils/api";
 
-const AddProduct = ({ onClose }) => {
+const AddProduct = ({ onClose, product }) => {
   const [form, setForm] = useState({
     name: "",
     price: "",
@@ -21,6 +21,25 @@ const AddProduct = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (product) {
+      setForm({
+        name: product.name || "",
+        price: product.price || "",
+        stock: product.stock || "",
+        description: product.description || "",
+        categories: product.categories || [],
+        specifications:
+          product.filleds?.map((f) => ({
+            title: f.title,
+            value: f.value.join(", "),
+          })) || [],
+        selectedImages: product.images || [],
+        selectedFiles: [],
+      });
+    }
+  }, [product]);
 
   useEffect(() => {
     fetchCategories();
@@ -136,16 +155,11 @@ const AddProduct = ({ onClose }) => {
       return;
     }
 
-    if (!form.selectedFiles || form.selectedFiles.length === 0) {
-      toast.error("Please upload at least one image");
-      return;
-    }
-
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-
       const formData = new FormData();
+
       formData.append("name", form.name);
       formData.append("price", form.price);
       formData.append("stock", form.stock);
@@ -158,22 +172,40 @@ const AddProduct = ({ onClose }) => {
 
       form.selectedFiles.forEach((file) => formData.append("images", file));
 
-      const res = await API.post("/adminProduct/addProduct", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      let res;
+      if (product?._id) {
+        res = await API.put(
+          `/adminProduct/updateProduct/${product._id}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      } else {
+        res = await API.post("/adminProduct/addProduct", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      }
 
       if (res.data.success) {
-        toast.success("Product added successfully");
+        toast.success(
+          product
+            ? "Product updated successfully"
+            : "Product added successfully"
+        );
         onClose();
       } else {
-        toast.error(res.data.message || "Failed to add product");
+        toast.error(res.data.message || "Operation failed");
       }
     } catch (error) {
-      console.error("Error adding product:", error);
-      toast.error("Server error while adding product");
+      console.error("Error submitting product:", error);
+      toast.error("Server error while submitting product");
     } finally {
       setLoading(false);
     }
@@ -183,7 +215,9 @@ const AddProduct = ({ onClose }) => {
     <div className="modal-overlay">
       <div style={{ width: "450px" }} className="modal-content">
         <div className="modal-header">
-          <h2 className="modal-title">Add Product</h2>
+          <h2 className="modal-title">
+            {product ? "Update Product" : "Add Product"}
+          </h2>
           <button onClick={onClose} className="modal-close-btn">
             <X />
           </button>
@@ -293,7 +327,7 @@ const AddProduct = ({ onClose }) => {
                     <strong>{spec.title}:</strong> {spec.value}
                   </span>
                   <button onClick={() => handleRemoveSpec(index)}>
-                    <X size={16} />
+                    <X size={13} />
                   </button>
                 </div>
               ))}
@@ -357,7 +391,7 @@ const AddProduct = ({ onClose }) => {
                 <span className="icon">
                   <BadgePlus size={16} />
                 </span>
-                Add Product
+                {product ? "Update Product" : "Add Product"}
               </>
             )}
           </button>

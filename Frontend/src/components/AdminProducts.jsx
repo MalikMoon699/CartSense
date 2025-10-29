@@ -5,6 +5,7 @@ import API from "../utils/api";
 import { toast } from "sonner";
 import AddProduct from "./AddProduct";
 import { PackagePlus } from "lucide-react";
+import ViewProductDetails from "./ViewProductDetails";
 
 const AdminProducts = () => {
   const limit = 10;
@@ -14,6 +15,8 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [isCreate, setIsCreate] = useState(false);
+  const [isDetailsModel, setIsDetailsModel] = useState(null);
+  const [editingProduct, setEditingProduct] = useState(null);
 
   useEffect(() => {
     fetchProducts(page);
@@ -77,10 +80,6 @@ const AdminProducts = () => {
     }
   };
 
-  const handleUpdate = (product) => {
-
-  };
-
   return (
     <div className="admin-users">
       <div className="admin-users-header">
@@ -116,7 +115,13 @@ const AdminProducts = () => {
 
         <div className="products-table-rows">
           {products.map((product) => (
-            <div key={product._id} className="product-table-row">
+            <div
+              onClick={() => {
+                setIsDetailsModel(product);
+              }}
+              key={product._id}
+              className="product-table-row"
+            >
               <span className="product-avatar">
                 <img src={product?.images?.[0]} />
               </span>
@@ -129,15 +134,19 @@ const AdminProducts = () => {
               <span className="product-rating">{product?.rating || 0}</span>
               <span className="product-action">
                 <button
-                  onClick={() => {
-                    handleUpdate(product);
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingProduct(product);
+                    setIsCreate(true);
                   }}
                   className="update-btn"
                 >
                   Update
                 </button>
+
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     handleDelete(product._id);
                   }}
                   className="delete-btn"
@@ -166,10 +175,18 @@ const AdminProducts = () => {
       </div>
       {isCreate && (
         <AddProduct
+          product={editingProduct}
           onClose={() => {
             setIsCreate(false);
+            setEditingProduct(null);
             fetchProducts();
           }}
+        />
+      )}
+      {isDetailsModel && (
+        <ViewProductDetails
+          isDetailsModel={isDetailsModel}
+          setIsDetailsModel={setIsDetailsModel}
         />
       )}
     </div>
