@@ -146,7 +146,12 @@
   width: 100%;
   color: white;
   margin-bottom: 10px;
+  transition: all 0.3s ease-in-out;
   background: rgba(255, 255, 255, 0.15);
+}
+
+.addproduct-upload-img-btn:hover{
+  text-decoration: underline;
 }
 
 

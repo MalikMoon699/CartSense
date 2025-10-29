@@ -12,10 +12,10 @@ import { verifyToken } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 router.get("/getProducts", getProducts);
-router.get("/getcategories", getCategories);
+router.get("/getcategories", verifyToken, getCategories);
 router.post("/addProduct", verifyToken, upload.array("images", 10), addProduct);
 router.delete("/deleteProduct/:id", verifyToken, deleteProduct);
 router.put("/updateProduct/:id", verifyToken, updateProduct);
-router.put("/updatecategories/:id", verifyToken, updateCategories);
+router.put("/updatecategories", verifyToken, updateCategories);
 
 export default router;

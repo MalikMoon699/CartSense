@@ -1,4 +1,3 @@
-
 import Product from "../models/product.model.js";
 import shopDetailsModel from "../models/shopDetails.model.js";
 import cloudinary from "../config/cloudinary.js";
@@ -128,9 +127,14 @@ export const updateProduct = async (req, res) => {
 
 export const getCategories = async (req, res) => {
   try {
-    const shop = await shopDetailsModel.findOne();
+    console.log("➡️ Fetching categories...");
+
+    let shop = await shopDetailsModel.findOne();
+    console.log("🔍 Found shop:", shop);
+
     if (!shop) {
-      return res.status(404).json({ message: "Shop details not found" });
+      shop = await shopDetailsModel.create({});
+      console.log("✅ Created default ShopDetails document:", shop);
     }
 
     res.status(200).json({
@@ -138,35 +142,40 @@ export const getCategories = async (req, res) => {
       categories: shop.categories || [],
     });
   } catch (error) {
-    console.error("Error fetching categories:", error);
+    console.error("❌ Error fetching categories:", error);
     res.status(500).json({ message: "Server error while fetching categories" });
   }
 };
 
 export const updateCategories = async (req, res) => {
   try {
-    const { id } = req.params;
     const { newCategories } = req.body;
+    if (!newCategories || !Array.isArray(newCategories)) {
+      return res
+        .status(400)
+        .json({ message: "newCategories must be an array" });
+    }
 
-    const shop = await shopDetailsModel.findById(id);
+    const shop = await shopDetailsModel.findOne();
     if (!shop) {
-      return res.status(404).json({ message: "Shop not found" });
+      return res.status(404).json({ message: "Shop details not found" });
     }
 
     const updatedCategories = [
-      ...new Set([...shop.categories, ...newCategories]),
+      ...new Set([...(shop.categories || []), ...newCategories]),
     ];
 
     shop.categories = updatedCategories;
     await shop.save();
-
     res.status(200).json({
       success: true,
       message: "Categories updated successfully",
       categories: updatedCategories,
     });
   } catch (error) {
-    console.error("Error updating categories:", error);
-    res.status(500).json({ message: "Server error while updating categories" });
+    res.status(500).json({
+      message: "Server error while updating categories",
+      error: error.message,
+    });
   }
 };

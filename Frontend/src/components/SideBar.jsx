@@ -1,7 +1,7 @@
 import React from "react";
 import "../assets/style/Sidebar.css";
 
-const SideBar = () => {
+const SideBar = ({ setSidebarType }) => {
   return (
     <div
       onClick={() => setSidebarType(null)}

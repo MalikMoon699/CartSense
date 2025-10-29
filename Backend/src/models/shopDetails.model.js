@@ -2,8 +2,10 @@ import mongoose from "mongoose";
 
 const ShopDetailsSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    orders: { type: mongoose.Schema.Types.ObjectId, ref: "Orders" },
+    users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", default: [] }],
+    orders: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Orders", default: [] },
+    ],
     categories: {
       type: Array,
       default: ["Men's", "Women's", "Electronics", "Sport's"],

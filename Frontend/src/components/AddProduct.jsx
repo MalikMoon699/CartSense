@@ -15,6 +15,7 @@ const AddProduct = ({ onClose }) => {
     selectedImages: [],
   });
   const [customCategory, setCustomCategory] = useState("");
+  const [addCategoryLoading, setAddCategoryLoading] = useState(false);
   const [newSpec, setNewSpec] = useState({ title: "", value: "" });
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -30,7 +31,6 @@ const AddProduct = ({ onClose }) => {
       const res = await API.get("/adminProduct/getcategories", {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       if (res.data.success) {
         setCategories(res.data.categories || []);
       } else {
@@ -45,23 +45,26 @@ const AddProduct = ({ onClose }) => {
   const handleAddCategory = async () => {
     if (customCategory.trim() && !categories.includes(customCategory)) {
       try {
+        setAddCategoryLoading(true);
         const token = localStorage.getItem("token");
         const res = await API.put(
           "/adminProduct/updatecategories",
-          { category: customCategory },
+          { newCategories: [customCategory] },
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
         if (res.data.success) {
           toast.success("Category added successfully");
           setCustomCategory("");
-          fetchCategories(); // ✅ Refresh categories list
+          fetchCategories();
         } else {
           toast.error(res.data.message || "Failed to add category");
         }
       } catch (error) {
         console.error("Error updating categories:", error);
         toast.error("Server error while updating categories");
+      }finally{
+        setAddCategoryLoading(false);
       }
     }
   };
@@ -186,7 +189,6 @@ const AddProduct = ({ onClose }) => {
             className="login-input"
           />
 
-          {/* Category Manager */}
           <div className="addproduct-category-manager">
             <div className="addproduct-category-input">
               <input
@@ -199,8 +201,13 @@ const AddProduct = ({ onClose }) => {
               <button
                 className="addproduct-add-category-btn"
                 onClick={handleAddCategory}
+                disabled={addCategoryLoading}
               >
-                + Add
+                {addCategoryLoading ? (
+                  <Loader color="white" style={{width:"35px"}} size="14" />
+                ) : (
+                  "+ Add"
+                )}
               </button>
             </div>
 

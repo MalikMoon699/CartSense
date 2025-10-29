@@ -75,6 +75,7 @@
   margin-bottom: 10px;
   font-weight: 600;
   color: #dedede;
+  text-align: start;
 }
 
 .update-section input {
@@ -94,10 +95,15 @@
 
 .upload-label {
   display: inline-block;
-  color: #9ecfff;
+  color: #ffffff;
   cursor: pointer;
   margin-bottom: 14px;
   transition: 0.3s ease;
+  text-align: start;
+  border: 1px dashed;
+  background: #0d1b36;
+  padding: 40px;
+  border-radius: 10px;
 }
 
 .upload-label:hover {
