@@ -13,6 +13,7 @@ const AddProduct = ({ onClose }) => {
     categories: [],
     specifications: [],
     selectedImages: [],
+    selectedFiles: [],
   });
   const [customCategory, setCustomCategory] = useState("");
   const [addCategoryLoading, setAddCategoryLoading] = useState(false);
@@ -63,7 +64,7 @@ const AddProduct = ({ onClose }) => {
       } catch (error) {
         console.error("Error updating categories:", error);
         toast.error("Server error while updating categories");
-      }finally{
+      } finally {
         setAddCategoryLoading(false);
       }
     }
@@ -112,10 +113,13 @@ const AddProduct = ({ onClose }) => {
       return;
     }
 
-    const urls = files.map((file) => URL.createObjectURL(file));
+    // Generate preview URLs
+    const previewUrls = files.map((file) => URL.createObjectURL(file));
+
     setForm((prev) => ({
       ...prev,
-      selectedImages: [...prev.selectedImages, ...urls],
+      selectedImages: [...prev.selectedImages, ...previewUrls],
+      selectedFiles: [...(prev.selectedFiles || []), ...files], // store files
     }));
   };
 
@@ -127,16 +131,38 @@ const AddProduct = ({ onClose }) => {
   };
 
   const handleSubmit = async () => {
-    if (form.selectedImages.length > 10) {
-      toast.error("You can only upload up to 10 images");
+    if (!form.name || !form.price) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
+    if (!form.selectedFiles || form.selectedFiles.length === 0) {
+      toast.error("Please upload at least one image");
       return;
     }
 
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await API.post("/adminProduct/addProduct", form, {
-        headers: { Authorization: `Bearer ${token}` },
+
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("price", form.price);
+      formData.append("stock", form.stock);
+      formData.append("description", form.description);
+      form.categories.forEach((cat) => formData.append("categories", cat));
+      form.specifications.forEach((spec, i) => {
+        formData.append(`specifications[${i}][title]`, spec.title);
+        formData.append(`specifications[${i}][value]`, spec.value);
+      });
+
+      form.selectedFiles.forEach((file) => formData.append("images", file));
+
+      const res = await API.post("/adminProduct/addProduct", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       if (res.data.success) {
@@ -204,7 +230,7 @@ const AddProduct = ({ onClose }) => {
                 disabled={addCategoryLoading}
               >
                 {addCategoryLoading ? (
-                  <Loader color="white" style={{width:"35px"}} size="14" />
+                  <Loader color="white" style={{ width: "35px" }} size="14" />
                 ) : (
                   "+ Add"
                 )}

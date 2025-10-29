@@ -27,10 +27,19 @@ export const getProducts = async (req, res) => {
 
 export const addProduct = async (req, res) => {
   try {
-    const { name, description, price, stock, category, filleds, user } =
-      req.body;
+    const {
+      name,
+      description,
+      price,
+      stock,
+      categories,
+      specifications = [],
+      selectedImages = [],
+    } = req.body;
 
-    if (!name || !price || !category) {
+    const user = req.user?.id;
+
+    if (!name || !price || !categories) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields" });
@@ -57,7 +66,14 @@ export const addProduct = async (req, res) => {
       });
 
       imageUrls = await Promise.all(uploadPromises);
+    } else {
+      imageUrls = selectedImages;
     }
+
+    const filleds = specifications.map((spec) => ({
+      title: spec.title,
+      value: [spec.value],
+    }));
 
     const product = new Product({
       user,
@@ -65,8 +81,8 @@ export const addProduct = async (req, res) => {
       description,
       price,
       stock,
-      category,
-      filleds: filleds ? JSON.parse(filleds) : [],
+      categories,
+      filleds,
       images: imageUrls,
     });
 

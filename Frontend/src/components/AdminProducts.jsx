@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { IMAGES } from "../services/Constants";
 import "../assets/style/AdminProducts.css";
 import Loader from "./Loader";
 import API from "../utils/api";
@@ -10,57 +9,57 @@ import { PackagePlus } from "lucide-react";
 const AdminProducts = () => {
   const limit = 10;
   
-  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [isCreate, setIsCreate] = useState(false);
 
   useEffect(() => {
-    fetchUsers(page);
+    fetchProducts(page);
   }, []);
 
-  const fetchUsers = async (pageNum = 1) => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      const res = await API.get(`/adminUser/getUsers`, {
-        params: { page: pageNum, limit, role: "user" },
-        headers: { Authorization: `Bearer ${token}` },
-      });
+const fetchProducts = async (pageNum = 1) => {
+  try {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    const res = await API.get(`/adminProduct/getProducts`, {
+      params: { page: pageNum, limit },
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      if (res.status === 200) {
-        const { users: fetchedUsers, total } = res.data;
-        if (pageNum === 1) {
-          setUsers(fetchedUsers);
-        } else {
-          setUsers((prev) => [...prev, ...fetchedUsers]);
-        }
-        if (users.length + fetchedUsers.length >= total) {
-          setHasMore(false);
-        }
+    if (res.status === 200) {
+      const { products: fetchedProducts, total } = res.data;
+      if (pageNum === 1) {
+        setProducts(fetchedProducts);
       } else {
-        toast.error(res.data.message || "Failed to fetch users");
+        setProducts((prev) => [...prev, ...fetchedProducts]);
       }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      toast.error("An error occurred while fetching users");
-    } finally {
-      setLoading(false);
+      if (products.length + fetchedProducts.length >= total) {
+        setHasMore(false);
+      }
+    } else {
+      toast.error(res.data.message || "Failed to fetch products");
     }
-  };
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    toast.error("An error occurred while fetching products");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleLoadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    fetchUsers(nextPage);
+    fetchProducts(nextPage);
   };
 
   const handleDelete = async (id) => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const res = await API.delete(`/adminUser/deleteUser/${id}`, {
+      const res = await API.delete(`/adminProduct/deleteUser/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -82,31 +81,6 @@ const AdminProducts = () => {
 
   };
 
-  const DummyProducts = [
-    {
-      _id: "4",
-      name: "Running Shoes",
-      category: "Footwear",
-      price: 5999,
-      stock: 60,
-      rating: 4.7,
-      images: [
-        "https://res.cloudinary.com/demo/image/upload/v1728810004/shoes.jpg",
-      ],
-    },
-    {
-      _id: "5",
-      name: "Smart Watch Series 7",
-      category: "Gadgets",
-      price: 24999,
-      stock: 20,
-      rating: 4.9,
-      images: [
-        "https://res.cloudinary.com/demo/image/upload/v1728810005/smart_watch.jpg",
-      ],
-    }
-  ];
-
   return (
     <div className="admin-users">
       <div className="admin-users-header">
@@ -123,9 +97,9 @@ const AdminProducts = () => {
           className="add-user-btn"
         >
           <span className="icon">
-            <PackagePlus size={16}/>
+            <PackagePlus size={16} />
           </span>
-         Add Product
+          Add Product
         </button>
       </div>
 
@@ -141,16 +115,18 @@ const AdminProducts = () => {
         </div>
 
         <div className="products-table-rows">
-          {DummyProducts.map((product) => (
+          {products.map((product) => (
             <div key={product._id} className="product-table-row">
               <span className="product-avatar">
                 <img src={product?.images?.[0]} />
               </span>
               <span className="product-name">{product?.name}</span>
-              <span className="product-category">{product?.category}</span>
+              <span className="product-category">
+                {product?.categories?.join(", ")}
+              </span>
               <span className="product-price">{product?.price}</span>
-              <span className="product-price">{product?.price}</span>
-              <span className="product-rating">{product?.rating}</span>
+              <span className="product-price">{product?.stock}</span>
+              <span className="product-rating">{product?.rating || 0}</span>
               <span className="product-action">
                 <button
                   onClick={() => {
@@ -192,6 +168,7 @@ const AdminProducts = () => {
         <AddProduct
           onClose={() => {
             setIsCreate(false);
+            fetchProducts();
           }}
         />
       )}

@@ -11,7 +11,7 @@ import upload  from "../middlewares/multer.middleware.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
-router.get("/getProducts", getProducts);
+router.get("/getProducts", verifyToken, getProducts);
 router.get("/getcategories", verifyToken, getCategories);
 router.post("/addProduct", verifyToken, upload.array("images", 10), addProduct);
 router.delete("/deleteProduct/:id", verifyToken, deleteProduct);
