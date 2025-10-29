@@ -8,7 +8,7 @@ import { PackagePlus } from "lucide-react";
 
 const AdminProducts = () => {
   const limit = 10;
-  
+
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -19,35 +19,35 @@ const AdminProducts = () => {
     fetchProducts(page);
   }, []);
 
-const fetchProducts = async (pageNum = 1) => {
-  try {
-    setLoading(true);
-    const token = localStorage.getItem("token");
-    const res = await API.get(`/adminProduct/getProducts`, {
-      params: { page: pageNum, limit },
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  const fetchProducts = async (pageNum = 1) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const res = await API.get(`/adminProduct/getProducts`, {
+        params: { page: pageNum, limit },
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    if (res.status === 200) {
-      const { products: fetchedProducts, total } = res.data;
-      if (pageNum === 1) {
-        setProducts(fetchedProducts);
+      if (res.status === 200) {
+        const { products: fetchedProducts, total } = res.data;
+        if (pageNum === 1) {
+          setProducts(fetchedProducts);
+        } else {
+          setProducts((prev) => [...prev, ...fetchedProducts]);
+        }
+        if (products.length + fetchedProducts.length >= total) {
+          setHasMore(false);
+        }
       } else {
-        setProducts((prev) => [...prev, ...fetchedProducts]);
+        toast.error(res.data.message || "Failed to fetch products");
       }
-      if (products.length + fetchedProducts.length >= total) {
-        setHasMore(false);
-      }
-    } else {
-      toast.error(res.data.message || "Failed to fetch products");
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      toast.error("An error occurred while fetching products");
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    toast.error("An error occurred while fetching products");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleLoadMore = () => {
     const nextPage = page + 1;
@@ -59,19 +59,19 @@ const fetchProducts = async (pageNum = 1) => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const res = await API.delete(`/adminProduct/deleteUser/${id}`, {
+      const res = await API.delete(`/adminProduct/deleteProduct/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (res.status === 200) {
-        toast.success("User deleted successfully");
-        setUsers((prev) => prev.filter((user) => user._id !== id));
+        toast.success("Product deleted successfully");
+        setProducts((prev) => prev.filter((product) => product._id !== id));
       } else {
-        toast.error(res.data.message || "Failed to delete user");
+        toast.error(res.data.message || "Failed to delete Product");
       }
     } catch (error) {
-      console.error("Error deleting user:", error);
-      toast.error("An error occurred while deleting the user");
+      console.error("Error deleting Product:", error);
+      toast.error("An error occurred while deleting the Product");
     } finally {
       setLoading(false);
     }
