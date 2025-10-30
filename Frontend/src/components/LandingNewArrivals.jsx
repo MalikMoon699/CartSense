@@ -2,12 +2,14 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import { stocklabel } from "../services/Helpers";
+import { stocklabel, handleAddToCart } from "../services/Helpers";
 import { Star, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../contexts/AuthContext";
 
 const LandingNewArrivals = ({ products }) => {
   const navigate = useNavigate("");
+  const {currentUser}=useAuth();
 
   return (
     <div className="landing-new-arrival-section">
@@ -58,7 +60,13 @@ const LandingNewArrivals = ({ products }) => {
                   alt={product?.name}
                   className="landing-new-arrival-img"
                 />
-                <button className="landing-new-arrival-cart-btn">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddToCart(product, currentUser);
+                  }}
+                  className="landing-new-arrival-cart-btn"
+                >
                   <ShoppingCart />
                 </button>
               </div>

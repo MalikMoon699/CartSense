@@ -87,7 +87,6 @@ const Products = () => {
       <div className="products-page-sidebar">
         <h3 className="sidebar-title">Filters</h3>
 
-        {/* Price Filter */}
         <div className="filter-block">
           <h4>Price Range</h4>
           <input
@@ -120,7 +119,6 @@ const Products = () => {
           </div>
         </div>
 
-        {/* Rating Filter */}
         <div className="filter-block">
           <h4>Rating</h4>
           {[5, 4, 3, 2, 1].map((r) => (
@@ -209,7 +207,6 @@ const Products = () => {
                         }
                       />
                     ))}
-                    <span>{product.rating?.toFixed(1) || "0"}</span>
                   </div>
                   <h4 className="products-page-price">Rs {product.price}</h4>
                 </div>

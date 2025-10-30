@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { landingHeroSlides } from "../services/Helpers";
+import { useNavigate } from "react-router";
 
 const LandingHero = () => {
   const [current, setCurrent] = useState(0);
+  const navigate = useNavigate();
 
   const nextSlide = () => {
     setCurrent((prev) => (prev + 1) % landingHeroSlides.length);
@@ -33,7 +35,12 @@ const LandingHero = () => {
               <p className="landing-hero-subtitle">{slide.subtitle}</p>
               <h1 className="landing-hero-title">{slide.title}</h1>
               <p className="landing-hero-description">{slide.description}</p>
-              <button className="landing-hero-button">
+              <button
+                onClick={() => {
+                  navigate("/products");
+                }}
+                className="landing-hero-button"
+              >
                 {slide.buttonText}
               </button>
             </div>

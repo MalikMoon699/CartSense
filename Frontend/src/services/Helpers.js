@@ -1,4 +1,6 @@
 import { IMAGES } from "./Constants";
+import API from "../utils/api";
+import { toast } from "sonner";
 
 export const formatDate = (isoString) => {
   const date = new Date(isoString);
@@ -108,3 +110,30 @@ export const landingServices = [
     subtitle: "30-day return policy for your peace of mind",
   },
 ];
+
+export const handleAddToCart = async (product, currentUser) => {
+  if (!currentUser) {
+    toast.error("Please log in to add items to your cart.");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("token");
+    const res = await API.post(
+      `/cart/addProductCart`,
+      { userId: currentUser._id, productId: product._id, quantity: 1 },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (res.data.success) {
+      toast.success(`${product.name} added to your cart!`);
+    } else {
+      toast.info(res.data.message || "Product already in cart.");
+    }
+  } catch (error) {
+    console.error("Error adding product to cart:", error);
+    toast.error("Failed to add product to cart. Please try again.");
+  }
+};

@@ -5,7 +5,6 @@ import Product from "../models/product.model.js";
 export const getCartById = async (req, res) => {
   try {
     const { id } = req.params;
-
     const cartItems = await Cart.find({ user: id }).populate("product");
 
     if (!cartItems.length) {
@@ -24,7 +23,6 @@ export const getCartById = async (req, res) => {
 export const addProductToCart = async (req, res) => {
   try {
     const { userId, productId, quantity = 1 } = req.body;
-
     if (!userId || !productId) {
       return res
         .status(400)

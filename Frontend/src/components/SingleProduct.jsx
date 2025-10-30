@@ -23,6 +23,7 @@ const SingleProduct = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [selectedFiled, setSelectedField] = useState({});
 
   const [newReview, setNewReview] = useState({
     name: "",
@@ -54,6 +55,20 @@ const SingleProduct = () => {
       setSelectedImage(productData.images?.[0]);
       setReviews(productData.reviews || []);
 
+      if (productData.filleds && productData.filleds.length > 0) {
+        const defaultSelections = {};
+
+        productData.filleds.forEach((field) => {
+          if (Array.isArray(field.value) && field.value.length > 0) {
+            const firstValue = field.value[0]
+              ?.split(",")[0] 
+              ?.trim();
+            if (firstValue) defaultSelections[field.title] = firstValue;
+          }
+        });
+
+        setSelectedField(defaultSelections);
+      }
       if (productData.categories?.length > 0) {
         const category = productData.categories[0];
         const relatedRes = await API.get(
@@ -88,7 +103,33 @@ const SingleProduct = () => {
     }
   };
 
-  const handleAddToCart = async () => {};
+  const handleAddToCart = async () => {
+    if (!currentUser) {
+      toast.error("Please log in to add items to your cart.");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.post(
+        `/cart/addProductCart`,
+        { userId: currentUser._id, productId: product._id, quantity },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (res.data.success) {
+        toast.success(`${product.name} added to your cart!`);
+      } else {
+        toast.info(res.data.message || "Product already in cart.");
+      }
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+      toast.error("Failed to add product to cart. Please try again.");
+    }
+  };
 
   const handleQuantityChange = (type) => {
     if (type === "inc") {
@@ -99,14 +140,12 @@ const SingleProduct = () => {
   };
 
   const handleShare = async () => {
-    const shareUrl = `${
-      import.meta.env.VITE_FRONTEND_URL
-    }/product/${id}`;
+    const shareUrl = `${import.meta.env.VITE_FRONTEND_URL}/product/${id}`;
     toast.success("Product share link created successfully!");
     if (navigator.share) {
       try {
         await navigator.share({
-          title: product?.name||"",
+          title: product?.name || "",
           text: "Check out this product!",
           url: shareUrl,
         });
@@ -177,6 +216,40 @@ const SingleProduct = () => {
             ))}
           </div>
           <p className="single-product-description">{product.description}</p>
+          {product.filleds && product.filleds.length > 0 && (
+            <div className="single-product-fields">
+              {product.filleds.map((field, index) => (
+                <div key={index} className="single-product-field">
+                  <strong>{field.title}:</strong>
+                  <div className="single-product-options">
+                    {Array.isArray(field.value) &&
+                      field.value[0]?.split(",").map((option, i) => {
+                        const trimmedOption = option.trim();
+                        const isSelected =
+                          selectedFiled[field.title] === trimmedOption;
+                        return (
+                          <button
+                            key={i}
+                            className={`field-option-btn ${
+                              isSelected ? "selected" : ""
+                            }`}
+                            onClick={() =>
+                              setSelectedField((prev) => ({
+                                ...prev,
+                                [field.title]: trimmedOption,
+                              }))
+                            }
+                          >
+                            {trimmedOption}
+                          </button>
+                        );
+                      })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           <h2 className="single-product-price">Rs {product.price}</h2>
           <p className="single-product-stock">
             {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
@@ -203,7 +276,7 @@ const SingleProduct = () => {
             </button>
           </div>
           <div className="single-product-btns">
-            <button className="single-product-btn">
+            <button onClick={handleAddToCart} className="single-product-btn">
               <span className="icon" style={{ marginRight: "2px" }}>
                 <ShoppingCart size={15} />
               </span>{" "}
