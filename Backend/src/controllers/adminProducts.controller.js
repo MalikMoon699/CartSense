@@ -226,3 +226,137 @@ export const updateCategories = async (req, res) => {
     });
   }
 };
+
+export const getSingleProducts = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await Product.findById(id).populate(
+      "reviews.user",
+      "name email"
+    );
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Product fetched successfully",
+      product,
+    });
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching product",
+      error: error.message,
+    });
+  }
+};
+
+export const getSameCategoriesProducts = async (req, res) => {
+  try {
+    const { category } = req.params;
+
+    const products = await Product.find({
+      categories: { $in: [category] },
+    }).limit(10);
+
+    if (!products.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No products found in this category",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Products fetched successfully",
+      products,
+    });
+  } catch (error) {
+    console.error("Error fetching same category products:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching same category products",
+      error: error.message,
+    });
+  }
+};
+
+export const addProductReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, rating } = req.body;
+
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    const newReview = {
+      user: req.user.id,
+      name,
+      description,
+      rating,
+    };
+
+    product.reviews.push(newReview);
+
+    product.rating =
+      product.reviews.reduce((acc, r) => acc + r.rating, 0) /
+      product.reviews.length;
+
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Review added successfully",
+      product,
+    });
+  } catch (error) {
+    console.error("Error adding review:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const getAllProducts = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, search = "", category = "All" } = req.query;
+
+    const skip = (page - 1) * limit;
+
+    const filter = {};
+    if (category && category !== "All") {
+      filter.categories = { $in: [category] };
+    }
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+    const total = await Product.countDocuments(filter);
+    const products = await Product.find(filter)
+      .skip(skip)
+      .limit(Number(limit))
+      .sort({ createdAt: -1 });
+    const allProducts = await Product.find({}, "categories");
+    const allCategories = [
+      "All",
+      ...new Set(allProducts.flatMap((p) => p.categories || [])),
+    ];
+
+    res.status(200).json({
+      success: true,
+      products,
+      total,
+      categories: allCategories,
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching products",
+      error: error.message,
+    });
+  }
+};

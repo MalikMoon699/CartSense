@@ -170,7 +170,6 @@
   font-family: "Poppins", sans-serif;
 }
 
-/* PRODUCT INFO */
 .single-product-info {
   display: flex;
   flex-wrap: wrap;
@@ -258,7 +257,6 @@
   background-color: #333;
 }
 
-/* REVIEWS */
 .single-product-reviews {
   margin-top: 60px;
   background: #fff;
@@ -326,7 +324,6 @@
   background-color: #333;
 }
 
-/* SUGGESTIONS */
 .single-product-suggestions {
   margin-top: 60px;
 }
