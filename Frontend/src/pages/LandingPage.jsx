@@ -6,6 +6,7 @@ import { landingCategory, landingServices } from "../services/Helpers";
 import API from "../utils/api";
 import { toast } from "sonner";
 import LandingNewArrivals from "../components/LandingNewArrivals";
+import LandingFooter from "../components/LandingFooter";
 
 const iconMap = {
   Truck: <Truck />,
@@ -83,6 +84,7 @@ const LandingPage = () => {
           </div>
         ))}
       </div>
+      <LandingFooter/>
     </div>
   );
 };

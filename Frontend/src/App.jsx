@@ -18,6 +18,11 @@ import ContactUs from "./pages/ContactUs.jsx";
 import AboutUs from "./pages/AboutUs.jsx";
 import FAQ from "./pages/FAQ.jsx";
 import MyOrders from "./pages/MyOrders.jsx";
+import Returns from "./components/infoPages/Returns.jsx";
+import ShippingInfo from "./components/infoPages/ShippingInfo.jsx";
+import Support from "./components/infoPages/Support.jsx";
+import PrivacyPolicy from "./components/infoPages/PrivacyPolicy.jsx";
+import TermsOfService from "./components/infoPages/TermsOfService.jsx";
 
 const App = () => {
   return (
@@ -28,6 +33,11 @@ const App = () => {
           <Route path="/products" element={<Products />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/returns" element={<Returns />} />
+          <Route path="/shipping" element={<ShippingInfo />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route
             path="/my-orders/:id"

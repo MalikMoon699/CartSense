@@ -439,3 +439,148 @@
   display: block;
   line-height: 1.4;
 }
+
+/* ===== FOOTER BASE ===== */
+.landing-footer-container {
+  background-color: #0d1b2a;
+  color: #f5f7fa;
+  padding: 60px 20px 30px;
+  font-family: "Inter", sans-serif;
+}
+
+.landing-footer-top {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto 40px;
+}
+
+.landing-footer-logo {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 15px;
+}
+
+.landing-footer-description {
+  color: #bfc8d6;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.landing-footer-socials {
+  display: flex;
+  gap: 12px;
+}
+
+.landing-footer-socials a {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1b263b;
+  border-radius: 50%;
+  color: #fff;
+  transition: 0.3s ease;
+}
+
+.landing-footer-socials a:hover {
+  background-color: #007bff;
+  transform: translateY(-3px);
+}
+
+.landing-footer-links h4 {
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 15px;
+}
+
+.landing-footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.landing-footer-links li {
+  margin-bottom: 10px;
+   transition: color 0.3s ease;
+}
+
+.landing-footer-links li:hover{
+  text-decoration: underline;
+}
+
+.landing-footer-links a {
+  color: #bfc8d6;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
+}
+
+.landing-footer-links a:hover {
+  color: #fff;
+}
+
+.landing-footer-contact h4 {
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 15px;
+}
+
+.landing-footer-contact p {
+  font-size: 0.95rem;
+  color: #bfc8d6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.landing-footer-bottom {
+  border-top: 1px solid #1e2e47;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.landing-footer-bottom p {
+  color: #9aacc4;
+  font-size: 0.9rem;
+}
+
+.landing-footer-bottom-links {
+  display: flex;
+  gap: 15px;
+}
+
+.landing-footer-bottom-links a {
+  color: #9aacc4;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s;
+}
+
+.landing-footer-bottom-links a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .landing-footer-top {
+    text-align: center;
+  }
+
+  .landing-footer-contact p {
+    justify-content: center;
+  }
+
+  .landing-footer-socials {
+    justify-content: center;
+  }
+}
