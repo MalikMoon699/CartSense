@@ -4,8 +4,11 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { stocklabel } from "../services/Helpers";
 import { Star, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import { useNavigate } from "react-router";
 
 const LandingNewArrivals = ({ products }) => {
+  const navigate = useNavigate("");
+
   return (
     <div className="landing-new-arrival-section">
       <div className="landing-new-arrival-header">
@@ -37,7 +40,12 @@ const LandingNewArrivals = ({ products }) => {
       >
         {products?.map((product, index) => (
           <SwiperSlide key={index}>
-            <div className="landing-new-arrival-card">
+            <div
+              onClick={() => {
+                navigate(`product/${product._id}`);
+              }}
+              className="landing-new-arrival-card"
+            >
               <div className="landing-new-arrival-img-box">
                 <span className="landing-new-arrival-badge">NEW</span>
                 {product?.topRated && (

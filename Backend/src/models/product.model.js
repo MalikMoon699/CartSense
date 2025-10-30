@@ -1,5 +1,16 @@
 import mongoose from "mongoose";
 
+
+const ReviewSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    rating: { type: Number, required: true, min: 1, max: 5 },
+  },
+  { timestamps: true }
+);
+
 const ProductSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -14,8 +25,9 @@ const ProductSchema = new mongoose.Schema(
       },
     ],
     price: { type: String },
-    stock: { type: Number },
-    rating: { type: Number },
+    stock: { type: Number, default: 0 },
+    rating: { type: Number, default: 0 },
+    reviews: [ReviewSchema],
     categories: [{ type: String }],
   },
   { timestamps: true, strict: false }

@@ -4,7 +4,6 @@ import "./assets/style/Style.css";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import AppLayout from "./layouts/AppLayout.jsx";
 import AdminDashBoard from "./pages/AdminDashBoard.jsx";
-import Store from "./pages/Store.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import Cart from "./components/Cart.jsx";
 import Checkout from "./components/Checkout.jsx";
@@ -31,6 +30,7 @@ const App = () => {
         <Route element={<AppLayout />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/product/:id" element={<SingleProduct />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/returns" element={<Returns />} />
@@ -63,8 +63,6 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route path="/product:id" element={<SingleProduct />} />
-          <Route path="/store" element={<Store />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
         <Route element={<AdminLayout />}>

@@ -235,6 +235,7 @@ const AddProduct = ({ onClose, product }) => {
           <input
             type="number"
             name="price"
+            min={0}
             value={form.price}
             onChange={handleChange}
             placeholder="Product price"
@@ -243,6 +244,7 @@ const AddProduct = ({ onClose, product }) => {
           <input
             type="number"
             name="stock"
+            min={0}
             value={form.stock}
             onChange={handleChange}
             placeholder="Product stock"

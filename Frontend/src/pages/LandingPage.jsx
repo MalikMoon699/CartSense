@@ -47,7 +47,6 @@ const LandingPage = () => {
     }
   };
 
-  console.log("products--->", products);
   return (
     <div className="landing-page-container">
       <LandingHero />
@@ -75,7 +74,10 @@ const LandingPage = () => {
       <LandingNewArrivals products={products} />
       <div className="landing-services-section">
         {landingServices.map((service, index) => (
-          <div key={index} className="landing-services-card">
+          <div
+            key={index}
+            className="landing-services-card"
+          >
             <div className="landing-services-icon">{iconMap[service.icon]}</div>
             <h3 className="landing-services-title">{service.title}</h3>
             <span className="landing-services-subtitle">
@@ -84,7 +86,7 @@ const LandingPage = () => {
           </div>
         ))}
       </div>
-      <LandingFooter/>
+      <LandingFooter />
     </div>
   );
 };
