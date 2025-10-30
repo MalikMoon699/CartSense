@@ -1,18 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { Star } from "lucide-react";
+import { toast } from "sonner";
+import {
+  CircleMinus,
+  CirclePlus,
+  Share2,
+  ShoppingCart,
+  Star,
+} from "lucide-react";
 import API from "../utils/api";
 import Loader from "./Loader";
 
 const SingleProduct = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
+  const [selectedImage, setSelectedImage] = useState("");
   const [suggestedProducts, setSuggestedProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
 
   const [newReview, setNewReview] = useState({
     name: "",
@@ -30,37 +40,36 @@ const SingleProduct = () => {
     fetchProduct();
   }, [id]);
 
+  const fetchProduct = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
 
-    const fetchProduct = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem("token");
+      const res = await API.get(`/adminProduct/getSingleProducts/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        const res = await API.get(`/adminProduct/getSingleProducts/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      const productData = res.data.product;
+      setProduct(productData);
+      setSelectedImage(productData.images?.[0]);
+      setReviews(productData.reviews || []);
 
-        const productData = res.data.product;
-        setProduct(productData);
-        setReviews(productData.reviews || []);
-
-        if (productData.categories?.length > 0) {
-          const category = productData.categories[0];
-          const relatedRes = await API.get(
-            `/adminProduct/getSameCategoriesProducts/${category}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          setSuggestedProducts(
-            relatedRes.data.products.filter((p) => p._id !== productData._id)
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      } finally {
-        setLoading(false);
+      if (productData.categories?.length > 0) {
+        const category = productData.categories[0];
+        const relatedRes = await API.get(
+          `/adminProduct/getSameCategoriesProducts/${category}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setSuggestedProducts(
+          relatedRes.data.products.filter((p) => p._id !== productData._id)
+        );
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
@@ -79,6 +88,37 @@ const SingleProduct = () => {
     }
   };
 
+  const handleAddToCart = async () => {};
+
+  const handleQuantityChange = (type) => {
+    if (type === "inc") {
+      setQuantity((prev) => prev + 1);
+    } else if (type === "dec" && quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    }
+  };
+
+  const handleShare = async () => {
+    const shareUrl = `${
+      import.meta.env.VITE_FRONTEND_URL
+    }/product/${id}`;
+    toast.success("Product share link created successfully!");
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product?.name||"",
+          text: "Check out this product!",
+          url: shareUrl,
+        });
+      } catch (err) {
+        console.error("Share failed:", err);
+      }
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.info("Share link copied to clipboard!");
+    }
+  };
+
   if (loading)
     return <Loader size="80" style={{ height: "80vh", width: "100%" }} />;
   if (!product) return <div>Product not found.</div>;
@@ -87,11 +127,35 @@ const SingleProduct = () => {
     <div className="single-product-container">
       <div className="single-product-info">
         <div className="single-product-image-wrapper">
-          <img
-            src={product.images?.[0]}
-            alt={product.name}
-            className="single-product-image"
-          />
+          <div
+            style={{
+              maxWidth: "450px",
+              width: "100%",
+              justifyContent: "center",
+            }}
+          >
+            <img
+              src={selectedImage}
+              alt={product.name}
+              className="single-product-image"
+            />
+
+            <div className="viewProductDetails-thumbnail-list">
+              {product.images?.map((img, index) => (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setSelectedImage(img);
+                  }}
+                  className={`viewProductDetails-thumbnail-item ${
+                    img === selectedImage ? "active" : ""
+                  }`}
+                >
+                  <img src={img} alt="" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="single-product-details">
@@ -111,15 +175,50 @@ const SingleProduct = () => {
                 }
               />
             ))}
-            <span>{product.rating} / 5</span>
           </div>
           <p className="single-product-description">{product.description}</p>
           <h2 className="single-product-price">Rs {product.price}</h2>
           <p className="single-product-stock">
             {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
           </p>
+          <div className="qty-box">
+            <button
+              className={`qty-btn ${quantity === 1 ? "disabled" : ""}`}
+              disabled={quantity === 1}
+              onClick={() => handleQuantityChange("dec")}
+            >
+              <CircleMinus size={18} />
+            </button>
 
-          <button className="single-product-btn">Add to Cart</button>
+            <p className="qty-number">{quantity}</p>
+
+            <button
+              className={`qty-btn ${
+                quantity === product.stock ? "disabled" : ""
+              }`}
+              disabled={quantity === product.stock}
+              onClick={() => handleQuantityChange("inc")}
+            >
+              <CirclePlus size={18} />
+            </button>
+          </div>
+          <div className="single-product-btns">
+            <button className="single-product-btn">
+              <span className="icon" style={{ marginRight: "2px" }}>
+                <ShoppingCart size={15} />
+              </span>{" "}
+              Add to Cart
+            </button>
+            <button
+              onClick={handleShare}
+              className="single-product-btn single-product-share-btn"
+            >
+              <span className="icon" style={{ marginRight: "2px" }}>
+                <Share2 size={15} />
+              </span>{" "}
+              Share
+            </button>
+          </div>
         </div>
       </div>
 
@@ -194,7 +293,13 @@ const SingleProduct = () => {
         <h2>You may also like</h2>
         <div className="single-product-suggestion-grid">
           {suggestedProducts.map((p) => (
-            <div key={p._id} className="single-product-suggestion-card">
+            <div
+              onClick={() => {
+                navigate(`/product/${p._id}`);
+              }}
+              key={p._id}
+              className="single-product-suggestion-card"
+            >
               <img src={p.images?.[0]} alt={p.name} />
               <h4>{p.name}</h4>
               <p>Rs {p.price}</p>
