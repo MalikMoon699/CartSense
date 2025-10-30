@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Star } from "lucide-react";
 import API from "../utils/api";
+import Loader from "./Loader";
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -14,12 +15,22 @@ const SingleProduct = () => {
   const [loading, setLoading] = useState(true);
 
   const [newReview, setNewReview] = useState({
-    name: currentUser?.name || "",
+    name: "",
     description: "",
     rating: 0,
   });
 
   useEffect(() => {
+    if (currentUser?.name) {
+      setNewReview((prev) => ({ ...prev, name: currentUser.name }));
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [id]);
+
+
     const fetchProduct = async () => {
       try {
         setLoading(true);
@@ -50,8 +61,6 @@ const SingleProduct = () => {
       }
     };
 
-    fetchProduct();
-  }, [id]);
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
@@ -59,7 +68,7 @@ const SingleProduct = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await API.post(`/products/addReview/${id}`, newReview, {
+      const res = await API.post(`/adminProduct/addReview/${id}`, newReview, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -70,7 +79,8 @@ const SingleProduct = () => {
     }
   };
 
-  if (loading) return <div className="loader">Loading product...</div>;
+  if (loading)
+    return <Loader size="80" style={{ height: "80vh", width: "100%" }} />;
   if (!product) return <div>Product not found.</div>;
 
   return (

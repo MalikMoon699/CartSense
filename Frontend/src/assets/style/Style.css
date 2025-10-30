@@ -6,6 +6,12 @@
   font-family: "Arial", sans-serif;
 }
 
+.loaderWrapper{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .layout-loading {
   height: 92vh;
   display: flex;

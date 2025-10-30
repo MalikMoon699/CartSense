@@ -24,7 +24,7 @@ const ProductSchema = new mongoose.Schema(
         value: [{ type: String }],
       },
     ],
-    price: { type: String },
+    price: { type: Number },
     stock: { type: Number, default: 0 },
     rating: { type: Number, default: 0 },
     reviews: [ReviewSchema],

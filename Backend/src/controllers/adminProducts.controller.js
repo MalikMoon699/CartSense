@@ -323,14 +323,31 @@ export const addProductReview = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = "", category = "All" } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search = "",
+      category = "All",
+      minPrice = 0,
+      maxPrice = 10000,
+      minRating = 0,
+    } = req.query;
 
     const skip = (page - 1) * limit;
 
-    const filter = {};
+  const filter = {
+    price: { $gte: Number(minPrice), $lte: Number(maxPrice) },
+    $or: [
+      { rating: { $gte: Number(minRating) } },
+      { rating: { $exists: false } }, 
+    ],
+  };
+
+
     if (category && category !== "All") {
       filter.categories = { $in: [category] };
     }
+
     if (search) {
       filter.name = { $regex: search, $options: "i" };
     }
@@ -339,6 +356,7 @@ export const getAllProducts = async (req, res) => {
       .skip(skip)
       .limit(Number(limit))
       .sort({ createdAt: -1 });
+
     const allProducts = await Product.find({}, "categories");
     const allCategories = [
       "All",
