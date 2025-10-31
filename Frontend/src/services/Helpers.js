@@ -137,3 +137,12 @@ export const handleAddToCart = async (product, currentUser) => {
     toast.error("Failed to add product to cart. Please try again.");
   }
 };
+
+
+export const countryCityData = {
+  Pakistan: ["Lahore", "Karachi", "Islamabad", "Rawalpindi", "Faisalabad"],
+  USA: ["New York", "Los Angeles", "Chicago", "Houston", "Miami"],
+  UK: ["London", "Manchester", "Liverpool", "Birmingham", "Leeds"],
+  Canada: ["Toronto", "Vancouver", "Calgary", "Montreal", "Ottawa"],
+  Australia: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
+};

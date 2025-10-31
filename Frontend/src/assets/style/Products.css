@@ -33,6 +33,21 @@
   margin-bottom: 10px;
 }
 
+.apply-filter-btn {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 8px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease-in-out;
+}
+.apply-filter-btn:hover {
+  background-color: #0369d7;
+}
+
+
 .filter-range {
   width: 100%;
 }
@@ -213,7 +228,6 @@
   background: #007bff;
   color: white;
 }
-
 
 .products-page-rating {
   display: flex;
