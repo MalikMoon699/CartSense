@@ -41,6 +41,7 @@ const Checkout = () => {
       toast.error("Failed to load cart");
     }
   };
+
   const singleProductPrice = (price, quantity) => {
     const total = price * quantity;
     return total.toFixed(2);
@@ -77,7 +78,7 @@ const Checkout = () => {
         })),
       };
 
-      const res = await API.post("/order/create", orderData, {
+      const res = await API.post("/order/createOrder", orderData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

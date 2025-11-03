@@ -8,15 +8,21 @@ const OrderSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
+    orderquantity: { type: Number, required: true },
+    totalprice: { type: Number, required: true },
+    paymentMethod: { type: String, default: "Cash on Delivery" },
+    paymentDetails: { type: String, default: "" },
+    address: {
+      country: { type: String },
+      city: { type: String },
+    },
     status: {
       type: String,
       enum: ["pending", "shipped", "delivered", "cancelled"],
       default: "pending",
     },
-    orderquantity: { type: Number, required: true },
-    totalprice: { type: Number, required: true}
   },
-  { timestamps: true, strict: false }
+  { timestamps: true }
 );
 
 export default mongoose.model("Orders", OrderSchema);
