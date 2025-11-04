@@ -1,7 +1,7 @@
 import Orders from "../models/orders.model.js";
 import User from "../models/user.model.js";
 import Product from "../models/product.model.js";
-
+import Cart from "../models/cart.model.js";
 
 export const createOrder = async (req, res) => {
   try {
@@ -17,7 +17,11 @@ export const createOrder = async (req, res) => {
     const createdOrders = await Promise.all(
       items.map(async (item) => {
         const product = await Product.findById(item.productId);
-        if (!product) throw new Error("Product not found");
+        if (!product) throw new Error(`Product not found: ${item.productId}`);
+
+        if (product.stock < item.quantity) {
+          throw new Error(`Insufficient stock for ${product.name}`);
+        }
 
         const order = new Orders({
           user: userId,
@@ -27,12 +31,24 @@ export const createOrder = async (req, res) => {
           paymentMethod,
           paymentDetails,
           address,
+          status: "pending",
         });
 
         await order.save();
+
+        product.stock -= item.quantity;
+        await product.save();
+
         return order;
       })
     );
+
+    await Cart.findOneAndUpdate(
+      { user: userId },
+      { $set: { items: [] } },
+      { new: true }
+    );
+
     await User.findByIdAndUpdate(userId, {
       $push: { orders: { $each: createdOrders.map((o) => o._id) } },
     });
@@ -43,12 +59,61 @@ export const createOrder = async (req, res) => {
       orders: createdOrders,
     });
   } catch (error) {
-    console.error("Error creating order:", error);
-    res
-      .status(500)
-      .json({ success: false, message: error.message || "Server error" });
+    console.error("❌ Error creating order:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Server error",
+    });
   }
 };
+
+
+// export const createOrder = async (req, res) => {
+//   try {
+//     const { userId, paymentMethod, paymentDetails, address, total, items } =
+//       req.body;
+
+//     if (!userId || !items?.length) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Missing order data" });
+//     }
+
+//     const createdOrders = await Promise.all(
+//       items.map(async (item) => {
+//         const product = await Product.findById(item.productId);
+//         if (!product) throw new Error("Product not found");
+
+//         const order = new Orders({
+//           user: userId,
+//           product: item.productId,
+//           orderquantity: item.quantity,
+//           totalprice: product.price * item.quantity,
+//           paymentMethod,
+//           paymentDetails,
+//           address,
+//         });
+
+//         await order.save();
+//         return order;
+//       })
+//     );
+//     await User.findByIdAndUpdate(userId, {
+//       $push: { orders: { $each: createdOrders.map((o) => o._id) } },
+//     });
+
+//     res.status(201).json({
+//       success: true,
+//       message: "Order placed successfully",
+//       orders: createdOrders,
+//     });
+//   } catch (error) {
+//     console.error("Error creating order:", error);
+//     res
+//       .status(500)
+//       .json({ success: false, message: error.message || "Server error" });
+//   }
+// };
 
 
 export const getAllOrders = async (req, res) => {

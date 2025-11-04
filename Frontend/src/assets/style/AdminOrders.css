@@ -1,0 +1,81 @@
+.admin-orders-page {
+  padding: 2rem;
+  background: #fafafa;
+}
+
+.admin-orders-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.admin-orders-subtitle {
+  color: #777;
+  margin-bottom: 1.2rem;
+}
+
+.admin-orders-filters {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-filter-btn {
+  background: #e4e4e4;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.admin-filter-btn.active {
+  background: #222;
+  color: #fff;
+}
+
+.admin-orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-orders-table th,
+.admin-orders-table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.admin-orders-table th {
+  background: #f0f0f0;
+}
+
+.status-tag {
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-weight: 500;
+  color: white;
+  text-transform: capitalize;
+}
+
+.status-tag.pending {
+  background-color: #fca311;
+}
+.status-tag.shipped {
+  background-color: #2a9d8f;
+}
+.status-tag.delivered {
+  background-color: #4caf50;
+}
+.status-tag.cancelled {
+  background-color: #d62828;
+}
+
+.status-selector {
+  padding: 4px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}

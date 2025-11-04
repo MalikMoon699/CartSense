@@ -89,6 +89,11 @@
   display: inline-block;
 }
 
+.my-order-status.pending {
+  background: #f6f4c8;
+  color: #cdc509;
+}
+
 .my-order-status.processing {
   background: #fff7e6;
   color: #d97706;

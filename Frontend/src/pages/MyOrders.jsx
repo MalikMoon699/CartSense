@@ -1,77 +1,91 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../assets/style/MyOrders.css";
+import API from "../utils/api";
+import { useAuth } from "../contexts/AuthContext";
+import { toast } from "sonner";
+import Loader from "../components/Loader";
 
 const MyOrders = () => {
+  const { currentUser } = useAuth();
   const [filter, setFilter] = useState("All");
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const orders = [
-    {
-      id: "#ffd06fa5-bc01-4597-9c52-32c3532d327c",
-      date: "9/2/2025",
-      status: "Processing",
-      total: 525.0,
-      items: [
-        {
-          name: "Baby Stroller (Foldable, Lightweight)",
-          quantity: 2,
-          price: 222.61,
-          img: "https://cdn-icons-png.flaticon.com/512/3003/3003854.png",
-        },
-      ],
-    },
-    {
-      id: "#4b2d6e21-cf32-4789-bd4b-62c431f8e21f",
-      date: "10/15/2025",
-      status: "Delivered",
-      total: 310.5,
-      items: [
-        {
-          name: "Electric Kettle (Stainless Steel)",
-          quantity: 1,
-          price: 310.5,
-          img: "https://cdn-icons-png.flaticon.com/512/1216/1216895.png",
-        },
-      ],
-    },
-  ];
+  useEffect(() => {
+    if (currentUser?._id) {
+      fetchOrders();
+    }
+  }, [currentUser]);
 
-  // ✅ Apply filter here
-  const filterData =
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const res = await API.get(`/order/getOrder/${currentUser._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.success) {
+        setOrders(res.data.orders || []);
+      } else {
+        toast.info(res.data.message || "No orders found");
+        setOrders([]);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      toast.error("Failed to load your orders");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredOrders =
     filter === "All"
       ? orders
-      : orders.filter((order) => order.status === filter);
+      : orders.filter(
+          (order) => order.status.toLowerCase() === filter.toLowerCase()
+        );
 
   return (
     <div className="my-order-page">
       <h1 className="my-order-title">My Orders</h1>
       <p className="my-order-subtitle">Track and manage your order history.</p>
 
-      {/* 🔘 Filter Buttons */}
       <div className="my-order-filters">
-        {["All", "Processing", "Shipped", "Delivered", "Cancelled"].map(
-          (status) => (
-            <button
-              key={status}
-              className={`my-order-filter-btn ${
-                filter === status ? "active" : ""
-              }`}
-              onClick={() => setFilter(status)}
-            >
-              {status}
-            </button>
-          )
-        )}
+        {[
+          "All",
+          "Pending",
+          "Processing",
+          "Shipped",
+          "Delivered",
+          "Cancelled",
+        ].map((status) => (
+          <button
+            key={status}
+            className={`my-order-filter-btn ${
+              filter === status ? "active" : ""
+            }`}
+            onClick={() => setFilter(status)}
+          >
+            {status}
+          </button>
+        ))}
       </div>
 
-      {/* 🧾 Orders List */}
       <div className="my-order-list">
-        {filterData.length > 0 ? (
-          filterData.map((order, i) => (
+        {loading ? (
+          <Loader />
+        ) : filteredOrders.length > 0 ? (
+          filteredOrders.map((order, i) => (
             <div key={i} className="my-order-card">
               <div className="my-order-header">
                 <div>
-                  <p className="my-order-id">Order {order.id}</p>
-                  <p className="my-order-date">Placed on {order.date}</p>
+                  <p className="my-order-id">
+                    Order #{order._id.slice(-8).toUpperCase()}
+                  </p>
+                  <p className="my-order-date">
+                    Placed on {new Date(order.createdAt).toLocaleDateString()}
+                  </p>
                 </div>
                 <div className="my-order-status-total">
                   <span
@@ -79,30 +93,25 @@ const MyOrders = () => {
                   >
                     {order.status}
                   </span>
-                  <span className="my-order-total">
-                    Total ${order.total.toFixed(2)}
-                  </span>
                 </div>
               </div>
 
-              {order.items.map((item, idx) => (
-                <div key={idx} className="my-order-item">
-                  <img
-                    src={item.img}
-                    alt={item.name}
-                    className="my-order-item-img"
-                  />
-                  <div className="my-order-item-details">
-                    <p className="my-order-item-name">{item.name}</p>
-                    <p className="my-order-item-quantity">
-                      Quantity: {item.quantity}
-                    </p>
-                  </div>
-                  <span className="my-order-item-price">
-                    ${item.price.toFixed(2)}
-                  </span>
+              <div className="my-order-item">
+                <img
+                  src={order.product?.images?.[0] || ""}
+                  alt={order.product?.name || "Product"}
+                  className="my-order-item-img"
+                />
+                <div className="my-order-item-details">
+                  <p className="my-order-item-name">{order.product?.name}</p>
+                  <p className="my-order-item-quantity">
+                    Quantity: {order.orderquantity}
+                  </p>
                 </div>
-              ))}
+                <span className="my-order-item-price">
+                  Rs {order.totalprice?.toFixed(2)}
+                </span>
+              </div>
 
               <div className="my-order-actions">
                 <button className="my-order-btn">View Details</button>
