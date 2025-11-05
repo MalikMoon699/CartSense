@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { landingHeroSlides } from "../services/Helpers";
+import { landingHeroSlides } from "../services/Constants";
 import { useNavigate } from "react-router";
 
 const LandingHero = () => {
@@ -37,7 +37,7 @@ const LandingHero = () => {
               <p className="landing-hero-description">{slide.description}</p>
               <button
                 onClick={() => {
-                  navigate("/products");
+                  navigate("/products", { state: { category: slide.action } });
                 }}
                 className="landing-hero-button"
               >

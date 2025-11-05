@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../assets/style/Checkout.css";
-import { countryCityData, handleEmptyCart } from "../services/Helpers";
+import { handleEmptyCart } from "../services/Helpers";
+import { countryCityData } from "../services/Constants";
 import { useAuth } from "../contexts/AuthContext";
 import API from "../utils/api";
 import { toast } from "sonner";

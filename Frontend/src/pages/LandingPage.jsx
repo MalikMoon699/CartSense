@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import "../assets/style/Landing.css";
 import LandingHero from "../components/LandingHero";
 import { Truck, Shield, Headphones, CreditCard } from "lucide-react";
-import { landingCategory, landingServices } from "../services/Helpers";
+import { landingCategory, landingServices } from "../services/Constants";
 import API from "../utils/api";
 import { toast } from "sonner";
 import LandingNewArrivals from "../components/LandingNewArrivals";
 import LandingFooter from "../components/LandingFooter";
+import { useNavigate } from "react-router";
 
 const iconMap = {
   Truck: <Truck />,
@@ -17,6 +18,7 @@ const iconMap = {
 
 const LandingPage = () => {
   const limit = 10;
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -58,7 +60,13 @@ const LandingPage = () => {
 
         <div className="landing-category-grid">
           {landingCategory.map((category, index) => (
-            <div className="landing-category-card" key={index}>
+            <div
+              onClick={() => {
+                navigate("/products", { state: { category: category.action } });
+              }}
+              className="landing-category-card"
+              key={index}
+            >
               <div className="landing-category-image-wrapper">
                 <img
                   src={category.image}
@@ -74,10 +82,7 @@ const LandingPage = () => {
       <LandingNewArrivals products={products} />
       <div className="landing-services-section">
         {landingServices.map((service, index) => (
-          <div
-            key={index}
-            className="landing-services-card"
-          >
+          <div key={index} className="landing-services-card">
             <div className="landing-services-icon">{iconMap[service.icon]}</div>
             <h3 className="landing-services-title">{service.title}</h3>
             <span className="landing-services-subtitle">

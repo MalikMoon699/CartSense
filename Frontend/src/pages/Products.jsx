@@ -120,7 +120,6 @@ const Products = () => {
     fetchProducts(nextPage, false, selectedCategory, searchTerm);
   };
 
-
   return (
     <div className="products-page-wrapper">
       <div className="products-page-sidebar">
