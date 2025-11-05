@@ -335,14 +335,13 @@ export const getAllProducts = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
-  const filter = {
-    price: { $gte: Number(minPrice), $lte: Number(maxPrice) },
-    $or: [
-      { rating: { $gte: Number(minRating) } },
-      { rating: { $exists: false } }, 
-    ],
-  };
-
+    const filter = {
+      price: { $gte: Number(minPrice), $lte: Number(maxPrice) },
+      $or: [
+        { rating: { $gte: Number(minRating) } },
+        { rating: { $exists: false } },
+      ],
+    };
 
     if (category && category !== "All") {
       filter.categories = { $in: [category] };

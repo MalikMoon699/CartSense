@@ -131,7 +131,9 @@ const AdminProducts = () => {
               </span>
               <span className="product-price">{product?.price}</span>
               <span className="product-price">{product?.stock}</span>
-              <span className="product-rating">{product?.rating || 0}</span>
+              <span className="product-rating">
+                {Math.round(product?.rating || 0)}
+              </span>
               <span className="product-action">
                 <button
                   onClick={(e) => {

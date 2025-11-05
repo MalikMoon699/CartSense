@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Star } from "lucide-react";
+import { RefreshCw, Search } from "lucide-react";
 import "../assets/style/Products.css";
 import { useNavigate } from "react-router";
 import API from "../utils/api";
@@ -8,79 +8,118 @@ import Loader from "../components/Loader";
 const Products = () => {
   const navigate = useNavigate();
   const limit = 10;
-
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [maxPrice, setMaxPrice] = useState(10000);
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [minRating, setMinRating] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchProducts(1, true);
+    fetchProducts(1, true, "All", "");
+    fetchCategories();
   }, []);
 
-  const fetchProducts = async (pageNum = 1, reset = false) => {
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setPage(1);
+      fetchProducts(1, true, selectedCategory, "");
+    }
+  }, [searchTerm]);
+
+  const fetchProducts = async (
+    pageNum = 1,
+    reset = false,
+    categoryParam = null,
+    searchParam = null
+  ) => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
+      const categoryToSend =
+        (categoryParam ?? selectedCategory) === "All"
+          ? ""
+          : categoryParam ?? selectedCategory;
+
+      const searchToSend = searchParam ?? searchTerm ?? "";
 
       const res = await API.get(`/adminProduct/getAllProducts`, {
         params: {
           page: pageNum,
           limit,
-          search: searchTerm,
-          category: selectedCategory,
-          minPrice: priceRange.min,
-          maxPrice: priceRange.max,
-          minRating,
+          search: searchToSend,
+          category: categoryToSend,
         },
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (res.status === 200 && res.data.success) {
-        const {
-          products: fetchedProducts,
-          total,
-          categories,
-          maxPrice,
-        } = res.data;
+        const { products: fetchedProducts, total, categories } = res.data;
 
-        if (reset) {
-          setProducts(fetchedProducts);
-        } else {
-          setProducts((prev) => [...prev, ...fetchedProducts]);
-        }
-
-        setCategories(categories);
-        setMaxPrice(maxPrice);
+        setProducts((prev) =>
+          reset ? fetchedProducts : [...prev, ...fetchedProducts]
+        );
         setHasMore(
           (reset
             ? fetchedProducts.length
             : products.length + fetchedProducts.length) < total
         );
+      } else {
+        if (reset) setProducts([]);
+        setHasMore(false);
       }
     } catch (error) {
       console.error("Error fetching products:", error);
+      if (reset) setProducts([]);
+      setHasMore(false);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFilterChange = () => {
+  const fetchCategories = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.get("/adminProduct/getcategories", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.data.success) {
+        setCategories(res.data.categories || []);
+      } else {
+        toast.error(res.data.message || "Failed to fetch categories");
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      toast.error("Server error while fetching categories");
+    }
+  };
+
+  const handleCategoryClick = (cat) => {
     setPage(1);
-    fetchProducts(1, true);
+    setSelectedCategory(cat);
+    fetchProducts(1, true, cat, searchTerm);
+  };
+
+  const handleSearch = (searchValue = null) => {
+    setPage(1);
+    const searchToUse = searchValue !== null ? searchValue : searchTerm;
+    fetchProducts(1, true, selectedCategory, searchToUse);
+  };
+
+  const handleResetFilters = () => {
+    setSelectedCategory("All");
+    setSearchTerm("");
+    setPage(1);
+    fetchProducts(1, true, "All", "");
   };
 
   const handleLoadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    fetchProducts(nextPage);
+    fetchProducts(nextPage, false, selectedCategory, searchTerm);
   };
+
 
   return (
     <div className="products-page-wrapper">
@@ -88,69 +127,23 @@ const Products = () => {
         <h3 className="sidebar-title">Filters</h3>
 
         <div className="filter-block">
-          <h4>Price Range</h4>
-          <input
-            type="range"
-            min="0"
-            max={maxPrice}
-            value={priceRange.max}
-            onChange={(e) =>
-              setPriceRange({ ...priceRange, max: e.target.value })
-            }
-            className="filter-range"
-          />
-          <div className="price-inputs">
-            <input
-              type="number"
-              value={priceRange.min}
-              onChange={(e) =>
-                setPriceRange({ ...priceRange, min: e.target.value })
-              }
-              placeholder="Min"
-            />
-            <input
-              type="number"
-              value={priceRange.max}
-              onChange={(e) =>
-                setPriceRange({ ...priceRange, max: e.target.value })
-              }
-              placeholder="Max"
-            />
-          </div>
-        </div>
-
-        <div className="filter-block">
-          <h4>Rating</h4>
-          {[5, 4, 3, 2, 1].map((r) => (
-            <div
-              key={r}
-              onClick={() => {
-                setMinRating(r);
-                handleFilterChange();
-              }}
-              className={`star-filter-row ${minRating === r ? "active" : ""}`}
-            >
-              {[...Array(r)].map((_, i) => (
-                <Star key={i} size={16} className="products-page-star-filled" />
-              ))}
-            </div>
-          ))}
-        </div>
-
-        {/* Category Filter */}
-        <div className="filter-block">
-          <h4>Categories</h4>
+          <h4>Category</h4>
           <div className="category-list">
+            <div
+              className={`category-item ${
+                selectedCategory === "All" ? "active-category" : ""
+              }`}
+              onClick={() => handleCategoryClick("All")}
+            >
+              All
+            </div>
             {categories.map((cat, i) => (
               <div
                 key={i}
                 className={`category-item ${
                   selectedCategory === cat ? "active-category" : ""
                 }`}
-                onClick={() => {
-                  setSelectedCategory(cat);
-                  handleFilterChange();
-                }}
+                onClick={() => handleCategoryClick(cat)}
               >
                 {cat}
               </div>
@@ -158,21 +151,35 @@ const Products = () => {
           </div>
         </div>
 
-        <button onClick={handleFilterChange} className="apply-filter-btn">
-          Apply Filters
-        </button>
+        <div className="filter-actions">
+          <button onClick={handleResetFilters} className="reset-filter-btn">
+            <RefreshCw size={16} /> Reset
+          </button>
+        </div>
       </div>
 
       <div className="products-page-content">
         <div className="products-page-topbar">
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onBlur={handleFilterChange}
-            className="products-page-search"
-          />
+          <div className="products-page-topbar-search-input">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && handleSearch(e.target.value)
+              }
+              className="products-page-search"
+            />
+            <span
+              className="icon"
+              onClick={() => handleSearch(searchTerm)}
+              role="button"
+              aria-label="Search"
+            >
+              <Search />
+            </span>
+          </div>
         </div>
 
         <div className="products-page-grid">
@@ -195,19 +202,6 @@ const Products = () => {
                   <p className="products-page-category">
                     {product.categories?.join(", ")}
                   </p>
-                  <div className="products-page-rating">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        size={16}
-                        className={
-                          i < Math.round(product.rating)
-                            ? "products-page-star-filled"
-                            : "products-page-star"
-                        }
-                      />
-                    ))}
-                  </div>
                   <h4 className="products-page-price">Rs {product.price}</h4>
                 </div>
               </div>
