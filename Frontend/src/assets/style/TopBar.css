@@ -15,6 +15,7 @@
 .icon {
   cursor: pointer;
   font-size: 0px;
+  transition: all 0.3s ease-in-out;
 }
 
 .go-dashboard-btn {

@@ -134,9 +134,13 @@
   transition: all 0.3s ease;
 }
 
-.products-page-search:focus .products-page-topbar-search-input {
+.products-page-topbar-search-input:focus-within {
   border-color: #111;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.products-page-topbar-search-input > .icon:hover {
+  transform: scale(1.1);
 }
 
 .products-page-ai-btn {
