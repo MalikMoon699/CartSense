@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import "../assets/style/Checkout.css";
-import { countryCityData } from "../services/Helpers";
+import { countryCityData, handleEmptyCart } from "../services/Helpers";
 import { useAuth } from "../contexts/AuthContext";
 import API from "../utils/api";
 import { toast } from "sonner";
+import { useNavigate } from "react-router";
+import Loader from "./Loader";
 
 const Checkout = () => {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   const [paymentDetails, setPaymentDetails] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const handlePaymentSelect = (method) => {
     setPaymentMethod(method);
@@ -26,6 +31,7 @@ const Checkout = () => {
     if (!currentUser?._id) return;
 
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
       const res = await API.get(`/cart/getCart/${currentUser._id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -39,6 +45,8 @@ const Checkout = () => {
     } catch (error) {
       console.error("Error fetching cart:", error);
       toast.error("Failed to load cart");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,6 +78,7 @@ const Checkout = () => {
         address: {
           country: selectedCountry,
           city: selectedCity,
+          location: selectedLocation,
         },
         total: totalCheckoutPrice(),
         items: cart.map((item) => ({
@@ -84,7 +93,8 @@ const Checkout = () => {
 
       if (res.data.success) {
         toast.success("Order placed successfully!");
-        setCart([]);
+        handleEmptyCart(currentUser);
+        navigate(`/my-orders/${currentUser?._id}`);
       } else {
         toast.error(res.data.message || "Failed to place order");
       }
@@ -94,6 +104,15 @@ const Checkout = () => {
     }
   };
 
+  if (loading)
+    return (
+      <Loader
+        size="100"
+        style={{ width: "100%", height: "70vh" }}
+        className="layout-loading"
+        stroke="6"
+      />
+    );
 
   return (
     <div className="checkout-page-container">
@@ -105,17 +124,32 @@ const Checkout = () => {
           <form className="checkout-form">
             <div className="checkout-form-group">
               <label>Full Name</label>
-              <input type="text" placeholder="John Doe" />
+              <input
+                type="text"
+                placeholder="John Doe"
+                value={currentUser?.name}
+                readOnly
+              />
             </div>
 
             <div className="checkout-form-group">
               <label>Email Address</label>
-              <input type="email" placeholder="john@example.com" />
+              <input
+                type="email"
+                placeholder="john@example.com"
+                value={currentUser?.email}
+                readOnly
+              />
             </div>
 
             <div className="checkout-form-group">
               <label>Address</label>
-              <input type="text" placeholder="123 Main Street" />
+              <input
+                type="text"
+                placeholder="123 Main Street"
+                value={selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value)}
+              />
             </div>
 
             <div className="checkout-form-row">

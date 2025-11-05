@@ -4,12 +4,15 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { stocklabel, handleAddToCart } from "../services/Helpers";
 import { Star, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import Loader from "../components/Loader";
 import { useNavigate } from "react-router";
 import { useAuth } from "../contexts/AuthContext";
+import { useState } from "react";
 
 const LandingNewArrivals = ({ products }) => {
   const navigate = useNavigate("");
-  const {currentUser}=useAuth();
+  const { currentUser } = useAuth();
+  const [loading, setLoading] = useState(null);
 
   return (
     <div className="landing-new-arrival-section">
@@ -63,11 +66,18 @@ const LandingNewArrivals = ({ products }) => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleAddToCart(product, currentUser);
+                    handleAddToCart(product, currentUser, setLoading);
                   }}
                   className="landing-new-arrival-cart-btn"
+                  disabled={stocklabel(product?.stock) === "out of Stock "}
+                  style={{
+                    cursor:
+                      stocklabel(product?.stock) === "out of Stock "
+                        ? "not-allowed"
+                        : "pointer",
+                  }}
                 >
-                  <ShoppingCart />
+                  {loading === product?._id ? <Loader color="white" size="25"/> : <ShoppingCart />}
                 </button>
               </div>
 

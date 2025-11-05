@@ -132,13 +132,12 @@ const AddProduct = ({ onClose, product }) => {
       return;
     }
 
-    // Generate preview URLs
     const previewUrls = files.map((file) => URL.createObjectURL(file));
 
     setForm((prev) => ({
       ...prev,
       selectedImages: [...prev.selectedImages, ...previewUrls],
-      selectedFiles: [...(prev.selectedFiles || []), ...files], // store files
+      selectedFiles: [...(prev.selectedFiles || []), ...files],
     }));
   };
 

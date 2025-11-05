@@ -111,13 +111,14 @@ export const landingServices = [
   },
 ];
 
-export const handleAddToCart = async (product, currentUser) => {
+export const handleAddToCart = async (product, currentUser, setLoading = null) => {
   if (!currentUser) {
     toast.error("Please log in to add items to your cart.");
     return;
   }
 
   try {
+    setLoading(product._id);
     const token = localStorage.getItem("token");
     const res = await API.post(
       `/cart/addProductCart`,
@@ -135,9 +136,22 @@ export const handleAddToCart = async (product, currentUser) => {
   } catch (error) {
     console.error("Error adding product to cart:", error);
     toast.error("Failed to add product to cart. Please try again.");
+  } finally {
+    setLoading(null);
   }
 };
 
+export const handleEmptyCart = async (currentUser) => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await API.delete(`/cart/emptyCart/${currentUser._id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error) {
+    console.error("Error emptying cart:", error);
+    toast.error("Server error emptying cart");
+  }
+};
 
 export const countryCityData = {
   Pakistan: ["Lahore", "Karachi", "Islamabad", "Rawalpindi", "Faisalabad"],

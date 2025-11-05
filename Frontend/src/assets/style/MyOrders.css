@@ -90,8 +90,8 @@
 }
 
 .my-order-status.pending {
-  background: #f6f4c8;
-  color: #cdc509;
+  background: #fca31138;
+  color: #fca311;
 }
 
 .my-order-status.processing {

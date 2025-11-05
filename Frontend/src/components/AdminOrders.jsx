@@ -3,11 +3,13 @@ import API from "../utils/api";
 import { toast } from "sonner";
 import "../assets/style/AdminOrders.css";
 import Loader from "./Loader";
+import ViewOrderDetails from "./ViewOrderDetails";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
+  const [isDetailsModel, setIsDetailsModel] = useState(null);
 
   useEffect(() => {
     fetchAllOrders();
@@ -34,7 +36,6 @@ const AdminOrders = () => {
     }
   };
 
-
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
@@ -58,12 +59,13 @@ const AdminOrders = () => {
     }
   };
 
-  const filteredOrders =
+  const filteredOrders = (
     filter === "All"
       ? orders
       : orders.filter(
           (order) => order.status.toLowerCase() === filter.toLowerCase()
-        );
+        )
+  ).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 
   return (
     <div className="admin-orders-page">
@@ -89,7 +91,7 @@ const AdminOrders = () => {
       </div>
 
       {loading ? (
-       <Loader />
+        <Loader />
       ) : filteredOrders.length === 0 ? (
         <p className="admin-orders-empty">No orders found</p>
       ) : (
@@ -108,7 +110,12 @@ const AdminOrders = () => {
           </thead>
           <tbody>
             {filteredOrders.map((order) => (
-              <tr key={order._id}>
+              <tr
+                key={order._id}
+                onClick={() => {
+                  setIsDetailsModel(order);
+                }}
+              >
                 <td>#{order._id.slice(-6).toUpperCase()}</td>
                 <td>{order.user?.name || "N/A"}</td>
                 <td>{order.product?.name || "Unknown Product"}</td>
@@ -120,7 +127,7 @@ const AdminOrders = () => {
                   </span>
                 </td>
                 <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                <td>
+                <td onClick={(e)=>{e.stopPropagation();}}>
                   <select
                     value={order.status}
                     onChange={(e) =>
@@ -128,19 +135,29 @@ const AdminOrders = () => {
                     }
                     className="status-selector"
                   >
-                    {["pending", "shipped", "delivered", "cancelled"].map(
-                      (status) => (
-                        <option key={status} value={status}>
-                          {status.charAt(0).toUpperCase() + status.slice(1)}
-                        </option>
-                      )
-                    )}
+                    {[
+                      "pending",
+                      "processing",
+                      "shipped",
+                      "delivered",
+                      "cancelled",
+                    ].map((status) => (
+                      <option key={status} value={status}>
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                      </option>
+                    ))}
                   </select>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      )}
+      {isDetailsModel && (
+        <ViewOrderDetails
+          isDetailsModel={isDetailsModel}
+          setIsDetailsModel={setIsDetailsModel}
+        />
       )}
     </div>
   );

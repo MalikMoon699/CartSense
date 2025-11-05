@@ -15,6 +15,7 @@ const OrderSchema = new mongoose.Schema(
     address: {
       country: { type: String },
       city: { type: String },
+      location: { type: String },
     },
     status: {
       type: String,

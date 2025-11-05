@@ -49,7 +49,7 @@ const ViewProductDetails = ({ isDetailsModel, setIsDetailsModel }) => {
         )}
 
         <div className="viewProductDetails-product-info">
-          <p className="viewProductDetails-description">
+          <div className="viewProductDetails-description">
             <p>
               <strong>Title: </strong>
               {isDetailsModel.name}
@@ -59,7 +59,7 @@ const ViewProductDetails = ({ isDetailsModel, setIsDetailsModel }) => {
 
               {isDetailsModel.description}
             </p>
-          </p>
+          </div>
 
           <div className="viewProductDetails-product-meta">
             <p>

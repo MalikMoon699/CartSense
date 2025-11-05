@@ -124,3 +124,27 @@ export const removeProductFromCart = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const emptyCart = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing userId" });
+    }
+
+    const deleted = await Cart.deleteMany({ user: userId });
+
+    await User.findByIdAndUpdate(userId, { $set: { cart: [] } });
+
+    res.status(200).json({
+      success: true,
+      message: `Cart emptied successfully. ${deleted.deletedCount} item(s) removed.`,
+    });
+  } catch (error) {
+    console.error("Error emptying cart:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

@@ -81,7 +81,7 @@ const MyOrders = () => {
               <div className="my-order-header">
                 <div>
                   <p className="my-order-id">
-                    Order #{order._id.slice(-8).toUpperCase()}
+                    Order #{order._id.slice(-6).toUpperCase()}
                   </p>
                   <p className="my-order-date">
                     Placed on {new Date(order.createdAt).toLocaleDateString()}

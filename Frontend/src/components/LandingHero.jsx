@@ -31,7 +31,7 @@ const LandingHero = () => {
           style={{ backgroundImage: `url(${slide.image})` }}
         >
           <div className="landing-hero-overlay">
-            <div className="landing-hero-content">
+            <div key={current} className="landing-hero-content">
               <p className="landing-hero-subtitle">{slide.subtitle}</p>
               <h1 className="landing-hero-title">{slide.title}</h1>
               <p className="landing-hero-description">{slide.description}</p>

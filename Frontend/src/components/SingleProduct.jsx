@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import API from "../utils/api";
 import Loader from "./Loader";
+import { stocklabel } from "../services/Helpers";
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -22,6 +23,7 @@ const SingleProduct = () => {
   const [suggestedProducts, setSuggestedProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cartLoading, setCartLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [selectedFiled, setSelectedField] = useState({});
 
@@ -60,9 +62,7 @@ const SingleProduct = () => {
 
         productData.filleds.forEach((field) => {
           if (Array.isArray(field.value) && field.value.length > 0) {
-            const firstValue = field.value[0]
-              ?.split(",")[0] 
-              ?.trim();
+            const firstValue = field.value[0]?.split(",")[0]?.trim();
             if (firstValue) defaultSelections[field.title] = firstValue;
           }
         });
@@ -109,7 +109,7 @@ const SingleProduct = () => {
       navigate("/login");
       return;
     }
-
+    setCartLoading(true);
     try {
       const token = localStorage.getItem("token");
       const res = await API.post(
@@ -128,6 +128,8 @@ const SingleProduct = () => {
     } catch (error) {
       console.error("Error adding product to cart:", error);
       toast.error("Failed to add product to cart. Please try again.");
+    } finally {
+      setCartLoading(false);
     }
   };
 
@@ -251,8 +253,13 @@ const SingleProduct = () => {
           )}
 
           <h2 className="single-product-price">Rs {product.price}</h2>
-          <p className="single-product-stock">
-            {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
+          <p
+            style={{
+              color: stocklabel(product.stock) === "out of Stock " ? "red" : "",
+            }}
+            className="single-product-stock"
+          >
+            {stocklabel(product.stock)}
           </p>
           <div className="qty-box">
             <button
@@ -276,11 +283,27 @@ const SingleProduct = () => {
             </button>
           </div>
           <div className="single-product-btns">
-            <button onClick={handleAddToCart} className="single-product-btn">
-              <span className="icon" style={{ marginRight: "2px" }}>
-                <ShoppingCart size={15} />
-              </span>{" "}
-              Add to Cart
+            <button
+              disabled={stocklabel(product?.stock) === "out of Stock "}
+              style={{
+                cursor:
+                  stocklabel(product?.stock) === "out of Stock "
+                    ? "not-allowed"
+                    : "pointer",
+              }}
+              onClick={handleAddToCart}
+              className="single-product-btn"
+            >
+              {cartLoading ? (
+                <Loader color="white" size="20" style={{width:"100px"}}/>
+              ) : (
+                <>
+                  <span className="icon" style={{ marginRight: "2px" }}>
+                    <ShoppingCart size={15} />
+                  </span>{" "}
+                  Add to Cart
+                </>
+              )}
             </button>
             <button
               onClick={handleShare}
