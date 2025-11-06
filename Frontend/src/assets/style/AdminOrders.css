@@ -1,6 +1,7 @@
 .admin-orders-page {
   padding: 2rem;
   background: #fafafa;
+  overflow: auto;
 }
 
 .admin-orders-title {
@@ -41,8 +42,6 @@
   background: #fff;
   border-radius: 8px;
   overflow: auto hidden;
-  display: block;
-  white-space: nowrap;
 }
 
 .admin-orders-table tr {
@@ -121,4 +120,11 @@
 .go-product-btn:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .admin-orders-table {
+    display: block;
+    white-space: nowrap;
+  }
 }
