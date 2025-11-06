@@ -69,6 +69,18 @@
 .admin-dashboard-orders-table {
   width: 100%;
   border-collapse: collapse;
+  display: table;
+  overflow-x: auto;
+  white-space: nowrap;
+  border-radius: 8px;
+}
+
+.admin-dashboard-orders {
+  overflow-x: auto;
+}
+
+.admin-dashboard-orders-table tr {
+  min-width: 700px;
 }
 
 .admin-dashboard-orders-table th,
@@ -144,4 +156,18 @@
   height: 50px;
   border-radius: 8px;
   object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .admin-dashboard-container {
+    padding: 10px;
+  }
+  .admin-dashboard-orders {
+    margin-bottom: 10px;
+  }
+  .admin-dashboard-stats {
+    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    gap: 10px;
+  }
 }

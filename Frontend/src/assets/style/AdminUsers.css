@@ -4,7 +4,6 @@
   font-family: "Inter", sans-serif;
 }
 
-/* Header */
 .admin-users-header {
   display: flex;
   justify-content: space-between;
@@ -64,12 +63,11 @@
   background-color: #1e40af;
 }
 
-/* Table */
 .users-table {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
+  overflow: auto hidden;
 }
 
 .users-table-header,
@@ -78,6 +76,7 @@
   grid-template-columns: 1fr 2fr 3fr 2fr 1fr;
   align-items: center;
   padding: 1rem;
+  min-width: 700px; 
 }
 
 .users-table-header {
@@ -95,7 +94,6 @@
   background-color: #f9fafb;
 }
 
-/* Avatar */
 .user-avatar img {
   width: 40px;
   height: 40px;
@@ -103,7 +101,6 @@
   object-fit: cover;
 }
 
-/* Text */
 .user-name {
   font-weight: 500;
   color: #111827;
@@ -118,7 +115,6 @@
   color: #6b7280;
 }
 
-/* Action Button */
 .delete-btn {
   background-color: #ef4444;
   color: white;

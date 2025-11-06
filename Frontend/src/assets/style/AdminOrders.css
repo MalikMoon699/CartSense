@@ -18,6 +18,7 @@
   display: flex;
   gap: 0.6rem;
   margin-bottom: 1.5rem;
+  overflow: auto hidden;
 }
 
 .admin-filter-btn {
@@ -39,7 +40,13 @@
   border-collapse: collapse;
   background: #fff;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto hidden;
+  display: block;
+  white-space: nowrap;
+}
+
+.admin-orders-table tr {
+  min-width: 700px;
 }
 
 .admin-orders-table th,
