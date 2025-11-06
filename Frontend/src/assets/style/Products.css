@@ -638,7 +638,7 @@
 
 .products-page-mobile-filter-container {
   position: relative;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: end;
   margin-bottom: 10px;
@@ -689,11 +689,13 @@
   background: #007bff42;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .products-page-sidebar {
     display: none;
   }
-
+  .products-page-mobile-filter-container {
+    display: flex;
+  }
   .products-page-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
