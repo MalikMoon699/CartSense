@@ -4,12 +4,15 @@ import API from "../utils/api";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 import Loader from "../components/Loader";
+import ViewOrderDetails from "../components/ViewOrderDetails";
+import ViewMyOrderDetails from "../components/ViewMyOrderDetails";
 
 const MyOrders = () => {
   const { currentUser } = useAuth();
   const [filter, setFilter] = useState("All");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isDetailsModel, setIsDetailsModel] = useState(null);
 
   useEffect(() => {
     if (currentUser?._id) {
@@ -114,7 +117,7 @@ const MyOrders = () => {
               </div>
 
               <div className="my-order-actions">
-                <button className="my-order-btn">View Details</button>
+                <button onClick={()=>{setIsDetailsModel(order);}} className="my-order-btn">View Details</button>
                 <button className="my-order-btn">Track Order</button>
               </div>
             </div>
@@ -123,6 +126,12 @@ const MyOrders = () => {
           <p className="my-order-empty">No orders found for this status.</p>
         )}
       </div>
+      {isDetailsModel && (
+        <ViewMyOrderDetails
+          isDetailsModel={isDetailsModel}
+          setIsDetailsModel={setIsDetailsModel}
+        />
+      )}
     </div>
   );
 };

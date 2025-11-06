@@ -1,5 +1,5 @@
 .admin-mobile-topbar {
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: space-between;
   padding: 20px;
@@ -114,6 +114,11 @@
 }
 
 @media (max-width: 768px) {
+
+  .admin-mobile-topbar{
+    display: flex;
+  }
+
   .admin-sidebar {
     left: -250px;
     top: 0px;
