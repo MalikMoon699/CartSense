@@ -1,5 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { RefreshCw, Search, ShoppingCart } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  RefreshCw,
+  Search,
+  ShoppingCart,
+  SlidersHorizontal,
+} from "lucide-react";
 import "../assets/style/Products.css";
 import { useAuth } from "../contexts/AuthContext";
 import { handleAddToCart } from "../services/Helpers";
@@ -14,7 +19,6 @@ const Products = () => {
   const location = useLocation();
   const limit = 10;
   const { currentUser } = useAuth();
-
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -23,6 +27,8 @@ const Products = () => {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [cartLoading, setCartLoading] = useState(false);
+  const [isFilter, setIsFilter] = useState(false);
+  const filterRef = useRef();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -35,6 +41,22 @@ const Products = () => {
     fetchProducts(1, true, urlCategory, urlSearch);
     fetchCategories();
   }, [location.search]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (filterRef.current && !filterRef.current.contains(e.target)) {
+        setIsFilter(false);
+      }
+    };
+
+    if (isFilter) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isFilter]);
 
   const updateURL = (cat, search) => {
     const params = new URLSearchParams();
@@ -194,7 +216,63 @@ const Products = () => {
             </span>
           </div>
         </div>
-
+        <div className="products-page-mobile-filter-container">
+          <div className="products-page-mobile-filter-inner-container">
+            {selectedCategory !== "All" && (
+              <div className="products-page-mobile-categories active-filter-category">
+                {selectedCategory}
+              </div>
+            )}
+            <button
+              onClick={() => {
+                setIsFilter(!isFilter);
+              }}
+              className="products-page-mobile-filter-btn"
+            >
+              <span className="icon">
+                <SlidersHorizontal size={18} />
+              </span>{" "}
+              Filter
+            </button>
+            {(selectedCategory !== "All" || searchTerm) && (
+              <button onClick={handleResetFilters} className="reset-filter-btn">
+                <RefreshCw size={16} /> Reset
+              </button>
+            )}
+          </div>
+          {isFilter && (
+            <div
+              ref={filterRef}
+              className="products-page-mobile-categories-container"
+            >
+              <div
+                className={`products-page-mobile-categories ${
+                  selectedCategory === "All" ? "active-filter-category" : ""
+                }`}
+                onClick={() => {
+                  handleCategoryClick("All");
+                  setIsFilter(false);
+                }}
+              >
+                All
+              </div>
+              {categories.map((cat, i) => (
+                <div
+                  key={i}
+                  className={`products-page-mobile-categories ${
+                    selectedCategory === cat ? "active-filter-category" : ""
+                  }`}
+                  onClick={() => {
+                    handleCategoryClick(cat);
+                    setIsFilter(false);
+                  }}
+                >
+                  {cat}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         <div className="products-page-grid">
           {products.length ? (
             products.map((product) => (

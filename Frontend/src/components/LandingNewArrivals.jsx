@@ -39,8 +39,9 @@ const LandingNewArrivals = ({ products }) => {
         }}
         breakpoints={{
           1024: { slidesPerView: 4 },
-          768: { slidesPerView: 2 },
-          480: { slidesPerView: 1 },
+          768: { slidesPerView: 3 },
+          480: { slidesPerView: 2 },
+          200: { slidesPerView: 1 },
         }}
         className="landing-new-arrival-slider"
       >

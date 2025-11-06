@@ -330,21 +330,18 @@
   background: #e4e4e4;
 }
 
-/* Combined filter buttons */
 .filter-actions {
   display: flex;
   gap: 6px;
   margin-top: 10px;
 }
 
-/* Star filter label */
 .star-label {
   font-size: 0.85rem;
   color: #555;
   margin-left: 5px;
 }
 
-/* Active star filter row */
 .star-filter-row.active {
   background: #111;
   color: #fff;
@@ -353,12 +350,10 @@
   transform: scale(1.02);
 }
 
-/* Hover for cards */
 .products-page-card:hover .products-page-name {
   color: #007bff;
 }
 
-/* Rating number */
 .rating-number {
   font-size: 0.85rem;
   color: #777;
@@ -639,4 +634,70 @@
   opacity: 0.4;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+.products-page-mobile-filter-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  margin-bottom: 10px;
+}
+
+.products-page-mobile-filter-inner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.products-page-mobile-filter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid #007bff;
+  background: #007bff42;
+  border-radius: 3px;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+
+.products-page-mobile-categories-container {
+  position: absolute;
+  top: 115%;
+  background: white;
+  box-shadow: 0px 0px 10px #00000024;
+  padding: 16px 13px;
+  border-radius: 6px;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  z-index: 5;
+}
+
+.products-page-mobile-categories {
+  border: 1px solid #000000;
+  background: transparent;
+  padding: 2px 10px;
+  border-radius: 14px;
+}
+
+.active-filter-category {
+  border: 1px solid #007bff;
+  background: #007bff42;
+}
+
+@media (max-width: 600px) {
+  .products-page-sidebar {
+    display: none;
+  }
+
+  .products-page-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  .products-page-content {
+    padding: 10px 20px;
+  }
 }

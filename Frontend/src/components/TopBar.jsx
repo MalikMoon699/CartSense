@@ -1,7 +1,13 @@
 // components/TopBar.jsx
 import React from "react";
 import "../assets/style/TopBar.css";
-import { LayoutDashboard, Menu, Search, ShoppingCart, User } from "lucide-react";
+import {
+  LayoutDashboard,
+  Menu,
+  Search,
+  ShoppingCart,
+  User,
+} from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 import { IMAGES } from "../services/Constants";
@@ -24,6 +30,7 @@ const TopBar = ({ setAcountState, setSidebarType, setIsSearch }) => {
         onClick={() => {
           navigate("/");
         }}
+        className={currentUser?.role === "admin" ? "hide-for-admin" : ""}
       >
         Cart Sense
       </h2>

@@ -75,7 +75,7 @@ const SearchModal = ({ onClose }) => {
         onClick={(e) => e.stopPropagation()}
         style={{
           padding: "22px 16px 17px 16px",
-          minWidth: "450px",
+          minWidth: "425px",
           maxHeight: "80vh",
           overflowY: "auto",
         }}

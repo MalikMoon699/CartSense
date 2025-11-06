@@ -174,3 +174,27 @@
   background-color: #0056b3;
   transform: translateY(-2px);
 }
+
+@media (max-width: 600px) {
+  .cart-wrapper {
+    flex-direction: column;
+  }
+  .cart-items,
+  .cart-summary {
+    width: 100%;
+    overflow: auto;
+  }
+  .cart-item-card {
+    width: fit-content;
+    flex-wrap: wrap;
+  }
+  .topbar > h2 {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 650px) {
+  .hide-for-admin {
+    display: none !important;
+  }
+}

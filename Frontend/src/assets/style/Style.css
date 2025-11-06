@@ -6,7 +6,7 @@
   font-family: "Arial", sans-serif;
 }
 
-.loaderWrapper{
+.loaderWrapper {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,7 +50,6 @@
   text-align: center;
   overflow: hidden auto;
 }
-
 
 .modal-header {
   display: flex;
@@ -101,4 +100,14 @@
 [data-sonner-toast][data-type="info"] {
   background-color: #3b82f6 !important;
   color: #ffffff !important;
+}
+
+@media (max-width: 450px) {
+  .modal-overlay{
+    padding:10px;
+  }
+  .modal-content {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
 }
