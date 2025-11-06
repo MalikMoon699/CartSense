@@ -37,7 +37,10 @@ const LandingHero = () => {
               <p className="landing-hero-description">{slide.description}</p>
               <button
                 onClick={() => {
-                  navigate("/products", { state: { category: slide.action } });
+                  const params = new URLSearchParams({
+                    category: slide.action,
+                  });
+                  navigate(`/products?${params.toString()}`);
                 }}
                 className="landing-hero-button"
               >

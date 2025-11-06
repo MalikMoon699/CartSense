@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { RefreshCw, Search } from "lucide-react";
 import "../assets/style/Products.css";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import API from "../utils/api";
 import Loader from "../components/Loader";
 
 const Products = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const limit = 10;
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -17,16 +19,24 @@ const Products = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchProducts(1, true, "All", "");
-    fetchCategories();
-  }, []);
+    const params = new URLSearchParams(location.search);
+    const urlCategory = params.get("category") || "All";
+    const urlSearch = params.get("search") || "";
 
-  useEffect(() => {
-    if (searchTerm.trim() === "") {
-      setPage(1);
-      fetchProducts(1, true, selectedCategory, "");
-    }
-  }, [searchTerm]);
+    setSelectedCategory(urlCategory);
+    setSearchTerm(urlSearch);
+
+    fetchProducts(1, true, urlCategory, urlSearch);
+    fetchCategories();
+  }, [location.search]);
+
+
+  const updateURL = (cat, search) => {
+    const params = new URLSearchParams();
+    params.set("category", cat || "All");
+    params.set("search", search?.trim() || "");
+    navigate(`/products?${params.toString()}`, { replace: true });
+  };
 
   const fetchProducts = async (
     pageNum = 1,
@@ -37,6 +47,7 @@ const Products = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
+
       const categoryToSend =
         (categoryParam ?? selectedCategory) === "All"
           ? ""
@@ -55,8 +66,7 @@ const Products = () => {
       });
 
       if (res.status === 200 && res.data.success) {
-        const { products: fetchedProducts, total, categories } = res.data;
-
+        const { products: fetchedProducts, total } = res.data;
         setProducts((prev) =>
           reset ? fetchedProducts : [...prev, ...fetchedProducts]
         );
@@ -87,31 +97,30 @@ const Products = () => {
       if (res.data.success) {
         setCategories(res.data.categories || []);
       } else {
-        toast.error(res.data.message || "Failed to fetch categories");
+        console.error("Failed to fetch categories");
       }
     } catch (error) {
       console.error("Error fetching categories:", error);
-      toast.error("Server error while fetching categories");
     }
   };
 
   const handleCategoryClick = (cat) => {
     setPage(1);
     setSelectedCategory(cat);
-    fetchProducts(1, true, cat, searchTerm);
+    updateURL(cat, searchTerm);
   };
 
   const handleSearch = (searchValue = null) => {
-    setPage(1);
     const searchToUse = searchValue !== null ? searchValue : searchTerm;
-    fetchProducts(1, true, selectedCategory, searchToUse);
+    setPage(1);
+    updateURL(selectedCategory, searchToUse);
   };
 
   const handleResetFilters = () => {
     setSelectedCategory("All");
     setSearchTerm("");
     setPage(1);
-    fetchProducts(1, true, "All", "");
+    updateURL("All", "");
   };
 
   const handleLoadMore = () => {

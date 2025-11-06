@@ -62,7 +62,10 @@ const LandingPage = () => {
           {landingCategory.map((category, index) => (
             <div
               onClick={() => {
-                navigate("/products", { state: { category: category.action } });
+                const params = new URLSearchParams({
+                  category: category.action,
+                });
+                navigate(`/products?${params.toString()}`);
               }}
               className="landing-category-card"
               key={index}
