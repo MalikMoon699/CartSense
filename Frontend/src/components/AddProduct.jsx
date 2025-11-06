@@ -26,8 +26,8 @@ const AddProduct = ({ onClose, product }) => {
     if (product) {
       setForm({
         name: product.name || "",
-        price: product.price || "",
-        stock: product.stock || "",
+        price: product.price || 0,
+        stock: product.stock || 0,
         description: product.description || "",
         categories: product.categories || [],
         specifications:

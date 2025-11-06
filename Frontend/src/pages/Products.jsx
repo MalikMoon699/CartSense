@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { RefreshCw, Search } from "lucide-react";
+import { RefreshCw, Search, ShoppingCart } from "lucide-react";
 import "../assets/style/Products.css";
-import { useNavigate, useLocation } from "react-router";
+import { useAuth } from "../contexts/AuthContext";
+import { handleAddToCart } from "../services/Helpers";
+import { useNavigate, useLocation, useOutletContext } from "react-router";
+import { stocklabel } from "../services/Helpers";
 import API from "../utils/api";
 import Loader from "../components/Loader";
 
 const Products = () => {
   const navigate = useNavigate();
+  const { setSidebarType } = useOutletContext();
   const location = useLocation();
   const limit = 10;
+  const { currentUser } = useAuth();
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -17,6 +22,7 @@ const Products = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [cartLoading, setCartLoading] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -29,7 +35,6 @@ const Products = () => {
     fetchProducts(1, true, urlCategory, urlSearch);
     fetchCategories();
   }, [location.search]);
-
 
   const updateURL = (cat, search) => {
     const params = new URLSearchParams();
@@ -204,12 +209,48 @@ const Products = () => {
                     alt={product.name}
                     className="products-page-image"
                   />
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart(
+                        product,
+                        currentUser,
+                        setCartLoading,
+                        setSidebarType
+                      );
+                    }}
+                    className="landing-new-arrival-cart-btn"
+                    disabled={stocklabel(product?.stock) === "out of Stock "}
+                    style={{
+                      cursor:
+                        stocklabel(product?.stock) === "out of Stock "
+                          ? "not-allowed"
+                          : "pointer",
+                    }}
+                  >
+                    {cartLoading === product?._id ? (
+                      <Loader color="white" size="25" />
+                    ) : (
+                      <ShoppingCart />
+                    )}
+                  </button>
                 </div>
                 <div className="products-page-info">
                   <h3 className="products-page-name">{product.name}</h3>
                   <p className="products-page-category">
                     {product.categories?.join(", ")}
                   </p>
+                  <span
+                    className={`landing-new-arrival-stock ${
+                      stocklabel(product?.stock) === "In Stock"
+                        ? "in-stock"
+                        : stocklabel(product?.stock) === "out of Stock "
+                        ? "out-of-stock"
+                        : "limited-stock"
+                    }`}
+                  >
+                    {stocklabel(product?.stock)}
+                  </span>
                   <h4 className="products-page-price">Rs {product.price}</h4>
                 </div>
               </div>

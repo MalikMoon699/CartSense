@@ -25,7 +25,9 @@
 
 .admin-dashboard-stat-card {
   background: white;
+  cursor: pointer;
   border-radius: 12px;
+  border-top: 1px solid;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   text-align: center;
@@ -33,7 +35,8 @@
 }
 
 .admin-dashboard-stat-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(4px);
+  border-top: 4px solid;
 }
 
 .admin-dashboard-stat-value {
@@ -88,7 +91,7 @@
   text-transform: capitalize;
   width: 82px;
   display: inline-block;
-   text-align: center;
+  text-align: center;
 }
 
 .admin-dashboard-status.pending {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 import {
@@ -16,6 +16,7 @@ import { stocklabel } from "../services/Helpers";
 const SingleProduct = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
+  const { setSidebarType } = useOutletContext();
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
@@ -125,6 +126,7 @@ const SingleProduct = () => {
       } else {
         toast.info(res.data.message || "Product already in cart.");
       }
+      setSidebarType("cartsidebar");
     } catch (error) {
       console.error("Error adding product to cart:", error);
       toast.error("Failed to add product to cart. Please try again.");
@@ -295,7 +297,7 @@ const SingleProduct = () => {
               className="single-product-btn"
             >
               {cartLoading ? (
-                <Loader color="white" size="20" style={{width:"100px"}}/>
+                <Loader color="white" size="20" style={{ width: "100px" }} />
               ) : (
                 <>
                   <span className="icon" style={{ marginRight: "2px" }}>

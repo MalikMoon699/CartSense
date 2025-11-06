@@ -94,7 +94,7 @@ const Cart = () => {
   };
 
   const handleCheckout = async () => {
-    if (!cart.length) return;
+       if (!cart.length) return toast.warning("Sorry your cart is currently empty.");
 
     const lowStockItems = cart.filter(
       (item) => item.quantity > item.product.stock

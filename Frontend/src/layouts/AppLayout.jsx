@@ -6,6 +6,7 @@ import Login from "../auth/Login";
 import Signup from "../auth/Signup";
 import SearchModal from "../components/SearchModal";
 import UserDetails from "../components/UserDetails";
+import CartSideBar from "../components/CartSideBar";
 
 const AppLayout = () => {
   const [acountState, setAcountState] = useState(null);
@@ -35,6 +36,11 @@ const AppLayout = () => {
           <UserDetails setSidebarType={setSidebarType} />
         ) : sidebarType === "sidebar" ? (
           <SideBar
+            setAcountState={setAcountState}
+            setSidebarType={setSidebarType}
+          />
+        ) : sidebarType === "cartsidebar" ? (
+          <CartSideBar
             setAcountState={setAcountState}
             setSidebarType={setSidebarType}
           />

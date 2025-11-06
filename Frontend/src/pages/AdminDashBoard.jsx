@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../assets/style/AdminDashboard.css";
 import Loader from "../components/Loader";
+import { useNavigate } from "react-router-dom";
 import {
   fetchAllOrders,
   fetchAllProducts,
@@ -8,6 +9,7 @@ import {
 } from "../services/DashboardServices";
 
 const AdminDashBoard = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -37,13 +39,29 @@ const AdminDashBoard = () => {
   };
 
   const stats = [
-    { title: "Total Users", value: users.length, color: "#4e73df" },
-    { title: "Total Products", value: products.length, color: "#1cc88a" },
-    { title: "Total Orders", value: orders.length, color: "#36b9cc" },
+    {
+      title: "Total Users",
+      value: users.length,
+      color: "#4e73df",
+      action: "users",
+    },
+    {
+      title: "Total Products",
+      value: products.length,
+      color: "#1cc88a",
+      action: "products",
+    },
+    {
+      title: "Total Orders",
+      value: orders.length,
+      color: "#36b9cc",
+      action: "orders",
+    },
     {
       title: "Total Revenue",
       value: `Rs:${orders.reduce((sum, o) => sum + (o.totalprice || 0), 0)}`,
       color: "#f6c23e",
+      action: "orders",
     },
   ];
 
@@ -67,7 +85,10 @@ const AdminDashBoard = () => {
           <div
             key={i}
             className="admin-dashboard-stat-card"
-            style={{ borderTop: `4px solid ${item.color}` }}
+            style={{ borderColor: `${item.color}` }}
+            onClick={() => {
+              navigate(`/admin/${item.action}`);
+            }}
           >
             <h3 className="admin-dashboard-stat-value">
               {loading ? (

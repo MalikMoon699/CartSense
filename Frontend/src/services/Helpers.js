@@ -20,7 +20,12 @@ export const stocklabel = (stock) => {
   }
 };
 
-export const handleAddToCart = async (product, currentUser, setLoading = null) => {
+export const handleAddToCart = async (
+  product,
+  currentUser,
+  setLoading = null,
+  setSidebarType = null
+) => {
   if (!currentUser) {
     toast.error("Please log in to add items to your cart.");
     return;
@@ -42,6 +47,7 @@ export const handleAddToCart = async (product, currentUser, setLoading = null) =
     } else {
       toast.info(res.data.message || "Product already in cart.");
     }
+    setSidebarType("cartsidebar");
   } catch (error) {
     console.error("Error adding product to cart:", error);
     toast.error("Failed to add product to cart. Please try again.");

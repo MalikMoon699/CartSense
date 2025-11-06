@@ -5,11 +5,12 @@ import "swiper/css/navigation";
 import { stocklabel, handleAddToCart } from "../services/Helpers";
 import { Star, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import Loader from "../components/Loader";
-import { useNavigate } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 
 const LandingNewArrivals = ({ products }) => {
+  const { setSidebarType } = useOutletContext();
   const navigate = useNavigate("");
   const { currentUser } = useAuth();
   const [loading, setLoading] = useState(null);
@@ -66,7 +67,12 @@ const LandingNewArrivals = ({ products }) => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleAddToCart(product, currentUser, setLoading);
+                    handleAddToCart(
+                      product,
+                      currentUser,
+                      setLoading,
+                      setSidebarType
+                    );
                   }}
                   className="landing-new-arrival-cart-btn"
                   disabled={stocklabel(product?.stock) === "out of Stock "}
@@ -77,7 +83,11 @@ const LandingNewArrivals = ({ products }) => {
                         : "pointer",
                   }}
                 >
-                  {loading === product?._id ? <Loader color="white" size="25"/> : <ShoppingCart />}
+                  {loading === product?._id ? (
+                    <Loader color="white" size="25" />
+                  ) : (
+                    <ShoppingCart />
+                  )}
                 </button>
               </div>
 
@@ -103,6 +113,8 @@ const LandingNewArrivals = ({ products }) => {
                   className={`landing-new-arrival-stock ${
                     stocklabel(product?.stock) === "In Stock"
                       ? "in-stock"
+                      : stocklabel(product?.stock) === "out of Stock "
+                      ? "out-of-stock"
                       : "limited-stock"
                   }`}
                 >

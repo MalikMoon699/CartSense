@@ -321,7 +321,7 @@
   border-radius: 8px;
   cursor: pointer;
   opacity: 0;
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease-in-out 0s, transform 0.3s ease-in-out 0.1s;
 }
 
 .landing-new-arrival-card:hover .landing-new-arrival-cart-btn {
@@ -370,6 +370,11 @@
 .landing-new-arrival-stock.in-stock {
   background-color: #e3fff0;
   color: #16a34a;
+}
+
+.landing-new-arrival-stock.out-of-stock {
+  background-color: #ffe3e3;
+  color: #ff0000;
 }
 
 .landing-new-arrival-stock.limited-stock {
@@ -506,10 +511,10 @@
 
 .landing-footer-links li {
   margin-bottom: 10px;
-   transition: color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
-.landing-footer-links li:hover{
+.landing-footer-links li:hover {
   text-decoration: underline;
 }
 
