@@ -67,62 +67,28 @@ export const createOrder = async (req, res) => {
   }
 };
 
-
-// export const createOrder = async (req, res) => {
-//   try {
-//     const { userId, paymentMethod, paymentDetails, address, total, items } =
-//       req.body;
-
-//     if (!userId || !items?.length) {
-//       return res
-//         .status(400)
-//         .json({ success: false, message: "Missing order data" });
-//     }
-
-//     const createdOrders = await Promise.all(
-//       items.map(async (item) => {
-//         const product = await Product.findById(item.productId);
-//         if (!product) throw new Error("Product not found");
-
-//         const order = new Orders({
-//           user: userId,
-//           product: item.productId,
-//           orderquantity: item.quantity,
-//           totalprice: product.price * item.quantity,
-//           paymentMethod,
-//           paymentDetails,
-//           address,
-//         });
-
-//         await order.save();
-//         return order;
-//       })
-//     );
-//     await User.findByIdAndUpdate(userId, {
-//       $push: { orders: { $each: createdOrders.map((o) => o._id) } },
-//     });
-
-//     res.status(201).json({
-//       success: true,
-//       message: "Order placed successfully",
-//       orders: createdOrders,
-//     });
-//   } catch (error) {
-//     console.error("Error creating order:", error);
-//     res
-//       .status(500)
-//       .json({ success: false, message: error.message || "Server error" });
-//   }
-// };
-
-
 export const getAllOrders = async (req, res) => {
   try {
-    const orders = await Orders.find()
-      .populate("user", "name email")
-      .populate("product", "name price");
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-    res.status(200).json({ success: true, count: orders.length, orders });
+    const query = {};
+    if (req.query.status && req.query.status.toLowerCase() !== "all") {
+      query.status = req.query.status.toLowerCase();
+    }
+
+    const total = await Orders.countDocuments(query);
+    const orders = await Orders.find(query)
+      .populate("user", "name email")
+      .populate("product", "name price")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res
+      .status(200)
+      .json({ success: true, total, count: orders.length, orders });
   } catch (error) {
     console.error("Error fetching all orders:", error);
     res.status(500).json({ success: false, message: "Server error" });

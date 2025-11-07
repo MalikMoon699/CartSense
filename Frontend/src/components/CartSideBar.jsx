@@ -94,8 +94,10 @@ const CartSideBar = ({ setSidebarType }) => {
   };
 
   const handleCheckout = async () => {
-      if (!cart.length)
-        return toast.warning("Sorry your cart is currently empty.");
+    if (!cart.length)
+      return toast.warning("Sorry your cart is currently empty.");
+
+    setSidebarType(null);
 
     const lowStockItems = cart.filter(
       (item) => item.quantity > item.product.stock
@@ -113,7 +115,6 @@ const CartSideBar = ({ setSidebarType }) => {
             })
           )
         );
-
         setCart((prevCart) =>
           prevCart.filter((item) => item.quantity <= item.product.stock)
         );
@@ -123,7 +124,6 @@ const CartSideBar = ({ setSidebarType }) => {
             lowStockItems.length > 1 ? "s" : ""
           } removed because of low stock`
         );
-          setSidebarType(null);
       } catch (error) {
         console.error("Error removing low stock items:", error);
         toast.error("Failed to remove low-stock items");
@@ -228,7 +228,8 @@ const CartSideBar = ({ setSidebarType }) => {
               </div>
               <button
                 className="cart-sidebar-btn view-cart"
-                onClick={() => {navigate("/cart");
+                onClick={() => {
+                  navigate("/cart");
                   setSidebarType(null);
                 }}
               >

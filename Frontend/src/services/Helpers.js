@@ -67,3 +67,49 @@ export const handleEmptyCart = async (currentUser) => {
     toast.error("Server error emptying cart");
   }
 };
+
+export const fetchOrders = async (Id, setLoading, setOrders) => {
+  try {
+    if (!Id) return toast.error("user not found.");
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    const res = await API.get(`/order/getOrder/${Id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.data.success) {
+      setOrders(res.data.orders || []);
+    } else {
+      toast.info(res.data.message || "No orders found");
+      setOrders([]);
+    }
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    toast.error("Failed to load your orders");
+  } finally {
+    setLoading(false);
+  }
+};
+
+export const fetchCart = async (Id, setLoading, setCart) => {
+  if (!Id) return toast.error("User not found");
+
+  try {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    const res = await API.get(`/cart/getCart/${Id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.data.success) {
+      setCart(res.data.cart);
+    } else {
+      toast.info(res.data.message || "No items in cart");
+    }
+  } catch (error) {
+    console.error("Error fetching cart:", error);
+    toast.error("Failed to load cart");
+  } finally {
+    setLoading(false);
+  }
+};

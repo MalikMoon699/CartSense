@@ -4,7 +4,6 @@ import API from "../utils/api";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 import Loader from "../components/Loader";
-import ViewOrderDetails from "../components/ViewOrderDetails";
 import ViewMyOrderDetails from "../components/ViewMyOrderDetails";
 
 const MyOrders = () => {

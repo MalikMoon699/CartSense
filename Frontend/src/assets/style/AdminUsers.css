@@ -73,10 +73,15 @@
 .users-table-header,
 .user-table-row {
   display: grid;
-  grid-template-columns: 1fr 2fr 3fr 2fr 1fr;
+  grid-template-columns: 1.2fr 2fr 2.2fr 1.2fr 1.2fr 2fr 1.2fr;
   align-items: center;
   padding: 1rem;
-  min-width: 700px; 
+  min-width: 950px;
+}
+
+.users-table-header span:nth-last-child(-n + 4),
+.user-table-row span:nth-last-child(-n + 4) {
+  text-align: center;
 }
 
 .users-table-header {
@@ -87,11 +92,13 @@
 
 .user-table-row {
   border-bottom: 1px solid #e5e7eb;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .user-table-row:hover {
   background-color: #f9fafb;
+  transform: scale(1.01);
 }
 
 .user-avatar img {
@@ -128,4 +135,19 @@
 
 .delete-btn:hover {
   background-color: #b91c1c;
+}
+
+.view-user-products-load-btn {
+  border: 1px solid #007bff;
+  background: #007bff33;
+  color: #fff;
+  padding: 3px 7px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.view-user-products-load-btn:hover {
+  transform: scale(1.1);
 }

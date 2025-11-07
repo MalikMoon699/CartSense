@@ -6,25 +6,48 @@ import Loader from "./Loader";
 import ViewOrderDetails from "./ViewOrderDetails";
 
 const AdminOrders = () => {
+  const limit = 10;
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [filter, setFilter] = useState("All");
   const [isDetailsModel, setIsDetailsModel] = useState(null);
 
   useEffect(() => {
-    fetchAllOrders();
-  }, []);
+    setPage(1);
+    setOrders([]);
+    setHasMore(true);
+    fetchOrders(1, filter);
+  }, [filter]);
 
-  const fetchAllOrders = async () => {
+  const fetchOrders = async (pageNum = 1, currentFilter = "All") => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const res = await API.get("/order/getAllOrders", {
+
+      const params = { page: pageNum, limit };
+      if (currentFilter !== "All") {
+        params.status = currentFilter.toLowerCase();
+      }
+
+      const res = await API.get(`/order/getAllOrders`, {
+        params,
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (res.data.success) {
-        setOrders(res.data.orders || []);
+        const { orders: fetchedOrders = [], total = 0 } = res.data;
+
+        if (pageNum === 1) {
+          setOrders(fetchedOrders);
+        } else {
+          setOrders((prev) => [...prev, ...fetchedOrders]);
+        }
+
+        if (orders.length + fetchedOrders.length >= total) {
+          setHasMore(false);
+        }
       } else {
         toast.info(res.data.message || "No orders found");
       }
@@ -34,6 +57,12 @@ const AdminOrders = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchOrders(nextPage, filter);
   };
 
   const handleStatusChange = async (orderId, newStatus) => {
@@ -59,14 +88,6 @@ const AdminOrders = () => {
     }
   };
 
-  const filteredOrders = (
-    filter === "All"
-      ? orders
-      : orders.filter(
-          (order) => order.status.toLowerCase() === filter.toLowerCase()
-        )
-  ).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-
   return (
     <div className="admin-orders-page">
       <h1 className="admin-orders-title">All Orders</h1>
@@ -75,84 +96,105 @@ const AdminOrders = () => {
       </p>
 
       <div className="admin-orders-filters">
-        {["All", "Pending", "Shipped", "Delivered", "Cancelled"].map(
-          (status) => (
-            <button
-              key={status}
-              className={`admin-filter-btn ${
-                filter === status ? "active" : ""
-              }`}
-              onClick={() => setFilter(status)}
-            >
-              {status}
-            </button>
-          )
-        )}
+        {[
+          "All",
+          "Pending",
+          "Processing",
+          "Shipped",
+          "Delivered",
+          "Cancelled",
+        ].map((status) => (
+          <button
+            key={status}
+            className={`admin-filter-btn ${filter === status ? "active" : ""}`}
+            onClick={() => setFilter(status)}
+          >
+            {status}
+          </button>
+        ))}
       </div>
 
-      {loading ? (
+      {loading && orders.length === 0 ? (
         <Loader />
-      ) : filteredOrders.length === 0 ? (
+      ) : orders.length === 0 ? (
         <p className="admin-orders-empty">No orders found</p>
       ) : (
-        <table className="admin-orders-table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>User</th>
-              <th>Product</th>
-              <th>Qty</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th>Update</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredOrders.map((order) => (
-              <tr
-                key={order._id}
-                onClick={() => {
-                  setIsDetailsModel(order);
-                }}
-              >
-                <td>#{order._id.slice(-6).toUpperCase()}</td>
-                <td>{order.user?.name || "N/A"}</td>
-                <td>{order.product?.name || "Unknown Product"}</td>
-                <td>{order.orderquantity}</td>
-                <td>Rs {order.totalprice?.toFixed(2)}</td>
-                <td>
-                  <span className={`status-tag ${order.status.toLowerCase()}`}>
-                    {order.status}
-                  </span>
-                </td>
-                <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                <td onClick={(e)=>{e.stopPropagation();}}>
-                  <select
-                    value={order.status}
-                    onChange={(e) =>
-                      handleStatusChange(order._id, e.target.value)
-                    }
-                    className="status-selector"
-                  >
-                    {[
-                      "pending",
-                      "processing",
-                      "shipped",
-                      "delivered",
-                      "cancelled",
-                    ].map((status) => (
-                      <option key={status} value={status}>
-                        {status.charAt(0).toUpperCase() + status.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </td>
+        <>
+          <table className="admin-orders-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>User</th>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Update</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr
+                  key={order._id}
+                  onClick={() => {
+                    setIsDetailsModel(order);
+                  }}
+                >
+                  <td>#{order._id.slice(-6).toUpperCase()}</td>
+                  <td>{order.user?.name || "N/A"}</td>
+                  <td>{order.product?.name || "Unknown Product"}</td>
+                  <td>{order.orderquantity}</td>
+                  <td>Rs {order.totalprice?.toFixed(2)}</td>
+                  <td>
+                    <span
+                      className={`status-tag ${order.status.toLowerCase()}`}
+                    >
+                      {order.status}
+                    </span>
+                  </td>
+                  <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                  <td onClick={(e) => e.stopPropagation()}>
+                    <select
+                      value={order.status}
+                      onChange={(e) =>
+                        handleStatusChange(order._id, e.target.value)
+                      }
+                      className="status-selector"
+                    >
+                      {[
+                        "pending",
+                        "processing",
+                        "shipped",
+                        "delivered",
+                        "cancelled",
+                      ].map((status) => (
+                        <option key={status} value={status}>
+                          {status.charAt(0).toUpperCase() + status.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {(loading || hasMore) && (
+            <div className="loadMore-container">
+              {loading ? (
+                <Loader style={{ width: "auto" }} />
+              ) : (
+                hasMore && (
+                  <button onClick={handleLoadMore} className="load-more-btn">
+                    Load More
+                  </button>
+                )
+              )}
+            </div>
+          )}
+        </>
       )}
+
       {isDetailsModel && (
         <ViewOrderDetails
           isDetailsModel={isDetailsModel}

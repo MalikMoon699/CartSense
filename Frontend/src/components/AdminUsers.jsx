@@ -5,6 +5,7 @@ import "../assets/style/AdminUsers.css";
 import Loader from "./Loader";
 import API from "../utils/api";
 import { toast } from "sonner";
+import ViewUserDetails from "./ViewUserDetails";
 
 const AdminUsers = () => {
   const limit = 10;
@@ -13,6 +14,7 @@ const AdminUsers = () => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [isDetailsModel, setIsDetailsModel] = useState(null);
 
   useEffect(() => {
     fetchUsers(page);
@@ -92,13 +94,21 @@ const AdminUsers = () => {
           <span>Avatar</span>
           <span>Name</span>
           <span>Email</span>
+          <span>Cart</span>
+          <span>Orders</span>
           <span>Registered At</span>
           <span>Action</span>
         </div>
 
         <div className="users-table-rows">
           {users.map((user) => (
-            <div key={user._id} className="user-table-row">
+            <div
+              onClick={() => {
+                setIsDetailsModel(user);
+              }}
+              key={user._id}
+              className="user-table-row"
+            >
               <span className="user-avatar">
                 <img
                   src={user?.profileImg || IMAGES.PlaceHolder}
@@ -107,6 +117,8 @@ const AdminUsers = () => {
               </span>
               <span className="user-name">{user?.name}</span>
               <span className="user-email">{user?.email}</span>
+              <span className="user-email">{user?.cart?.length || 0}</span>
+              <span className="user-email">{user?.orders?.length || 0}</span>
               <span className="user-date">{formatDate(user?.createdAt)}</span>
               <span className="user-action">
                 <button
@@ -122,7 +134,10 @@ const AdminUsers = () => {
           ))}
         </div>
 
-        <div style={{ margin: hasMore ? "":"-1px 0px"}} className="loadMore-container">
+        <div
+          style={{ margin: hasMore ? "" : "-1px 0px" }}
+          className="loadMore-container"
+        >
           {loading ? (
             <Loader style={{ width: "auto" }} />
           ) : (
@@ -134,6 +149,13 @@ const AdminUsers = () => {
           )}
         </div>
       </div>
+      {isDetailsModel && (
+        <ViewUserDetails
+          isDetailsModel={isDetailsModel}
+          setIsDetailsModel={setIsDetailsModel}
+          handleDelete={handleDelete}
+        />
+      )}
     </div>
   );
 };

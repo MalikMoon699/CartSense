@@ -58,7 +58,7 @@ const TopBar = ({ setAcountState, setSidebarType, setIsSearch }) => {
         </span>
         <span
           onClick={() => {
-            navigate("/cart");
+            setSidebarType("cartsidebar");
           }}
           className="icon"
         >
