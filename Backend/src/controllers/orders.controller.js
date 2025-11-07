@@ -4,70 +4,6 @@ import Product from "../models/product.model.js";
 import Cart from "../models/cart.model.js";
 import mailer from "../config/mailer.js";
 
-// export const createOrder = async (req, res) => {
-//   try {
-//     const { userId, paymentMethod, paymentDetails, address, total, items } =
-//       req.body;
-
-//     if (!userId || !items?.length) {
-//       return res
-//         .status(400)
-//         .json({ success: false, message: "Missing order data" });
-//     }
-
-//     const createdOrders = await Promise.all(
-//       items.map(async (item) => {
-//         const product = await Product.findById(item.productId);
-//         if (!product) throw new Error(`Product not found: ${item.productId}`);
-
-//         if (product.stock < item.quantity) {
-//           throw new Error(`Insufficient stock for ${product.name}`);
-//         }
-
-//         const order = new Orders({
-//           user: userId,
-//           product: item.productId,
-//           orderquantity: item.quantity,
-//           totalprice: product.price * item.quantity,
-//           paymentMethod,
-//           paymentDetails,
-//           address,
-//           status: "pending",
-//         });
-
-//         await order.save();
-
-//         product.stock -= item.quantity;
-//         await product.save();
-
-//         return order;
-//       })
-//     );
-
-//     await Cart.findOneAndUpdate(
-//       { user: userId },
-//       { $set: { items: [] } },
-//       { new: true }
-//     );
-
-//     await User.findByIdAndUpdate(userId, {
-//       $push: { orders: { $each: createdOrders.map((o) => o._id) } },
-//     });
-
-//     res.status(201).json({
-//       success: true,
-//       message: "Order placed successfully",
-//       orders: createdOrders,
-//     });
-//   } catch (error) {
-//     console.error("❌ Error creating order:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: error.message || "Server error",
-//     });
-//   }
-// };
-
 export const createOrder = async (req, res) => {
   try {
     const { userId, paymentMethod, paymentDetails, address, total, items } =
@@ -114,19 +50,16 @@ export const createOrder = async (req, res) => {
       })
     );
 
-    // Empty user's cart
     await Cart.findOneAndUpdate(
       { user: userId },
       { $set: { items: [] } },
       { new: true }
     );
 
-    // Link orders to user
     await User.findByIdAndUpdate(userId, {
       $push: { orders: { $each: createdOrders.map((o) => o._id) } },
     });
 
-    // Generate email HTML
     const orderDate = new Date().toLocaleDateString();
     const productsHtml = createdOrders
       .map(
@@ -210,7 +143,6 @@ export const createOrder = async (req, res) => {
     });
   }
 };
-
 
 export const getAllOrders = async (req, res) => {
   try {
@@ -336,5 +268,43 @@ Your Shop Team`;
   } catch (error) {
     console.error("Error updating order:", error);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const getTotalOrdersCount = async (req, res) => {
+  try {
+    const totalOrders = await Orders.countDocuments();
+    res.status(200).json({
+      success: true,
+      totalOrders,
+    });
+  } catch (error) {
+    console.error("Error getting total orders count:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while getting total orders count",
+    });
+  }
+};
+
+export const getTotalRevenue = async (req, res) => {
+  try {
+    const result = await Orders.aggregate([
+      { $match: { status: "delivered" } },
+      { $group: { _id: null, totalRevenue: { $sum: "$totalprice" } } },
+    ]);
+
+    const totalRevenue = result.length > 0 ? result[0].totalRevenue : 0;
+
+    res.status(200).json({
+      success: true,
+      totalRevenue,
+    });
+  } catch (error) {
+    console.error("Error getting total revenue:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while getting total revenue",
+    });
   }
 };

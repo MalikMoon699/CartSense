@@ -6,6 +6,10 @@ import {
   fetchAllOrders,
   fetchAllProducts,
   fetchAllUsers,
+  fetchTotalUsersCount,
+  fetchTotalProductsCount,
+  fetchTotalOrdersCount,
+  fetchTotalRevenue,
 } from "../services/DashboardServices";
 
 const AdminDashBoard = () => {
@@ -14,8 +18,17 @@ const AdminDashBoard = () => {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [countsLoading, setCountsLoading] = useState(true);
+  const [usersCount, setUsersCount] = useState(0);
+  const [productsCount, setProductsCount] = useState(0);
+  const [ordersCount, setOrdersCount] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState(0);
 
   useEffect(() => {
+    fetchTotalUsersCount(setUsersCount, setCountsLoading);
+    fetchTotalProductsCount(setProductsCount, setCountsLoading);
+    fetchTotalOrdersCount(setOrdersCount, setCountsLoading);
+    fetchTotalRevenue(setTotalRevenue, setCountsLoading);
     loadDashboardData();
   }, []);
 
@@ -41,25 +54,25 @@ const AdminDashBoard = () => {
   const stats = [
     {
       title: "Total Users",
-      value: users.length,
+      value: usersCount,
       color: "#4e73df",
       action: "users",
     },
     {
       title: "Total Products",
-      value: products.length,
+      value: productsCount,
       color: "#1cc88a",
       action: "products",
     },
     {
       title: "Total Orders",
-      value: orders.length,
+      value: ordersCount,
       color: "#36b9cc",
       action: "orders",
     },
     {
       title: "Total Revenue",
-      value: `Rs:${orders.reduce((sum, o) => sum + (o.totalprice || 0), 0)}`,
+      value: `Rs:${totalRevenue}`,
       color: "#f6c23e",
       action: "orders",
     },
@@ -91,7 +104,7 @@ const AdminDashBoard = () => {
             }}
           >
             <h3 className="admin-dashboard-stat-value">
-              {loading ? (
+              {countsLoading ? (
                 <Loader size="20" style={{ height: "30px" }} />
               ) : (
                 item.value
@@ -158,7 +171,13 @@ const AdminDashBoard = () => {
           <div className="admin-dashboard-product-list">
             {latestProducts.length > 0 ? (
               latestProducts.map((p, i) => (
-                <div key={i} className="admin-dashboard-product-card">
+                <div
+                  onClick={() => {
+                    navigate(`/product/${p._id}`);
+                  }}
+                  key={i}
+                  className="admin-dashboard-product-card"
+                >
                   <img src={p.images?.[0] || ""} alt={p.name} />
                   <div>
                     <h4>{p.name}</h4>

@@ -25,6 +25,14 @@ const Checkout = () => {
     setPaymentDetails("");
   };
 
+  useEffect(()=>{
+      if (!cart.length) {
+        navigate("/cart");
+        toast.warning("Sorry your cart is currently empty.");
+        return;
+      }
+  },[])
+
   useEffect(() => {
     fetchCart();
   }, [currentUser]);
@@ -65,11 +73,80 @@ const Checkout = () => {
     return total.toFixed(2);
   };
 
+  const validateForm = () => {
+    if (!selectedLocation.trim()) {
+      toast.error("Please enter your address");
+      return false;
+    }
+    if (!selectedCountry) {
+      toast.error("Please select a country");
+      return false;
+    }
+    if (!selectedCity) {
+      toast.error("Please select a city");
+      return false;
+    }
+    if (paymentMethod !== "Cash on Delivery" && !paymentDetails.trim()) {
+      toast.error(`Please enter your ${paymentMethod} account or card number`);
+      return false;
+    }
+    return true;
+  };
+
   const handlePlaceOrder = async () => {
-    if (!cart.length) {
-      toast.warning("Your cart is empty!");
+   if (!cart.length) {
+     navigate("/cart");
+     toast.warning("Sorry your cart is currently empty.");
+     return;
+   }
+
+    if (!validateForm()) return;
+
+    const lowStockItems = cart.filter(
+      (item) => item.quantity > item.product.stock
+    );
+
+    if (lowStockItems.length > 0) {
+      try {
+        const token = localStorage.getItem("token");
+        await Promise.all(
+          lowStockItems.map((item) =>
+            API.delete(`/cart/removeProductCart/${item.product._id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+              data: { userId: currentUser._id },
+            })
+          )
+        );
+
+        setCart((prevCart) =>
+          prevCart.filter((item) => item.quantity <= item.product.stock)
+        );
+
+        toast.warning(
+          `${lowStockItems.length} item${
+            lowStockItems.length > 1 ? "s" : ""
+          } removed due to low stock`
+        );
+      } catch (error) {
+        console.error("Error removing low stock items:", error);
+        toast.error("Failed to remove low-stock items");
+        return;
+      }
+    }
+    const updatedCart = cart.filter(
+      (item) => item.quantity <= item.product.stock
+    );
+
+    if (updatedCart.length === 0) {
+      toast.info("Your cart is empty now — please add items before checkout.");
       return;
     }
+  if (!cart.length) {
+     navigate("/cart");
+    toast.warning("Sorry your cart is currently empty.");
+    return;
+  }
+
     try {
       setCheckoutLoading(true);
       const token = localStorage.getItem("token");

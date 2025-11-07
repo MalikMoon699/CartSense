@@ -336,6 +336,10 @@
   font-weight: 600;
   margin-bottom: 8px;
   color: #111;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .landing-new-arrival-stars {

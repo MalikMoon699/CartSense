@@ -9,6 +9,7 @@ import {
   getSingleProducts,
   getSameCategoriesProducts,
   addProductReview,
+  getTotalProductsCount,
   getAllProducts,
 } from "../controllers/adminProducts.controller.js";
 import upload from "../middlewares/multer.middleware.js";
@@ -17,6 +18,7 @@ import { verifyToken } from "../middlewares/auth.middleware.js";
 const router = express.Router();
 router.get("/getProducts", getProducts);
 router.get("/getAllProducts", getAllProducts);
+router.get("/getTotalProductsCount", getTotalProductsCount);
 router.get("/getSingleProducts/:id", getSingleProducts);
 router.get("/getSameCategoriesProducts/:category", getSameCategoriesProducts);
 router.get("/getcategories", verifyToken, getCategories);

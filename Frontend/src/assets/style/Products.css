@@ -206,6 +206,10 @@
   font-weight: 600;
   color: #111;
   margin-bottom: 5px;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .products-page-category {
@@ -395,7 +399,7 @@
 }
 
 .single-product-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #222;
 }

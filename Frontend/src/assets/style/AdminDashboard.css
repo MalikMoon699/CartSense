@@ -147,6 +147,11 @@
   transition: 0.3s;
 }
 
+.admin-dashboard-product-card > div > h4{    width: 190px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;}
+
 .admin-dashboard-product-card:hover {
   background: #f1f5f9;
 }

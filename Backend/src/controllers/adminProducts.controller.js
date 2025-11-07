@@ -417,3 +417,19 @@ export const getAllProducts = async (req, res) => {
     });
   }
 };
+
+export const getTotalProductsCount = async (req, res) => {
+  try {
+    const totalProducts = await Product.countDocuments();
+    res.status(200).json({
+      success: true,
+      totalProducts,
+    });
+  } catch (error) {
+    console.error("Error getting total product count:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while getting total product count",
+    });
+  }
+};

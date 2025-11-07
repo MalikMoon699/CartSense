@@ -39,3 +39,19 @@ export const deleteUser = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const getTotalUsersCount = async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    res.status(200).json({
+      success: true,
+      totalUsers,
+    });
+  } catch (error) {
+    console.error("Error getting total user count:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while getting total user count",
+    });
+  }
+};
