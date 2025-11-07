@@ -18,6 +18,7 @@ const Checkout = () => {
   const [selectedCity, setSelectedCity] = useState("");
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const handlePaymentSelect = (method) => {
     setPaymentMethod(method);
@@ -69,8 +70,8 @@ const Checkout = () => {
       toast.warning("Your cart is empty!");
       return;
     }
-
     try {
+      setCheckoutLoading(true);
       const token = localStorage.getItem("token");
       const orderData = {
         userId: currentUser._id,
@@ -102,6 +103,8 @@ const Checkout = () => {
     } catch (error) {
       console.error("Error placing order:", error);
       toast.error("Something went wrong");
+    } finally {
+      setCheckoutLoading(false);
     }
   };
 
@@ -264,9 +267,14 @@ const Checkout = () => {
 
           <button
             onClick={handlePlaceOrder}
+            disabled={checkoutLoading}
             className="checkout-place-order-btn"
           >
-            Place Order
+            {checkoutLoading ? (
+              <Loader color="white" size="20" />
+            ) : (
+              "Place Order"
+            )}
           </button>
         </div>
       </div>

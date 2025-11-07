@@ -1,6 +1,9 @@
 import Product from "../models/product.model.js";
 import shopDetailsModel from "../models/shopDetails.model.js";
+import mailer from "../config/mailer.js";
+import User from "../models/user.model.js";
 import cloudinary from "../config/cloudinary.js";
+import { Frontend_Url } from "../config/env.js";
 
 export const getProducts = async (req, res) => {
   try {
@@ -88,9 +91,60 @@ export const addProduct = async (req, res) => {
 
     await product.save();
 
+    const users = await User.find({ role: "user" }, "email name");
+
+    if (users && users.length > 0) {
+      const productLink = `${Frontend_Url}/product/${product._id}`;
+
+      const emailHTML = `
+        <div style="font-family:Arial, sans-serif; max-width:600px; margin:auto; border:1px solid #ddd; border-radius:10px; overflow:hidden;">
+          <div style="background:#000; color:#fff; padding:20px; text-align:center;">
+            <h2 style="margin:0;">🛍️ New Product Alert!</h2>
+          </div>
+
+          <div style="padding:20px;">
+            <h3 style="margin-top:0;">${product.name}</h3>
+            <p>${
+              product.description?.slice(0, 150) ||
+              "Check out our latest product!"
+            }</p>
+            <p><b>Price:</b> Rs ${product.price.toFixed(2)}</p>
+
+            ${
+              product.images?.[0]
+                ? `<img src="${product.images[0]}" alt="${product.name}" style="max-width:100%; border-radius:10px; margin-top:10px;">`
+                : ""
+            }
+
+            <div style="text-align:center; margin-top:20px;">
+              <a href="${productLink}" style="display:inline-block; background:#000; color:#fff; text-decoration:none; padding:10px 20px; border-radius:5px;">
+                View Product
+              </a>
+            </div>
+
+            <p style="margin-top:30px; font-size:13px; color:#777;">
+              You’re receiving this email because you subscribed to Cart Sense updates.
+            </p>
+          </div>
+        </div>
+      `;
+
+      const emailPromises = users.map((u) =>
+        mailer.sendMail({
+          from: `"Cart Sense" <${process.env.EMAIL_USER}>`,
+          to: u.email,
+          subject: `New Product Added: ${product.name}`,
+          html: emailHTML,
+        })
+      );
+
+      await Promise.allSettled(emailPromises);
+      console.log(`📩 Sent new product email to ${users.length} users`);
+    }
+
     res.status(201).json({
       success: true,
-      message: "Product added successfully",
+      message: "Product added successfully & notifications sent",
       product,
     });
   } catch (error) {
@@ -323,31 +377,17 @@ export const addProductReview = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    const {
-      page = 1,
-      limit = 10,
-      search = "",
-      category = "All",
-      minPrice = 0,
-      maxPrice = 10000,
-      minRating = 0,
-    } = req.query;
+    const { page = 1, limit = 10, search = "", category = "All" } = req.query;
 
     const skip = (page - 1) * limit;
 
-    const filter = {
-      price: { $gte: Number(minPrice), $lte: Number(maxPrice) },
-      $or: [
-        { rating: { $gte: Number(minRating) } },
-        { rating: { $exists: false } },
-      ],
-    };
+    const filter = {};
 
     if (category && category !== "All") {
       filter.categories = { $in: [category] };
     }
 
-    if (search) {
+    if (search && search.trim() !== "") {
       filter.name = { $regex: search, $options: "i" };
     }
     const total = await Product.countDocuments(filter);
