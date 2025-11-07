@@ -7,6 +7,7 @@ import Signup from "../auth/Signup";
 import SearchModal from "../components/SearchModal";
 import UserDetails from "../components/UserDetails";
 import CartSideBar from "../components/CartSideBar";
+import ChatBot from "../components/ChatBot";
 
 const AppLayout = () => {
   const [acountState, setAcountState] = useState(null);
@@ -49,6 +50,7 @@ const AppLayout = () => {
         <Outlet
           context={{ setAcountState, acountState, sidebarType, setSidebarType }}
         />
+        <ChatBot />
       </div>
     </div>
   );

@@ -114,7 +114,7 @@ const Products = () => {
       setLoading(false);
     }
   };
-
+  
   const fetchCategories = async () => {
     try {
       const token = localStorage.getItem("token");

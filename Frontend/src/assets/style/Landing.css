@@ -1,5 +1,4 @@
 /* ==== Slider ===== */
-
 .landing-hero-container {
   position: relative;
   width: 100%;
@@ -30,13 +29,12 @@
   align-items: center;
   text-align: center;
   padding: 2rem;
-  /* backdrop-filter: blur(3px); */
 }
 
 .landing-hero-content {
   color: white;
   max-width: 800px;
-  animation: fadeInUp 1s ease;
+  animation: fadeInUp 1s ease 0.2s;
 }
 
 .landing-hero-subtitle {

@@ -2,6 +2,9 @@ import { IMAGES } from "./Constants";
 import API from "../utils/api";
 import { toast } from "sonner";
 
+export const API_URL =
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyB4HY5C2b_yWROOtiIEYs0WP3xSDk28Y-E";
+
 export const formatDate = (isoString) => {
   const date = new Date(isoString);
   const day = String(date.getDate()).padStart(2, "0");
