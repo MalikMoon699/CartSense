@@ -18,6 +18,7 @@ const Checkout = () => {
   const [selectedCity, setSelectedCity] = useState("");
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [paymentLoading, setPaymentLoading] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const handlePaymentSelect = (method) => {
@@ -25,17 +26,17 @@ const Checkout = () => {
     setPaymentDetails("");
   };
 
-  useEffect(()=>{
-      if (!cart.length) {
-        navigate("/cart");
-        toast.warning("Sorry your cart is currently empty.");
-        return;
-      }
-  },[])
-
   useEffect(() => {
     fetchCart();
   }, [currentUser]);
+
+  useEffect(() => {
+    if (!cart.length && !loading) {
+      navigate("/cart");
+      toast.warning("Sorry your cart is currently empty.");
+      return;
+    }
+  }, []);
 
   const fetchCart = async () => {
     if (!currentUser?._id) return;
@@ -94,11 +95,11 @@ const Checkout = () => {
   };
 
   const handlePlaceOrder = async () => {
-   if (!cart.length) {
-     navigate("/cart");
-     toast.warning("Sorry your cart is currently empty.");
-     return;
-   }
+    if (!cart.length) {
+      navigate("/cart");
+      toast.warning("Sorry your cart is currently empty.");
+      return;
+    }
 
     if (!validateForm()) return;
 
@@ -141,11 +142,11 @@ const Checkout = () => {
       toast.info("Your cart is empty now — please add items before checkout.");
       return;
     }
-  if (!cart.length) {
-     navigate("/cart");
-    toast.warning("Sorry your cart is currently empty.");
-    return;
-  }
+    if (!cart.length) {
+      navigate("/cart");
+      toast.warning("Sorry your cart is currently empty.");
+      return;
+    }
 
     try {
       setCheckoutLoading(true);
@@ -184,6 +185,8 @@ const Checkout = () => {
       setCheckoutLoading(false);
     }
   };
+
+  const handlePayment = () => {};
 
   if (loading)
     return (
@@ -303,12 +306,30 @@ const Checkout = () => {
               </ul>
 
               {paymentMethod && paymentMethod !== "Cash on Delivery" && (
-                <input
-                  type="text"
-                  placeholder={`Enter your ${paymentMethod} account or card number`}
-                  value={paymentDetails}
-                  onChange={(e) => setPaymentDetails(e.target.value)}
-                />
+                <div className="addproduct-category-input">
+                  <input
+                    type="text"
+                    placeholder={`Enter your ${paymentMethod} account or card number`}
+                    value={paymentDetails}
+                    style={{ width: "100%" }}
+                    onChange={(e) => setPaymentDetails(e.target.value)}
+                  />
+                  <button
+                    onClick={handlePayment}
+                    disabled={paymentLoading}
+                    className="addproduct-add-category-btn"
+                  >
+                    {paymentLoading ? (
+                      <Loader
+                        color="white"
+                        size="14"
+                        style={{ height: "100%", width: "55px" }}
+                      />
+                    ) : (
+                      "Pay Now"
+                    )}
+                  </button>
+                </div>
               )}
             </div>
           </form>
