@@ -82,7 +82,9 @@
 }
 
 .upload-label {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: #ffffff;
   cursor: pointer;
   margin-bottom: 14px;

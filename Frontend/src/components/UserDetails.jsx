@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { X, Upload } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { IMAGES } from "../services/Constants";
 import API from "../utils/api";
@@ -83,6 +83,7 @@ const UserDetails = ({ setSidebarType }) => {
       const formData = new FormData();
 
       formData.append("name", name);
+      formData.append("email", email);
 
       const fileInput = document.querySelector('input[type="file"]');
       if (fileInput && fileInput.files[0]) {
@@ -147,7 +148,13 @@ const UserDetails = ({ setSidebarType }) => {
             onChange={(e) => setName(e.target.value)}
             placeholder="Full Name"
           />
-          <input type="email" className="login-input" value={email} readOnly />
+          <input
+            type="email"
+            placeholder="Email Address"
+            className="login-input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
           <label className="upload-label">
             <input
               type="file"
@@ -155,7 +162,10 @@ const UserDetails = ({ setSidebarType }) => {
               onChange={handleImageChange}
               hidden
             />
-            ⬆ Upload Avatar
+            <span className="icon">
+              <Upload />
+            </span>
+            Upload Avatar
           </label>
           <button onClick={handleSaveChanges} className="btn save-btn">
             Save Changes
