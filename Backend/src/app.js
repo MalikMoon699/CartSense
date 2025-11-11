@@ -10,7 +10,6 @@ import adminProductsRoutes from "./routes/adminProducts.routes.js";
 import cartRoutes from "./routes/cartProducts.routes.js";
 import orderRoutes from "./routes/orders.routes.js";
 import connectToDB from "./database/mongodb.js";
-import { EMAIL_HOST } from "./config/env.js";
 
 connectToDB();
 const app = express();
