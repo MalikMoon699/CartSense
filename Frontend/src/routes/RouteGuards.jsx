@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import Loader from "../components/Loader";
+import { useEffect } from 'react';
 
 export const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { authAllow, loading, currentUser, isOnline } = useAuth();

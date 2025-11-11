@@ -4,10 +4,17 @@ import "../assets/style/ChatBot.css";
 import Loader from "./Loader";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../services/Helpers";
+import { useAuth } from "../contexts/AuthContext";
 import API from "../utils/api";
 import { FormatResponse } from "./FormatResponse";
+import {
+  AdminRoutes,
+  ProtectedRoutes,
+  PublicRoutes,
+} from "../services/Constants";
 
 const ChatBot = () => {
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [isChatBot, setIsChatBot] = useState(false);
   const [sendLoading, setSendLoading] = useState(false);
@@ -24,32 +31,32 @@ const ChatBot = () => {
   const chatContainerRef = useRef(null);
   const textareaRef = useRef(null);
 
-useEffect(() => {
-  if (messagesEndRef.current) {
-    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-  }
-}, [chats, responseLoading]);
-
-useEffect(() => {
-  if (messagesEndRef.current) {
-    messagesEndRef.current.scrollIntoView({ behavior: "auto" });
-  }
-}, [isChatBot]);
-
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (
-      chatContainerRef.current &&
-      !chatContainerRef.current.contains(event.target) &&
-      isChatBot
-    ) {
-      setIsChatBot(false);
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  };
+  }, [chats, responseLoading]);
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => document.removeEventListener("mousedown", handleClickOutside);
-}, [isChatBot]);
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "auto" });
+    }
+  }, [isChatBot]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        chatContainerRef.current &&
+        !chatContainerRef.current.contains(event.target) &&
+        isChatBot
+      ) {
+        setIsChatBot(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isChatBot]);
 
   useEffect(() => {
     sessionStorage.setItem("csChats", JSON.stringify(chats));
@@ -105,7 +112,39 @@ useEffect(() => {
     e.target.style.height = e.target.scrollHeight + "px";
   };
 
+  let availableRoutes = [...PublicRoutes];
+
+  if (currentUser) {
+    availableRoutes = [...availableRoutes, ...ProtectedRoutes];
+    if (currentUser.role === "admin") {
+      availableRoutes = [...availableRoutes, ...AdminRoutes];
+    }
+  }
+
+  const routesText = availableRoutes
+    .map((r, i) => `${i + 1}. ${r.name} → ${r.path}`)
+    .join("\n");
+
   const infoText = `
+
+${
+  currentUser
+    ? `
+CurrentUser Details:
+- _Id: ${currentUser._id || ""}
+- Name: ${currentUser.name || ""}
+- Email: ${currentUser.email || ""}
+- createdAt: ${currentUser.createdAt || ""}
+- updatedAt: ${currentUser.updatedAt || ""}
+- orders: ${currentUser.orders?.length || 0}
+- cart: ${currentUser.cart?.length || 0}
+`
+    : "No current user information available."
+}
+
+📍 Available Routes:
+${routesText}
+
 Introduction:
 I'm your friendly  Cart Sense chatbot where every click makes perfect sense, here to assist you with anything you need related to our store! Whether you're looking for information about our products, business hours, or tech guidance, I'm here to help.
 
@@ -138,6 +177,9 @@ Stay connected:
 Website: https://cart-sense.vercel.app
 Email: CartSense@gmail.com
 Phone: +1 (555) 123-4567
+
+
+
 
 ============================
 Available Categories:
@@ -329,10 +371,16 @@ ${reviewDetails}`;
                   <FormatResponse
                     text={item.message}
                     products={products}
-                    setIsChatBot={setIsChatBot}
-                    navigateTo={(id) => {
+                    routes={availableRoutes}
+                    navigateTo={(idOrPath) => {
                       setIsChatBot(false);
-                      navigate(`/product/${id}`);
+                      if (products.find((p) => p._id === idOrPath)) {
+                        navigate(`/product/${idOrPath}`);
+                      } else {
+                        navigate(
+                          idOrPath.startsWith("/") ? idOrPath : `/${idOrPath}`
+                        );
+                      }
                     }}
                   />
                 )}

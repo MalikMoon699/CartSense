@@ -133,3 +133,31 @@ export const countryCityData = {
   Canada: ["Toronto", "Vancouver", "Calgary", "Montreal", "Ottawa"],
   Australia: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
 };
+
+export const PublicRoutes = [
+  { path: "/", name: "Landing Page" },
+  { path: "/products", name: "Products" },
+  { path: "/product/:id", name: "Single Product" },
+  { path: "/about", name: "About Us" },
+  { path: "/faq", name: "FAQ" },
+  { path: "/returns", name: "Returns" },
+  { path: "/shipping", name: "Shipping Info" },
+  { path: "/support", name: "Support" },
+  { path: "/privacy", name: "Privacy Policy" },
+  { path: "/terms", name: "Terms of Service" },
+  { path: "/contact", name: "Contact Us" },
+  { path: "/offline", name: "Offline Page" },
+];
+
+export const ProtectedRoutes = [
+  { path: "/my-orders/:id", name: "My Orders (Protected)" },
+  { path: "/cart", name: "Cart (Protected)" },
+  { path: "/checkout", name: "Checkout (Protected)" },
+];
+
+export const AdminRoutes = [
+  { path: "/admin/dashboard", name: "Admin Dashboard (Admin Only)" },
+  { path: "/admin/orders", name: "Admin Orders (Admin Only)" },
+  { path: "/admin/products", name: "Admin Products (Admin Only)" },
+  { path: "/admin/users", name: "Admin Users (Admin Only)" },
+];
