@@ -7,15 +7,19 @@ import { Frontend_Url } from "../config/env.js";
 
 export const getProducts = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, search = "" } = req.query;
     const query = {};
+
+    if (search.trim() !== "") {
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    const total = await Product.countDocuments(query);
 
     const products = await Product.find(query)
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(Number(limit));
-
-    const total = await Product.countDocuments(query);
 
     res.status(200).json({
       success: true,

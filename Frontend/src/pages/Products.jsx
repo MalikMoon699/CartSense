@@ -274,7 +274,7 @@ const Products = () => {
           )}
         </div>
         <div className="products-page-grid">
-          {products.length ? (
+          {products.length > 0 || loading ? (
             products.map((product) => (
               <div
                 key={product._id}

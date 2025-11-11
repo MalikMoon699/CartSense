@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IMAGES } from "../services/Constants";
 import { formatDate } from "../services/Helpers";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, Search } from "lucide-react";
 import "../assets/style/AdminUsers.css";
 import Loader from "./Loader";
 import API from "../utils/api";
@@ -9,54 +9,52 @@ import { toast } from "sonner";
 import ViewUserDetails from "./ViewUserDetails";
 
 const AdminUsers = () => {
-  const limit = 10;
-
+  const limit = 1;
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isDetailsModel, setIsDetailsModel] = useState(null);
 
   useEffect(() => {
     fetchUsers(page);
   }, []);
 
-  const fetchUsers = async (pageNum = 1) => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      const res = await API.get(`/adminUser/getUsers`, {
-        params: { page: pageNum, limit, role: "user" },
-        headers: { Authorization: `Bearer ${token}` },
-      });
+const fetchUsers = async (pageNum = 1, search = "") => {
+  try {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    const res = await API.get(`/adminUser/getUsers`, {
+      params: { page: pageNum, limit, role: "user", searchTerm: search },
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      if (res.status === 200) {
-        const { users: fetchedUsers, total } = res.data;
-        if (pageNum === 1) {
-          setUsers(fetchedUsers);
-        } else {
-          setUsers((prev) => [...prev, ...fetchedUsers]);
-        }
-        if (users.length + fetchedUsers.length >= total) {
-          setHasMore(false);
-        }
+    if (res.status === 200) {
+      const { users: fetchedUsers, total } = res.data;
+      if (pageNum === 1) {
+        setUsers(fetchedUsers);
       } else {
-        toast.error(res.data.message || "Failed to fetch users");
+        setUsers((prev) => [...prev, ...fetchedUsers]);
       }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      toast.error("An error occurred while fetching users");
-    } finally {
-      setLoading(false);
+      setHasMore(users.length + fetchedUsers.length < total);
+    } else {
+      toast.error(res.data.message || "Failed to fetch users");
     }
-  };
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    toast.error("An error occurred while fetching users");
+  } finally {
+    setLoading(false);
+  }
+};
 
-  const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchUsers(nextPage);
-  };
+const handleLoadMore = () => {
+  const nextPage = page + 1;
+  setPage(nextPage);
+  fetchUsers(nextPage, searchTerm.trim());
+};
 
   const handleDelete = async (id) => {
     try {
@@ -105,6 +103,12 @@ const AdminUsers = () => {
     }
   };
 
+const handleSearch = () => {
+  setPage(1);
+  fetchUsers(1, searchTerm.trim());
+};
+
+
   return (
     <div className="admin-users">
       <div className="admin-users-header">
@@ -131,7 +135,26 @@ const AdminUsers = () => {
           )}
         </button>
       </div>
-
+      <div className="products-page-topbar">
+        <div className="products-page-topbar-search-input">
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch(e.target.value)}
+            className="products-page-search"
+          />
+          <span
+            className="icon"
+            onClick={() => handleSearch(searchTerm)}
+            role="button"
+            aria-label="Search"
+          >
+            <Search />
+          </span>
+        </div>
+      </div>
       <div className="users-table">
         <div className="users-table-header">
           <span>Avatar</span>

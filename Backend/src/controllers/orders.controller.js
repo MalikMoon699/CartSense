@@ -151,22 +151,75 @@ export const getAllOrders = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const query = {};
-    if (req.query.status && req.query.status.toLowerCase() !== "all") {
-      query.status = req.query.status.toLowerCase();
+    const status = req.query.status?.toLowerCase();
+    const search = req.query.search?.trim();
+
+    // Build $match for status only (we'll incorporate search in the pipeline)
+    const statusMatch = status && status !== "all" ? { status } : null;
+
+    // Start pipeline: lookup user & product
+    const pipeline = [
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "product",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      { $unwind: "$product" },
+    ];
+
+    // Add status filter if needed
+    if (statusMatch) pipeline.push({ $match: statusMatch });
+
+    // Add search match if provided
+    if (search) {
+      const regex = new RegExp(search, "i");
+      // match against order _id (string), product name, product categories, user.name
+      pipeline.push({
+        $match: {
+          $or: [
+            // Note: matching ObjectId as string - convert _id to string for regex
+            { $expr: { $regexMatch: { input: { $toString: "$_id" }, regex } } },
+            { "product.name": { $regex: regex } },
+            { "product.categories": { $regex: regex } },
+            { "user.name": { $regex: regex } },
+          ],
+        },
+      });
     }
 
-    const total = await Orders.countDocuments(query);
-    const orders = await Orders.find(query)
-      .populate("user", "name email")
-      .populate("product", "name price")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    // pipeline copy for counting total matched documents
+    const countPipeline = [...pipeline, { $count: "total" }];
+    const countResult = await Orders.aggregate(countPipeline);
+    const total = countResult.length > 0 ? countResult[0].total : 0;
 
-    res
-      .status(200)
-      .json({ success: true, total, count: orders.length, orders });
+    // Add sorting + pagination to original pipeline
+    pipeline.push(
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit }
+    );
+
+    // Fetch paginated orders
+    const orders = await Orders.aggregate(pipeline);
+
+    res.status(200).json({
+      success: true,
+      total,
+      count: orders.length,
+      orders,
+    });
   } catch (error) {
     console.error("Error fetching all orders:", error);
     res.status(500).json({ success: false, message: "Server error" });

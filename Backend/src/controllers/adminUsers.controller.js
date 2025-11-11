@@ -4,9 +4,18 @@ import { ADMIN_EMAIL } from "../config/env.js";
 
 export const getUsers = async (req, res) => {
   try {
-    const { page = 1, limit = 10, role } = req.query;
+    const { page = 1, limit = 10, role, searchTerm = "" } = req.query;
 
-    const query = role ? { role } : {};
+    const query = {};
+
+    if (role) query.role = role;
+
+    if (searchTerm.trim() !== "") {
+      query.$or = [
+        { name: { $regex: searchTerm, $options: "i" } },
+        { email: { $regex: searchTerm, $options: "i" } },
+      ];
+    }
 
     const users = await User.find(query)
       .sort({ createdAt: -1 })

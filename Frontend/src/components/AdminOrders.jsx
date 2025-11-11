@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import API from "../utils/api";
 import { toast } from "sonner";
 import "../assets/style/AdminOrders.css";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, Search } from "lucide-react";
 import Loader from "./Loader";
 import ViewOrderDetails from "./ViewOrderDetails";
 
@@ -13,25 +13,30 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [refreshLoading, setRefreshLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("All");
   const [isDetailsModel, setIsDetailsModel] = useState(null);
+
 
   useEffect(() => {
     setPage(1);
     setOrders([]);
     setHasMore(true);
-    fetchOrders(1, filter);
+    fetchOrders(1, filter, searchTerm);
   }, [filter]);
 
-  const fetchOrders = async (pageNum = 1, currentFilter = "All") => {
+  const fetchOrders = async (
+    pageNum = 1,
+    currentFilter = "All",
+    search = ""
+  ) => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
 
       const params = { page: pageNum, limit };
-      if (currentFilter !== "All") {
-        params.status = currentFilter.toLowerCase();
-      }
+      if (currentFilter !== "All") params.status = currentFilter.toLowerCase();
+      if (search?.trim()) params.search = search.trim();
 
       const res = await API.get(`/order/getAllOrders`, {
         params,
@@ -39,7 +44,8 @@ const AdminOrders = () => {
       });
 
       if (res.data.success) {
-        const { orders: fetchedOrders = [], total = 0 } = res.data;
+        const fetchedOrders = res.data.orders || [];
+        const total = res.data.total || 0;
 
         if (pageNum === 1) {
           setOrders(fetchedOrders);
@@ -47,11 +53,12 @@ const AdminOrders = () => {
           setOrders((prev) => [...prev, ...fetchedOrders]);
         }
 
-        if (orders.length + fetchedOrders.length >= total) {
-          setHasMore(false);
-        }
+        // Determine hasMore by comparing pageNum * limit with total
+        setHasMore(pageNum * limit < total);
       } else {
         toast.info(res.data.message || "No orders found");
+        setOrders([]);
+        setHasMore(false);
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -64,8 +71,17 @@ const AdminOrders = () => {
   const handleLoadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    fetchOrders(nextPage, filter);
+    fetchOrders(nextPage, filter, searchTerm);
   };
+
+  const handleSearch = (searchValue = null) => {
+    const searchToUse = searchValue !== null ? searchValue : searchTerm;
+    setPage(1);
+    setOrders([]);
+    setHasMore(true);
+    fetchOrders(1, filter, searchToUse);
+  };
+
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
@@ -166,6 +182,27 @@ const AdminOrders = () => {
             {status}
           </button>
         ))}
+      </div>
+
+      <div className="products-page-topbar">
+        <div className="products-page-topbar-search-input">
+          <input
+            type="text"
+            placeholder="Search orders by id and product name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch(e.target.value)}
+            className="products-page-search"
+          />
+          <span
+            className="icon"
+            onClick={() => handleSearch(searchTerm)}
+            role="button"
+            aria-label="Search"
+          >
+            <Search />
+          </span>
+        </div>
       </div>
 
       {loading && orders.length === 0 ? (

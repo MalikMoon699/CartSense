@@ -4,7 +4,7 @@ import Loader from "./Loader";
 import API from "../utils/api";
 import { toast } from "sonner";
 import AddProduct from "./AddProduct";
-import { PackagePlus, RefreshCcw } from "lucide-react";
+import { PackagePlus, RefreshCcw, Search } from "lucide-react";
 import ViewProductDetails from "./ViewProductDetails";
 
 const AdminProducts = () => {
@@ -16,6 +16,7 @@ const AdminProducts = () => {
   const [hasMore, setHasMore] = useState(true);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [isCreate, setIsCreate] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isDetailsModel, setIsDetailsModel] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
 
@@ -23,25 +24,25 @@ const AdminProducts = () => {
     fetchProducts(page);
   }, []);
 
-  const fetchProducts = async (pageNum = 1) => {
+  const fetchProducts = async (pageNum = 1, searchValue = "") => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
       const res = await API.get(`/adminProduct/getProducts`, {
-        params: { page: pageNum, limit },
+        params: { page: pageNum, limit, search: searchValue },
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (res.status === 200) {
         const { products: fetchedProducts, total } = res.data;
+
         if (pageNum === 1) {
           setProducts(fetchedProducts);
         } else {
           setProducts((prev) => [...prev, ...fetchedProducts]);
         }
-        if (products.length + fetchedProducts.length >= total) {
-          setHasMore(false);
-        }
+
+        setHasMore(pageNum * limit < total);
       } else {
         toast.error(res.data.message || "Failed to fetch products");
       }
@@ -56,7 +57,7 @@ const AdminProducts = () => {
   const handleLoadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    fetchProducts(nextPage);
+    fetchProducts(nextPage, searchTerm);
   };
 
   const handleDelete = async (id) => {
@@ -106,6 +107,12 @@ const AdminProducts = () => {
     }
   };
 
+  const handleSearch = (searchValue = null) => {
+    const searchToUse = searchValue !== null ? searchValue : searchTerm;
+    setPage(1);
+    fetchProducts(1, searchToUse);
+  };
+
   return (
     <div className="admin-users">
       <div className="admin-users-header">
@@ -143,7 +150,26 @@ const AdminProducts = () => {
           )}
         </button>
       </div>
-
+      <div className="products-page-topbar">
+        <div className="products-page-topbar-search-input">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch(e.target.value)}
+            className="products-page-search"
+          />
+          <span
+            className="icon"
+            onClick={() => handleSearch(searchTerm)}
+            role="button"
+            aria-label="Search"
+          >
+            <Search />
+          </span>
+        </div>
+      </div>
       <div className="products-table">
         <div className="products-table-header">
           <span>Image</span>
