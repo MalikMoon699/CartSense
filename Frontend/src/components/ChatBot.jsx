@@ -73,7 +73,7 @@ const ChatBot = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await API.get("/adminProduct/getAllProducts", {
-        params: { page: 1, limit: 20 },
+        params: { page: 1, limit: 40 },
         headers: { Authorization: `Bearer ${token}` },
       });
 
