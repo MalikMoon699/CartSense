@@ -11,6 +11,7 @@ const MyOrders = () => {
   const [filter, setFilter] = useState("All");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cancelLoading, setCancelLoading] = useState(null);
   const [isDetailsModel, setIsDetailsModel] = useState(null);
 
   useEffect(() => {
@@ -38,6 +39,29 @@ const MyOrders = () => {
       toast.error("Failed to load your orders");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOrderDelete = async (orderId) => {
+    if (!orderId) return toast.error("Order not found");
+    try {
+      setCancelLoading(orderId);
+      const token = localStorage.getItem("token");
+      const res = await API.delete(`/order/deleteOrder/${orderId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.success) {
+        toast.success("Order deleted successfully.");
+        setOrders((prevOrders) => prevOrders.filter((o) => o._id !== orderId));
+      } else {
+        toast.error(res.data.message || "Failed to delete order.");
+      }
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      toast.error("Something went wrong while deleting the order.");
+    } finally {
+      setCancelLoading(null);
     }
   };
 
@@ -116,8 +140,35 @@ const MyOrders = () => {
               </div>
 
               <div className="my-order-actions">
-                <button onClick={()=>{setIsDetailsModel(order);}} className="my-order-btn">View Details</button>
+                <button
+                  onClick={() => {
+                    setIsDetailsModel(order);
+                  }}
+                  className="my-order-btn"
+                >
+                  View Details
+                </button>
                 <button className="my-order-btn">Track Order</button>
+                {order.status === "pending" && (
+                  <button
+                    onClick={() => {
+                      handleOrderDelete(order._id);
+                    }}
+                    disabled={cancelLoading}
+                    style={{ cursor: cancelLoading ? "not-allowed" : "" }}
+                    className="my-order-cencel-btn"
+                  >
+                    {cancelLoading === order._id ? (
+                      <Loader
+                        size="20"
+                        color="#ff0000"
+                        style={{ width: "82px" }}
+                      />
+                    ) : (
+                      "Cancel Order"
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           ))

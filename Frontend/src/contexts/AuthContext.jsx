@@ -45,6 +45,8 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(null);
     setAuthAllow(false);
     setIsDetail(false);
+    navigate("/");
+    window.location.reload();
     if (redirect) navigate("/login");
   };
 

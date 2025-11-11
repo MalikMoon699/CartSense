@@ -82,7 +82,7 @@ const LandingPage = () => {
           ))}
         </div>
       </div>
-      <LandingNewArrivals products={products} />
+      {products?.length > 0 && <LandingNewArrivals products={products} />}
       <div className="landing-services-section">
         {landingServices.map((service, index) => (
           <div key={index} className="landing-services-card">

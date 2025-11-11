@@ -4,9 +4,12 @@ import { useAuth } from "../contexts/AuthContext";
 import { IMAGES } from "../services/Constants";
 import API from "../utils/api";
 import { toast } from "sonner";
+import Logout from "../auth/Logout";
 
 const UserDetails = ({ setSidebarType }) => {
-  const { currentUser, logout } = useAuth();
+  const { currentUser } = useAuth();
+  const [isLogout, setIsLogout] = useState(false);
+
   const [profileImg, setProfileImg] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -201,11 +204,23 @@ const UserDetails = ({ setSidebarType }) => {
         </div>
 
         <div className="logout-section">
-          <button onClick={logout} className="btn logout-btn">
+          <button
+            onClick={() => {
+              setIsLogout(true);
+            }}
+            className="btn logout-btn"
+          >
             Logout
           </button>
         </div>
       </div>
+      {isLogout && (
+        <Logout
+          onClose={() => {
+            setIsLogout(false);
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -1,0 +1,50 @@
+.lgout-modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.75rem;
+}
+
+.lgout-modal-message {
+  font-size: 0.95rem;
+  color: #b4b4b4;
+  margin-bottom: 1.5rem;
+}
+
+.lgout-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.lgout-modal-btn {
+  flex: 1;
+  padding: 0.6rem 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.lgout-modal-btn-cancel {
+  background: #f3f3f3;
+  color: #333;
+  transition: all 0.3s ease-in-out;
+}
+
+.lgout-modal-btn-cancel:hover {
+  background: #e6e6e6;
+  transform: scale(1.04);
+}
+
+.lgout-modal-btn-confirm {
+  background: #e63946;
+  color: #fff;
+  transition: all 0.3s ease-in-out;
+}
+
+.lgout-modal-btn-confirm:hover {
+  background: #d62839;
+  transform: scale(1.04);
+}

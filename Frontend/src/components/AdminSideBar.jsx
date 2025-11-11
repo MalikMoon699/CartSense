@@ -10,12 +10,12 @@ import {
   Users,
 } from "lucide-react";
 import { useNavigate } from "react-router";
-import { useAuth } from "../contexts/AuthContext";
+import Logout from "../auth/Logout";
 
 const AdminSideBar = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
   const [isSidebar, setIsSidebar] = useState(false);
+  const [isLogout, setIsLogout] = useState(false);
 
   return (
     <>
@@ -82,7 +82,8 @@ const AdminSideBar = () => {
           </div>
           <div
             onClick={() => {
-              navigate("/admin/orders"); setIsSidebar(false);
+              navigate("/admin/orders");
+              setIsSidebar(false);
             }}
             className={
               location.pathname === "/admin/orders"
@@ -97,7 +98,8 @@ const AdminSideBar = () => {
           </div>
           <div
             onClick={() => {
-              navigate("/admin/products"); setIsSidebar(false);
+              navigate("/admin/products");
+              setIsSidebar(false);
             }}
             className={
               location.pathname === "/admin/products"
@@ -112,7 +114,8 @@ const AdminSideBar = () => {
           </div>
           <div
             onClick={() => {
-              navigate("/admin/users"); setIsSidebar(false);
+              navigate("/admin/users");
+              setIsSidebar(false);
             }}
             className={
               location.pathname === "/admin/users" ? "admin-sidebar-active" : ""
@@ -125,13 +128,24 @@ const AdminSideBar = () => {
           </div>
         </div>
         <div className="admin-sidebar-footer">
-          <button onClick={logout}>
+          <button
+            onClick={() => {
+              setIsLogout(true);
+            }}
+          >
             <span className="icon">
               <LogOut size={18} />
             </span>
             Logout
           </button>
         </div>
+        {isLogout && (
+          <Logout
+            onClose={() => {
+              setIsLogout(false);
+            }}
+          />
+        )}
       </div>
     </>
   );

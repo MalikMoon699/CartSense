@@ -182,3 +182,18 @@
 .my-order-btn:hover {
   background: #c7d2fe;
 }
+
+.my-order-cencel-btn {
+  background: #ffe0e0;
+  color: #ff0000;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.my-order-cencel-btn:hover {
+  background: #fec7c7;
+}

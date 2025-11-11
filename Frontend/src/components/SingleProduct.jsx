@@ -24,6 +24,7 @@ const SingleProduct = () => {
   const [suggestedProducts, setSuggestedProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reviewLoading, setrReviewLoading] = useState(false);
   const [cartLoading, setCartLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [selectedFiled, setSelectedField] = useState({});
@@ -92,6 +93,7 @@ const SingleProduct = () => {
     if (!newReview.description || newReview.rating === 0) return;
 
     try {
+      setrReviewLoading(true);
       const token = localStorage.getItem("token");
       const res = await API.post(`/adminProduct/addReview/${id}`, newReview, {
         headers: { Authorization: `Bearer ${token}` },
@@ -101,6 +103,8 @@ const SingleProduct = () => {
       setNewReview({ description: "", rating: 0 });
     } catch (error) {
       console.error("Error submitting review:", error);
+    } finally {
+      setrReviewLoading(false);
     }
   };
 
@@ -380,31 +384,38 @@ const SingleProduct = () => {
               ))}
             </div>
 
-            <button type="submit">Submit Review</button>
+            <button disabled={reviewLoading} type="submit">
+              {!reviewLoading ? (
+                <Loader color="white" size="20" />
+              ) : (
+                "Submit Review"
+              )}
+            </button>
           </form>
         ) : (
           <p className="login-warning">Please log in to write a review.</p>
         )}
       </div>
-
-      <div className="single-product-suggestions">
-        <h2>You may also like</h2>
-        <div className="single-product-suggestion-grid">
-          {suggestedProducts.map((p) => (
-            <div
-              onClick={() => {
-                navigate(`/product/${p._id}`);
-              }}
-              key={p._id}
-              className="single-product-suggestion-card"
-            >
-              <img src={p.images?.[0]} alt={p.name} />
-              <h4>{p.name}</h4>
-              <p>Rs {p.price}</p>
-            </div>
-          ))}
+      {suggestedProducts.length > 0 && (
+        <div className="single-product-suggestions">
+          <h2>You may also like</h2>
+          <div className="single-product-suggestion-grid">
+            {suggestedProducts.map((p) => (
+              <div
+                onClick={() => {
+                  navigate(`/product/${p._id}`);
+                }}
+                key={p._id}
+                className="single-product-suggestion-card"
+              >
+                <img src={p.images?.[0]} alt={p.name} />
+                <h4>{p.name}</h4>
+                <p>Rs {p.price}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
