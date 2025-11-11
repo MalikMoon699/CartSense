@@ -154,10 +154,8 @@ export const getAllOrders = async (req, res) => {
     const status = req.query.status?.toLowerCase();
     const search = req.query.search?.trim();
 
-    // Build $match for status only (we'll incorporate search in the pipeline)
     const statusMatch = status && status !== "all" ? { status } : null;
 
-    // Start pipeline: lookup user & product
     const pipeline = [
       {
         $lookup: {
@@ -179,17 +177,13 @@ export const getAllOrders = async (req, res) => {
       { $unwind: "$product" },
     ];
 
-    // Add status filter if needed
     if (statusMatch) pipeline.push({ $match: statusMatch });
 
-    // Add search match if provided
     if (search) {
       const regex = new RegExp(search, "i");
-      // match against order _id (string), product name, product categories, user.name
       pipeline.push({
         $match: {
           $or: [
-            // Note: matching ObjectId as string - convert _id to string for regex
             { $expr: { $regexMatch: { input: { $toString: "$_id" }, regex } } },
             { "product.name": { $regex: regex } },
             { "product.categories": { $regex: regex } },
@@ -199,19 +193,15 @@ export const getAllOrders = async (req, res) => {
       });
     }
 
-    // pipeline copy for counting total matched documents
     const countPipeline = [...pipeline, { $count: "total" }];
     const countResult = await Orders.aggregate(countPipeline);
     const total = countResult.length > 0 ? countResult[0].total : 0;
-
-    // Add sorting + pagination to original pipeline
     pipeline.push(
       { $sort: { createdAt: -1 } },
       { $skip: skip },
       { $limit: limit }
     );
 
-    // Fetch paginated orders
     const orders = await Orders.aggregate(pipeline);
 
     res.status(200).json({
