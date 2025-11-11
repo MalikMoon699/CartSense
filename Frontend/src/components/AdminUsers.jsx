@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import ViewUserDetails from "./ViewUserDetails";
 
 const AdminUsers = () => {
-  const limit = 1;
+  const limit = 10;
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
