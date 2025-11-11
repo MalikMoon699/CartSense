@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "../assets/style/AdminDashboard.css";
 import Loader from "../components/Loader";
+import { RefreshCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   fetchAllOrders,
   fetchAllProducts,
-  fetchAllUsers,
   fetchTotalUsersCount,
   fetchTotalProductsCount,
   fetchTotalOrdersCount,
@@ -14,11 +14,11 @@ import {
 
 const AdminDashBoard = () => {
   const navigate = useNavigate();
-  const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [countsLoading, setCountsLoading] = useState(true);
+  const [refreshLoading, setRefreshLoading] = useState(false);
   const [usersCount, setUsersCount] = useState(0);
   const [productsCount, setProductsCount] = useState(0);
   const [ordersCount, setOrdersCount] = useState(0);
@@ -35,13 +35,11 @@ const AdminDashBoard = () => {
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      const [usersData, productsData, ordersData] = await Promise.all([
-        fetchAllUsers(),
+      const [productsData, ordersData] = await Promise.all([
         fetchAllProducts(),
         fetchAllOrders(),
       ]);
 
-      setUsers(usersData || []);
       setProducts(productsData || []);
       setOrders(ordersData || []);
     } catch (error) {
@@ -86,12 +84,58 @@ const AdminDashBoard = () => {
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 3);
 
+  const handleRefresh = async () => {
+    setRefreshLoading(true);
+    try {
+      await Promise.all([
+        fetchTotalUsersCount(setUsersCount),
+        fetchTotalProductsCount(setProductsCount),
+        fetchTotalOrdersCount(setOrdersCount),
+        fetchTotalRevenue(setTotalRevenue),
+      ]);
+
+      const [productsData, ordersData] = await Promise.all([
+        fetchAllProducts(),
+        fetchAllOrders(),
+      ]);
+
+      setProducts(productsData || []);
+      setOrders(ordersData || []);
+    } catch (error) {
+      console.error("Error refreshing dashboard:", error);
+    } finally {
+      setRefreshLoading(false);
+    }
+  };
+
   return (
     <div className="admin-dashboard-container">
-      <h1 className="admin-dashboard-title">Admin Dashboard</h1>
-      <p className="admin-dashboard-subtitle">
-        Manage users, products, and orders at a glance.
-      </p>
+      <div className="admin-users-header">
+        <div className="admin-users-info">
+          <h1 className="admin-dashboard-title">Admin Dashboard</h1>
+          <p className="admin-dashboard-subtitle">
+            Manage users, products, and orders at a glance.
+          </p>
+        </div>
+        <div>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshLoading}
+            className="refresh-btn"
+          >
+            {refreshLoading ? (
+              <Loader color="white" size="20" style={{ width: "69px" }} />
+            ) : (
+              <>
+                <span className="icon">
+                  <RefreshCcw size={16} />
+                </span>
+                Refresh
+              </>
+            )}
+          </button>
+        </div>
+      </div>
 
       <div className="admin-dashboard-stats">
         {stats.map((item, i) => (

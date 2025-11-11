@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import API from "../utils/api";
 import { toast } from "sonner";
 import "../assets/style/AdminOrders.css";
+import { RefreshCcw } from "lucide-react";
 import Loader from "./Loader";
 import ViewOrderDetails from "./ViewOrderDetails";
 
@@ -11,6 +12,7 @@ const AdminOrders = () => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [refreshLoading, setRefreshLoading] = useState(false);
   const [filter, setFilter] = useState("All");
   const [isDetailsModel, setIsDetailsModel] = useState(null);
 
@@ -88,13 +90,65 @@ const AdminOrders = () => {
     }
   };
 
+  const handleRefresh = async () => {
+    setRefreshLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+
+      const params = { page: 1, limit };
+      if (filter !== "All") {
+        params.status = filter.toLowerCase();
+      }
+
+      const res = await API.get(`/order/getAllOrders`, {
+        params,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.success) {
+        const { orders: fetchedOrders = [], total = 0 } = res.data;
+        setOrders(fetchedOrders);
+        setPage(1);
+        setHasMore(fetchedOrders.length < total);
+      } else {
+        toast.info(res.data.message || "No orders found");
+        setOrders([]);
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error refreshing orders:", error);
+      toast.error("Failed to refresh orders");
+    } finally {
+      setRefreshLoading(false);
+    }
+  };
+
   return (
     <div className="admin-orders-page">
-      <h1 className="admin-orders-title">All Orders</h1>
-      <p className="admin-orders-subtitle">
-        Manage and track all customer orders from here.
-      </p>
-
+      <div className="admin-users-header">
+        <div className="admin-users-info">
+          <h1 className="admin-orders-title">All Orders</h1>
+          <p className="admin-orders-subtitle">
+            Manage and track all customer orders from here.
+          </p>
+        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshLoading}
+          className="refresh-btn"
+        >
+          {refreshLoading ? (
+            <Loader color="white" size="20" style={{ width: "69px" }} />
+          ) : (
+            <>
+              <span className="icon">
+                <RefreshCcw size={16} />
+              </span>
+              Refresh
+            </>
+          )}
+        </button>
+      </div>
       <div className="admin-orders-filters">
         {[
           "All",

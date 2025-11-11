@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IMAGES } from "../services/Constants";
 import { formatDate } from "../services/Helpers";
+import { RefreshCcw } from "lucide-react";
 import "../assets/style/AdminUsers.css";
 import Loader from "./Loader";
 import API from "../utils/api";
@@ -13,6 +14,7 @@ const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [refreshLoading, setRefreshLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [isDetailsModel, setIsDetailsModel] = useState(null);
 
@@ -78,6 +80,31 @@ const AdminUsers = () => {
     }
   };
 
+  const handleRefresh = async () => {
+    setRefreshLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.get(`/adminUser/getUsers`, {
+        params: { page: 1, limit, role: "user" },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.status === 200) {
+        const { users: fetchedUsers, total } = res.data;
+        setUsers(fetchedUsers);
+        setPage(1);
+        setHasMore(fetchedUsers.length < total);
+      } else {
+        toast.error(res.data.message || "Failed to fetch users");
+      }
+    } catch (error) {
+      console.error("Error refreshing users:", error);
+      toast.error("An error occurred while refreshing users");
+    } finally {
+      setRefreshLoading(false);
+    }
+  };
+
   return (
     <div className="admin-users">
       <div className="admin-users-header">
@@ -87,6 +114,22 @@ const AdminUsers = () => {
             Manage all your website’s users.
           </p>
         </div>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshLoading}
+          className="refresh-btn"
+        >
+          {refreshLoading ? (
+            <Loader color="white" size="20" style={{ width: "69px" }} />
+          ) : (
+            <>
+              <span className="icon">
+                <RefreshCcw size={16} />
+              </span>
+              Refresh
+            </>
+          )}
+        </button>
       </div>
 
       <div className="users-table">

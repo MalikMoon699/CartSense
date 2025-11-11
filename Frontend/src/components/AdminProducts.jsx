@@ -4,7 +4,7 @@ import Loader from "./Loader";
 import API from "../utils/api";
 import { toast } from "sonner";
 import AddProduct from "./AddProduct";
-import { PackagePlus } from "lucide-react";
+import { PackagePlus, RefreshCcw } from "lucide-react";
 import ViewProductDetails from "./ViewProductDetails";
 
 const AdminProducts = () => {
@@ -14,6 +14,7 @@ const AdminProducts = () => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [refreshLoading, setRefreshLoading] = useState(false);
   const [isCreate, setIsCreate] = useState(false);
   const [isDetailsModel, setIsDetailsModel] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -80,6 +81,31 @@ const AdminProducts = () => {
     }
   };
 
+  const handleRefresh = async () => {
+    setRefreshLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.get(`/adminProduct/getProducts`, {
+        params: { page: 1, limit },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.status === 200) {
+        const { products: fetchedProducts, total } = res.data;
+        setProducts(fetchedProducts);
+        setPage(1);
+        setHasMore(fetchedProducts.length < total);
+      } else {
+        toast.error(res.data.message || "Failed to fetch products");
+      }
+    } catch (error) {
+      console.error("Error refreshing products:", error);
+      toast.error("An error occurred while refreshing products");
+    } finally {
+      setRefreshLoading(false);
+    }
+  };
+
   return (
     <div className="admin-users">
       <div className="admin-users-header">
@@ -99,6 +125,22 @@ const AdminProducts = () => {
             <PackagePlus size={16} />
           </span>
           Add Product
+        </button>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshLoading}
+          className="refresh-btn"
+        >
+          {refreshLoading ? (
+            <Loader color="white" size="20" style={{ width: "69px" }} />
+          ) : (
+            <>
+              <span className="icon">
+                <RefreshCcw size={16} />
+              </span>
+              Refresh
+            </>
+          )}
         </button>
       </div>
 

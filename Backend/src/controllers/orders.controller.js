@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import Product from "../models/product.model.js";
 import Cart from "../models/cart.model.js";
 import mailer from "../config/mailer.js";
+import {Frontend_Url} from "../config/env.js"
 
 export const createOrder = async (req, res) => {
   try {
@@ -223,7 +224,9 @@ export const updateOrder = async (req, res) => {
       id,
       { status },
       { new: true }
-    ).populate("user", "name email");
+    )
+      .populate("user", "name email")
+      .populate("product", "name description price images categories stock");
 
     if (!updatedOrder) {
       return res
@@ -231,34 +234,59 @@ export const updateOrder = async (req, res) => {
         .json({ success: false, message: "Order not found" });
     }
 
-    const userEmail = updatedOrder.user.email;
-    const userName = updatedOrder.user.name;
+    const userName = updatedOrder.user?.name || "Customer";
+    const userEmail = updatedOrder.user?.email;
+
+    const product = updatedOrder.product;
+
+    const productHtml = product
+      ? `
+   
+        ${product.images
+          .map((img) => `<img src="${img}" width="100" style="margin:5px"/>`)
+          .join("")}
+               <h4>${product.name}</h4>
+        <p>${product.description}</p>
+        <p>Price: $${product.price}</p>
+        <p>Quantity: ${updatedOrder.orderquantity}</p>
+      `
+      : "Product details not available.";
 
     const subject = `Your Order #${updatedOrder._id} Status Updated`;
-    const text = `Hello ${userName},
+    const text = `
+Hello ${userName},
 
 Your order status has been updated to: ${status.toUpperCase()}.
 
 Order ID: ${updatedOrder._id}
+Product: ${product?.name || "N/A"}
+Total Price: $${updatedOrder.totalprice}
+
 Thank you for shopping with us!
+`;
 
-Best regards,
-Your Shop Team`;
-
-    await mailer.sendMail({
-      from: `"Cart Sense" <${process.env.EMAIL_USER}>`,
-      to: userEmail,
-      subject,
-      text,
-      html: `
-        <h3>Hello ${userName},</h3>
-        <p>Your order status has been updated to: <b>${status.toUpperCase()}</b>.</p>
-        <p><b>Order ID:</b> ${updatedOrder._id}</p>
-        <p>Thank you for shopping with us!</p>
-        <br/>
-        <p>Best regards,<br/>Your Shop Team</p>
-      `,
-    });
+    try {
+      await mailer.sendMail({
+        from: `"Cart Sense" <${process.env.EMAIL_USER}>`,
+        to: userEmail,
+        subject,
+        text,
+        html: `
+          <h3>Hello ${userName},</h3>
+          <p>Your order status has been updated to: <b>${status.toUpperCase()}</b>.</p>
+          <p><b>Order ID:</b> ${updatedOrder._id}</p>
+          <h3>Product details:</h3>
+          ${productHtml}
+          <br/>
+          Total Price: $${updatedOrder.totalprice}
+          <br/>
+          <p>Thank you for shopping with us!</p>
+          <p>Best regards,<br/>Your Shop Team</p>
+        `,
+      });
+    } catch (mailError) {
+      console.error("Failed to send email:", mailError);
+    }
 
     res.status(200).json({
       success: true,
