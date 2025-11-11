@@ -57,35 +57,36 @@ export const FormatResponse = ({
       >
         {text}
       </ReactMarkdown>
+      {(matchedProducts.length > 0 || matchedRoutes.length > 0) && (
+        <div
+          style={{
+            marginTop: "12px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+          }}
+        >
+          {matchedProducts.map((p) => (
+            <button
+              key={p._id}
+              onClick={() => navigateTo(p._id)}
+              className="chatbot-view-product-btn"
+            >
+              <ShoppingBag size={16} /> View {p.name}
+            </button>
+          ))}
 
-      <div
-        style={{
-          marginTop: "12px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "8px",
-        }}
-      >
-        {matchedProducts.map((p) => (
-          <button
-            key={p._id}
-            onClick={() => navigateTo(p._id)}
-            className="chatbot-view-product-btn"
-          >
-            <ShoppingBag size={16} /> View {p.name}
-          </button>
-        ))}
-
-        {matchedRoutes.map((r) => (
-          <button
-            key={r.path}
-            onClick={() => navigateTo(r.path)}
-            className="chatbot-view-product-btn"
-          >
-            <SquareArrowOutUpRight size={16} /> Go {r.name}
-          </button>
-        ))}
-      </div>
+          {matchedRoutes.map((r) => (
+            <button
+              key={r.path}
+              onClick={() => navigateTo(r.path)}
+              className="chatbot-view-product-btn"
+            >
+              <SquareArrowOutUpRight size={16} /> Go {r.name}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
