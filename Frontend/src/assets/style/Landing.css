@@ -245,6 +245,10 @@
   transition: all 0.3s ease;
 }
 
+.swiper-button-disabled {
+  cursor: not-allowed;
+}
+
 .landing-new-arrival-prev:hover,
 .landing-new-arrival-next:hover {
   background-color: #e5f0ff;
