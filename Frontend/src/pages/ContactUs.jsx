@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import LandingFooter from "../components/LandingFooter";
 import { Clock9, Mail, MapPin, Phone } from "lucide-react";
+import API from "../utils/api";
+import { toast } from "sonner";
+import Loader from "../components/Loader";
 
 const ContactUs = () => {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,10 +18,23 @@ const ContactUs = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Thank you for contacting us! We'll respond soon.");
-    setFormData({ name: "", email: "", message: "" });
+    try {
+      setLoading(true);
+      const res = await API.post("/adminUser/contactMail", formData);
+      if (res.data.success) {
+        toast.success("Thank you! Your message has been sent.");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        toast.error(res.data.message || "Failed to send message.");
+      }
+    } catch (error) {
+      console.error("Contact form error:", error);
+      toast.error("Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -98,8 +115,13 @@ const ContactUs = () => {
               ></textarea>
             </div>
 
-            <button type="submit" className="contact-submit-btn">
-              Send Message
+            <button
+              type="submit"
+              disabled={loading}
+              style={{ cursor: loading ? "not-allowed" : "" }}
+              className="contact-submit-btn"
+            >
+              {loading ? <Loader size="20" color="white" /> : "Send Message"}
             </button>
           </form>
         </div>

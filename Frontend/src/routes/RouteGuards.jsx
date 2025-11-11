@@ -1,11 +1,28 @@
-import { Navigate, useOutletContext } from "react-router-dom";
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useOutletContext,
+} from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import Loader from "../components/Loader";
 
 export const ProtectedRoute = ({ children, adminOnly = false }) => {
-  const { authAllow, loading, currentUser } = useAuth();
+  const { authAllow, loading, currentUser, isOnline } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const outletContext = useOutletContext?.() || {};
   const { acountState, setAcountState } = outletContext;
+
+  useEffect(() => {
+    if (!isOnline && location.pathname !== "/offline") {
+      navigate("/offline", { replace: true });
+    }
+
+    if (isOnline && location.pathname === "/offline") {
+      navigate("/", { replace: true });
+    }
+  }, [isOnline, location, navigate]);
 
   if (loading) {
     return (
@@ -32,7 +49,11 @@ export const ProtectedRoute = ({ children, adminOnly = false }) => {
 };
 
 export const PublicRoute = ({ children }) => {
-  const { authAllow, loading } = useAuth();
+  const { authAllow, loading, isOnline } = useAuth();
+
+  if (!isOnline && location.pathname !== "/offline") {
+    return <Navigate to="/offline" replace />;
+  }
 
   if (loading) {
     return (

@@ -22,11 +22,13 @@ import ShippingInfo from "./components/infoPages/ShippingInfo.jsx";
 import Support from "./components/infoPages/Support.jsx";
 import PrivacyPolicy from "./components/infoPages/PrivacyPolicy.jsx";
 import TermsOfService from "./components/infoPages/TermsOfService.jsx";
+import Offline from "./pages/Offline.jsx";
 
 const App = () => {
   return (
     <>
       <Routes>
+        <Route path="/offline" element={<Offline />} />
         <Route element={<AppLayout />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/products" element={<Products />} />

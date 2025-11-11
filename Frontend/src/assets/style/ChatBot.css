@@ -120,8 +120,8 @@
   display: flex;
   align-items: center;
   padding: 10px;
-  border-top: 1px solid #e5e7eb;
-  background-color: #ffffff;
+  border-top: 1px solid rgb(255 255 255 / 35%);
+  background-color: rgba(255, 255, 255, 0.15);
   gap: 8px;
   z-index: 2;
   border-radius: 0px 0px 16px 16px;
@@ -140,7 +140,7 @@
 
 .chatbot-textarea {
   flex: 1;
-  border: 1px solid #007bff;
+  border: 1px solid transparent;
   border-radius: 20px;
   padding: 10px 14px;
   font-size: 16px;
@@ -155,7 +155,6 @@
   resize: none;
   scrollbar-width: none;
 }
-
 .chatbot-input:focus,
 .chatbot-textarea:focus {
   border-color: #007bff;
@@ -215,7 +214,6 @@
 .chatbot-view-product-btn:hover {
   background: #3730a3;
 }
-
 
 @media only screen and (max-width: 450px) {
   .chatbot-wrapper {
