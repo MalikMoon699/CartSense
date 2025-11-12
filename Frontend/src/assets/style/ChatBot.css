@@ -227,11 +227,20 @@
     gap: 3px;
   }
   .chatbot-container {
-    max-width: 95vw;
+    width: 100vw;
+    max-height: 100vh;
+    height: 100vh;
     margin-bottom: 10px;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    border-radius: 0px;
+    z-index: 1;
+  }
+  .chatbot-header {
+    border-radius: 0px;
   }
   .chat-bot-corner {
-    transform: skewY(36deg);
-    right: 21px;
+    display: none;
   }
 }
