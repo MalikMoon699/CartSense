@@ -104,7 +104,7 @@ const LandingNewArrivals = ({ products }) => {
                     />
                   ))}
                   <span className="landing-new-arrival-reviews">
-                    ({product?.reviewsCount || 0})
+                    ({product?.reviews?.length || 0})
                   </span>
                 </div>
                 <h3 className="landing-new-arrival-price">

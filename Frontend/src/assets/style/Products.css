@@ -451,7 +451,33 @@
   display: flex;
   align-items: center;
   justify-content: start;
+  flex-wrap: wrap;
   gap: 10px;
+}
+
+.single-product-update-btn {
+  position: fixed;
+  top: 50%;
+  right: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 7px 5px !important;
+  border-radius: 6px 0px 0px 6px !important;
+  transition: all 0.3s ease-in-out;
+}
+
+.single-product-update-btn-inner-span {
+  max-width: 0;
+  overflow: hidden;
+  transform: translateX(10px);
+  transition: all 0.3s ease-in-out;
+}
+
+.single-product-update-btn:hover .single-product-update-btn-inner-span {
+  max-width: 100px;
+  transform: translateX(0);
 }
 
 .single-product-btn {

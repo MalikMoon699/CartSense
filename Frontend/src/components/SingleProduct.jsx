@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import {
   CircleMinus,
   CirclePlus,
+  RefreshCcw,
   Share2,
   ShoppingCart,
   Sparkle,
@@ -14,6 +15,7 @@ import {
 import API from "../utils/api";
 import Loader from "./Loader";
 import { stocklabel, reviewDescription } from "../services/Helpers";
+import AddProduct from "./AddProduct";
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -31,6 +33,8 @@ const SingleProduct = () => {
   const [cartLoading, setCartLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [selectedFiled, setSelectedField] = useState({});
+  const [isCreate, setIsCreate] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
 
   const [newReview, setNewReview] = useState({
     name: "",
@@ -329,6 +333,21 @@ const SingleProduct = () => {
               </span>{" "}
               Share
             </button>
+            {currentUser && currentUser.role === "admin" && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setEditingProduct(product);
+                  setIsCreate(true);
+                }}
+                className="single-product-update-btn single-product-btn"
+              >
+                <span className="icon">
+                  <RefreshCcw size={15} />
+                </span>{" "}
+                <span className="single-product-update-btn-inner-span">Update</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -448,6 +467,15 @@ const SingleProduct = () => {
             ))}
           </div>
         </div>
+      )}
+      {isCreate && (
+        <AddProduct
+          product={editingProduct}
+          onClose={() => {
+            setIsCreate(false);
+            setEditingProduct(null);
+          }}
+        />
       )}
     </div>
   );
