@@ -51,7 +51,18 @@
   border-left: 4px solid #007bff;
 }
 
-.landing-infoPages-container a {
+.contact-link{
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.contact-link:hover {
+  text-decoration: underline;
+}
+
+.landing-infoPages-container a{
   color: #007bff;
   text-decoration: none;
   font-weight: 500;

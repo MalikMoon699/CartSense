@@ -122,8 +122,12 @@ const SideBar = ({ setSidebarType, setAcountState }) => {
 
           <div
             onClick={() => {
-              navigate("/cart");
-              onClose();
+              if (currentUser?._id) {
+                navigate("/cart");
+                onClose();
+              } else {
+                authUser();
+              }
             }}
             className={`normalSidebar-link ${
               location.pathname === "/cart" ? "active" : ""

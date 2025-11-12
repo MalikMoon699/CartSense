@@ -11,10 +11,16 @@ import {
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 import { IMAGES } from "../services/Constants";
+import { toast } from "sonner";
 
 const TopBar = ({ setAcountState, setSidebarType, setIsSearch }) => {
   const { authAllow, currentUser } = useAuth();
   const navigate = useNavigate();
+
+  const authUser = () => {
+    setAcountState("login");
+    toast.error("You need to be logged in to access this feature.");
+  };
 
   return (
     <div className="topbar">
@@ -58,7 +64,11 @@ const TopBar = ({ setAcountState, setSidebarType, setIsSearch }) => {
         </span>
         <span
           onClick={() => {
-            setSidebarType("cartsidebar");
+            if (currentUser?._id) {
+              setSidebarType("cartsidebar");
+            } else {
+              authUser();
+            }
           }}
           className="icon"
         >

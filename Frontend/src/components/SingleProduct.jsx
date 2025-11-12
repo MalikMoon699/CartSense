@@ -467,7 +467,9 @@ const SingleProduct = () => {
                 key={p._id}
                 className="single-product-suggestion-card"
               >
-                <img src={p.images?.[0]} alt={p.name} />
+                <div className="single-product-suggestion-card-img">
+                  <img src={p.images?.[0]} alt={p.name} />
+                </div>
                 <h4>{p.name}</h4>
                 <p>
                   {getCurrencySymbol(
