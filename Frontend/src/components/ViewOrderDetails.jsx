@@ -1,9 +1,16 @@
 import React from "react";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
+import { useAuth } from "../contexts/AuthContext";
+
 
 const ViewOrderDetails = ({ isDetailsModel, setIsDetailsModel }) => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   if (!isDetailsModel) return null;
 
 
@@ -36,13 +43,28 @@ const ViewOrderDetails = ({ isDetailsModel, setIsDetailsModel }) => {
               <strong>Product:</strong> {isDetailsModel?.product?.name}
             </p>
             <p>
-              <strong>Price:</strong> Rs. {isDetailsModel?.product?.price}
+              <strong>Price:</strong>{" "}
+              {getCurrencySymbol(
+                currentUser?.currencyType ||
+                  isDetailsModel?.product?.currencyType
+              )}{" "}
+              {getPriceByCurrency(
+                isDetailsModel?.product?.currencyType,
+                currentUser?.currencyType,
+                isDetailsModel?.product?.price
+              )}
             </p>
             <p>
               <strong>Quantity:</strong> {isDetailsModel?.orderquantity}
             </p>
             <p>
-              <strong>Total Price:</strong> Rs. {isDetailsModel?.totalprice}
+              <strong>Total Price:</strong>{" "}
+              {getCurrencySymbol(currentUser?.currencyType)}{" "}
+              {getPriceByCurrency(
+                "PKR",
+                currentUser?.currencyType,
+                isDetailsModel?.totalprice
+              )}
             </p>
           </div>
           <div className="viewProductDetails-description">

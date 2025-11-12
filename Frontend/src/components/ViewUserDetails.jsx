@@ -2,6 +2,11 @@ import { X } from "lucide-react";
 import { useNavigate } from "react-router";
 import { IMAGES } from "../services/Constants";
 import { useState } from "react";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
+import { useAuth } from "../contexts/AuthContext";
 import { fetchCart, fetchOrders } from "../services/Helpers";
 import Loader from "./Loader";
 
@@ -10,6 +15,7 @@ const ViewUserDetails = ({
   setIsDetailsModel,
   handleDelete,
 }) => {
+  const { currentUser } = useAuth();
   if (!isDetailsModel) return null;
   const { profileImg, name, email, createdAt, updatedAt, orders, cart, _id } =
     isDetailsModel;
@@ -124,7 +130,15 @@ const ViewUserDetails = ({
                         </h3>
                         <div className="view-my-order-details-product-inner-info">
                           <p className="view-my-order-details-product-price">
-                            Rs {product?.product?.price?.toLocaleString()}
+                            {getCurrencySymbol(
+                              currentUser?.currencyType ||
+                                product?.product?.currencyType
+                            )}{" "}
+                            {getPriceByCurrency(
+                              product?.product?.currencyType,
+                              currentUser?.currencyType,
+                              product?.product?.price
+                            )}
                           </p>
                           <p className="view-my-order-details-product-qty">
                             Quantity: <span>{product?.orderquantity}</span>
@@ -198,7 +212,15 @@ const ViewUserDetails = ({
                         </h3>
                         <div className="view-my-order-details-product-inner-info">
                           <p className="view-my-order-details-product-price">
-                            Rs {product?.product?.price?.toLocaleString()}
+                            {getCurrencySymbol(
+                              currentUser?.currencyType ||
+                                product?.product?.currencyType
+                            )}{" "}
+                            {getPriceByCurrency(
+                              product?.product?.currencyType,
+                              currentUser?.currencyType,
+                              product?.product?.price
+                            )}
                           </p>
                           <p className="view-my-order-details-product-qty">
                             Quantity: <span>{product?.quantity}</span>

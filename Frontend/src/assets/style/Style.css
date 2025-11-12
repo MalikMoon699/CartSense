@@ -6,6 +6,10 @@
   font-family: "Arial", sans-serif;
 }
 
+:disabled {
+  cursor: not-allowed !important;
+}
+
 .loaderWrapper {
   display: flex;
   align-items: center;

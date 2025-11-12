@@ -300,12 +300,6 @@ const Products = () => {
                     }}
                     className="landing-new-arrival-cart-btn"
                     disabled={stocklabel(product?.stock) === "out of Stock "}
-                    style={{
-                      cursor:
-                        stocklabel(product?.stock) === "out of Stock "
-                          ? "not-allowed"
-                          : "pointer",
-                    }}
                   >
                     {cartLoading === product?._id ? (
                       <Loader color="white" size="25" />

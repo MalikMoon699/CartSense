@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import "../assets/style/Checkout.css";
 import { handleEmptyCart } from "../services/Helpers";
 import { countryCityData } from "../services/Constants";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
 import { useAuth } from "../contexts/AuthContext";
 import API from "../utils/api";
 import { toast } from "sonner";
@@ -348,8 +352,14 @@ const Checkout = () => {
                     </span>
                   </p>
                   <span>
-                    Rs{" "}
-                    {singleProductPrice(item?.product?.price, item?.quantity)}
+                    {getCurrencySymbol(
+                      currentUser?.currencyType || item?.product?.currencyType
+                    )}{" "}
+                    {getPriceByCurrency(
+                      item?.product?.currencyType,
+                      currentUser?.currencyType,
+                      singleProductPrice(item?.product?.price, item?.quantity)
+                    )}
                   </span>
                 </div>
               ))
@@ -360,7 +370,14 @@ const Checkout = () => {
 
           <div className="checkout-summary-total">
             <p>Total</p>
-            <span>Rs {totalCheckoutPrice()}</span>
+            <span>
+              {getCurrencySymbol(currentUser?.currencyType)}{" "}
+              {getPriceByCurrency(
+                "PKR",
+                currentUser?.currencyType,
+                totalCheckoutPrice()
+              )}
+            </span>
           </div>
 
           <button

@@ -118,7 +118,6 @@ const ContactUs = () => {
             <button
               type="submit"
               disabled={loading}
-              style={{ cursor: loading ? "not-allowed" : "" }}
               className="contact-submit-btn"
             >
               {loading ? <Loader size="20" color="white" /> : "Send Message"}

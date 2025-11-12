@@ -2,6 +2,11 @@ import { X } from "lucide-react";
 import React from "react";
 import "../assets/style/ViewMyOrderDetails.css";
 import { useNavigate } from "react-router";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
+import { useAuth } from "../contexts/AuthContext";
 
 const ViewMyOrderDetails = ({ isDetailsModel, setIsDetailsModel }) => {
   if (!isDetailsModel) return null;
@@ -14,6 +19,7 @@ const ViewMyOrderDetails = ({ isDetailsModel, setIsDetailsModel }) => {
     status,
     createdAt,
   } = isDetailsModel;
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -49,7 +55,14 @@ const ViewMyOrderDetails = ({ isDetailsModel, setIsDetailsModel }) => {
                 </h3>
                 <div className="view-my-order-details-product-inner-info">
                   <p className="view-my-order-details-product-price">
-                    Rs {product?.price?.toLocaleString()}
+                    {getCurrencySymbol(
+                      currentUser?.currencyType || product?.currencyType
+                    )}{" "}
+                    {getPriceByCurrency(
+                      product?.currencyType,
+                      currentUser?.currencyType,
+                      product?.price
+                    )}
                   </p>
                   <p className="view-my-order-details-product-qty">
                     Quantity: <span>{orderquantity}</span>
@@ -88,7 +101,16 @@ const ViewMyOrderDetails = ({ isDetailsModel, setIsDetailsModel }) => {
               <div className="cart-sidebar-total-price">
                 <strong>Total Price:</strong>
                 <span className="straight-line"></span>
-                <span>Rs {totalprice.toLocaleString()}</span>
+                <span>
+                  {getCurrencySymbol(
+                    currentUser?.currencyType || product?.currencyType
+                  )}{" "}
+                  {getPriceByCurrency(
+                    "PKR",
+                    currentUser?.currencyType,
+                    totalprice
+                  )}
+                </span>
               </div>
               <div className="cart-sidebar-total-price">
                 <strong>Payment Method:</strong>

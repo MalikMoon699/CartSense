@@ -19,9 +19,6 @@ const conversionRates = {
 };
 
 export const getPriceByCurrency = (fromISOCode, toISOCode, amount) => {
-  console.log("fromISOCode---->", fromISOCode);
-  console.log("toISOCode---->", toISOCode);
-  console.log("amount---->", amount);
   if (!fromISOCode || !toISOCode || !amount) return amount || 0;
   const fromRate = conversionRates[fromISOCode.toUpperCase()];
   const toRate = conversionRates[toISOCode.toUpperCase()];
@@ -32,6 +29,7 @@ export const getPriceByCurrency = (fromISOCode, toISOCode, amount) => {
 };
 
 export const getCurrencySymbol = (ISOCode) => {
+  if (!ISOCode) return "Rs";
   const currency = Currencies.find(
     (c) => c.ISOCode.toUpperCase() === ISOCode.toUpperCase()
   );

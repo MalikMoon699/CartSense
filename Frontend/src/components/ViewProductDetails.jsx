@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
+import { useAuth } from "../contexts/AuthContext";
+
 
 const ViewProductDetails = ({ isDetailsModel, setIsDetailsModel }) => {
+  const { currentUser } = useAuth();
   const [selectedImage, setSelectedImage] = useState(
     isDetailsModel?.images?.[0] || ""
   );
@@ -63,7 +70,15 @@ const ViewProductDetails = ({ isDetailsModel, setIsDetailsModel }) => {
 
           <div className="viewProductDetails-product-meta">
             <p>
-              <strong>Price:</strong> Rs. {isDetailsModel.price}
+              <strong>Price:</strong>{" "}
+              {getCurrencySymbol(
+                currentUser?.currencyType || isDetailsModel?.currencyType
+              )}{" "}
+              {getPriceByCurrency(
+                isDetailsModel?.currencyType,
+                currentUser?.currencyType,
+                isDetailsModel.price
+              )}
             </p>
             <p>
               <strong>Stock:</strong>{" "}

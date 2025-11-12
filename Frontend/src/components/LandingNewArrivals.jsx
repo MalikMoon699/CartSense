@@ -3,6 +3,10 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import { stocklabel, handleAddToCart } from "../services/Helpers";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
 import { Star, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import Loader from "../components/Loader";
 import { useNavigate, useOutletContext } from "react-router";
@@ -11,8 +15,8 @@ import { useState } from "react";
 
 const LandingNewArrivals = ({ products }) => {
   const { setSidebarType } = useOutletContext();
-  const navigate = useNavigate("");
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(null);
 
   return (
@@ -77,12 +81,6 @@ const LandingNewArrivals = ({ products }) => {
                   }}
                   className="landing-new-arrival-cart-btn"
                   disabled={stocklabel(product?.stock) === "out of Stock "}
-                  style={{
-                    cursor:
-                      stocklabel(product?.stock) === "out of Stock "
-                        ? "not-allowed"
-                        : "pointer",
-                  }}
                 >
                   {loading === product?._id ? (
                     <Loader color="white" size="25" />
@@ -108,7 +106,14 @@ const LandingNewArrivals = ({ products }) => {
                   </span>
                 </div>
                 <h3 className="landing-new-arrival-price">
-                  Rs {product?.price}
+                  {getCurrencySymbol(
+                    currentUser?.currencyType || product?.currencyType
+                  )}{" "}
+                  {getPriceByCurrency(
+                    product?.currencyType,
+                    currentUser?.currencyType,
+                    product?.price
+                  )}
                 </h3>
                 <span
                   className={`landing-new-arrival-stock ${

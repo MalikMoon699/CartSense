@@ -383,8 +383,7 @@ const AddProduct = ({ onClose, product }) => {
               style={
                 descriptionLoading
                   ? {
-                      backgroundColor: "#858585",
-                      cursor: "not-allowed",
+                      backgroundColor: "#858585"
                     }
                   : {}
               }
@@ -445,7 +444,6 @@ const AddProduct = ({ onClose, product }) => {
             style={{
               width: "100%",
               padding: "12px",
-              cursor: loading ? "not-allowed" : "",
             }}
             className="add-user-btn"
             disabled={loading}

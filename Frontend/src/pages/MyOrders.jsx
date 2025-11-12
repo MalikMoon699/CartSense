@@ -167,7 +167,6 @@ const MyOrders = () => {
                       handleOrderDelete(order._id);
                     }}
                     disabled={cancelLoading}
-                    style={{ cursor: cancelLoading ? "not-allowed" : "" }}
                     className="my-order-cencel-btn"
                   >
                     {cancelLoading === order._id ? (

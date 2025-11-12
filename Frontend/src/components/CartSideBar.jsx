@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Minus, Plus, Trash2, X } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import "../assets/style/CartSideBar.css";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
 import API from "../utils/api";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
@@ -183,7 +187,15 @@ const CartSideBar = ({ setSidebarType }) => {
                         {item.product.name}
                       </h4>
                       <p className="cart-sidebar-price">
-                        ${item.product.price * item.quantity}
+                        {getCurrencySymbol(
+                          currentUser?.currencyType ||
+                            item?.product?.currencyType
+                        )}{" "}
+                        {getPriceByCurrency(
+                          item?.product?.currencyType,
+                          currentUser?.currencyType,
+                          item?.product?.price
+                        )}
                       </p>
                       <div className="cart-sidebar-controls">
                         <div className="cart-sidebar-quantity-controls">
@@ -222,8 +234,14 @@ const CartSideBar = ({ setSidebarType }) => {
                 <strong>Total</strong>
                 <span className="straight-line"></span>
                 <span>
-                  Rs{" "}
-                  {cart.reduce((t, i) => t + i.product.price * i.quantity, 0)}
+                  {getCurrencySymbol(
+                    currentUser?.currencyType || item?.product?.currencyType
+                  )}{" "}
+                  {getPriceByCurrency(
+                    "PKR",
+                    currentUser?.currencyType,
+                    cart.reduce((t, i) => t + i.product.price * i.quantity, 0)
+                  )}
                 </span>
               </div>
               <button

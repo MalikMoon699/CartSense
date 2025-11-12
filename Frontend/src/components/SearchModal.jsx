@@ -2,9 +2,15 @@ import { X, Star } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import API from "../utils/api";
 import Loader from "../components/Loader";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
+import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 
 const SearchModal = ({ onClose }) => {
+  const { currentUser } = useAuth();
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
@@ -134,7 +140,16 @@ const SearchModal = ({ onClose }) => {
                     <p className="search-result-category">
                       {product.categories?.join(", ")}
                     </p>
-                    <p className="search-result-price">Rs {product.price}</p>
+                    <p className="search-result-price">
+                      {getCurrencySymbol(
+                        currentUser?.currencyType || product?.currencyType
+                      )}{" "}
+                      {getPriceByCurrency(
+                        product?.currencyType,
+                        currentUser?.currencyType,
+                        product?.price
+                      )}
+                    </p>
                   </div>
                 </div>
               </div>

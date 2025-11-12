@@ -6,6 +6,7 @@ import { Currencies } from "../services/CurrencyHelper";
 import API from "../utils/api";
 import { toast } from "sonner";
 import Logout from "../auth/Logout";
+import Loader from "./Loader";
 
 const UserDetails = ({ setSidebarType }) => {
   const { currentUser } = useAuth();
@@ -15,10 +16,12 @@ const UserDetails = ({ setSidebarType }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [currencyType, setCurrencyType] = useState("");
+  const [userLoading, setUserLoading] = useState(false);
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   useEffect(() => {
     setProfileImg(currentUser?.profileImg || "");
@@ -55,6 +58,7 @@ const UserDetails = ({ setSidebarType }) => {
     }
 
     try {
+      setPasswordLoading(true);
       const token = localStorage.getItem("token");
 
       const res = await API.put(
@@ -80,11 +84,14 @@ const UserDetails = ({ setSidebarType }) => {
         error.response?.data?.message ||
           "An error occurred while updating your password"
       );
+    } finally {
+      setPasswordLoading(false);
     }
   };
 
   const handleSaveChanges = async () => {
     try {
+      setUserLoading(true);
       const token = localStorage.getItem("token");
       const formData = new FormData();
 
@@ -116,6 +123,8 @@ const UserDetails = ({ setSidebarType }) => {
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error("An error occurred while updating profile");
+    } finally {
+      setUserLoading(false);
     }
   };
 
@@ -165,7 +174,9 @@ const UserDetails = ({ setSidebarType }) => {
           <select
             name="currencyType"
             value={currencyType}
-            onChange={(e)=>{setCurrencyType(e.target.value);}}
+            onChange={(e) => {
+              setCurrencyType(e.target.value);
+            }}
             style={{ cursor: "pointer" }}
             className="login-input"
           >
@@ -190,8 +201,12 @@ const UserDetails = ({ setSidebarType }) => {
             </span>
             Upload Avatar
           </label>
-          <button onClick={handleSaveChanges} className="btn save-btn">
-            Save Changes
+          <button
+            onClick={handleSaveChanges}
+            disabled={userLoading}
+            className="btn save-btn"
+          >
+            {userLoading ? <Loader size="15" color="white" /> : "Save Changes"}
           </button>
         </div>
 
@@ -218,8 +233,16 @@ const UserDetails = ({ setSidebarType }) => {
             className="login-input"
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
-          <button className="btn update-btn" onClick={handlePasswordUpdate}>
-            Update Password
+          <button
+            className="btn update-btn"
+            disabled={passwordLoading}
+            onClick={handlePasswordUpdate}
+          >
+            {passwordLoading ? (
+              <Loader size="15" color="white" />
+            ) : (
+              "Update Password"
+            )}
           </button>
         </div>
 

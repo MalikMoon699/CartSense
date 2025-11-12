@@ -4,12 +4,13 @@ import Loader from "./Loader";
 import API from "../utils/api";
 import { toast } from "sonner";
 import AddProduct from "./AddProduct";
+import { useAuth } from "../contexts/AuthContext";
 import { PackagePlus, RefreshCcw, Search } from "lucide-react";
 import ViewProductDetails from "./ViewProductDetails";
 import { getPriceByCurrency } from "../services/CurrencyHelper";
 
 const AdminProducts = () => {
-  
+  const { currentUser } = useAuth();
   const limit = 10;
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);

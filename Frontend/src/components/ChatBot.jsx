@@ -2,6 +2,10 @@ import { Bot, ChevronLeft, SendHorizontal } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import "../assets/style/ChatBot.css";
 import Loader from "./Loader";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../services/Helpers";
 import { useAuth } from "../contexts/AuthContext";
@@ -192,8 +196,14 @@ ${
     ? products
         .map(
           (p, i) =>
-            `${i + 1}. ${p.name || "Unnamed Product"} — Rs ${
-              p.price?.toLocaleString?.() || "N/A"
+            `${i + 1}. ${p.name || "Unnamed Product"} — ${getCurrencySymbol(
+              currentUser?.currencyType || p?.currencyType
+            )} ${
+              getPriceByCurrency(
+                p?.currencyType,
+                currentUser?.currencyType,
+                p.price
+              )|| "N/A"
             }`
         )
         .slice(0, 20)
@@ -238,7 +248,15 @@ ${i + 1}. ${p.name || "Unnamed Product"}
             : "\n   • Reviews: No reviews yet.";
 
           const footer = `
-   • Price: Rs ${p.price?.toLocaleString?.() || "N/A"} Pkr
+   • Price: ${getCurrencySymbol(
+     currentUser?.currencyType || p?.currencyType
+   )} ${
+            getPriceByCurrency(
+              p?.currencyType,
+              currentUser?.currencyType,
+              p.price
+            )|| "N/A"
+          }
    • Description: ${p.description || "No description available."}
    • Images: ${p.images?.length ? p.images.join(", ") : "No images"}
 ${reviewDetails}`;

@@ -16,7 +16,10 @@ import API from "../utils/api";
 import Loader from "./Loader";
 import { stocklabel, reviewDescription } from "../services/Helpers";
 import AddProduct from "./AddProduct";
-import { getCurrencySymbol, getPriceByCurrency } from "../services/CurrencyHelper";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -281,7 +284,6 @@ const SingleProduct = () => {
               product.price
             )}
           </h2>
-          {/* <h2 className="single-product-price">Rs {product.price}</h2> */}
           <p
             style={{
               color: stocklabel(product.stock) === "out of Stock " ? "red" : "",
@@ -314,12 +316,6 @@ const SingleProduct = () => {
           <div className="single-product-btns">
             <button
               disabled={stocklabel(product?.stock) === "out of Stock "}
-              style={{
-                cursor:
-                  stocklabel(product?.stock) === "out of Stock "
-                    ? "not-allowed"
-                    : "pointer",
-              }}
               onClick={handleAddToCart}
               className="single-product-btn"
             >
@@ -408,7 +404,6 @@ const SingleProduct = () => {
                   reviewGenrateLoading
                     ? {
                         backgroundColor: "#858585",
-                        cursor: "not-allowed",
                       }
                     : {}
                 }
@@ -474,7 +469,16 @@ const SingleProduct = () => {
               >
                 <img src={p.images?.[0]} alt={p.name} />
                 <h4>{p.name}</h4>
-                <p>Rs {p.price}</p>
+                <p>
+                  {getCurrencySymbol(
+                    currentUser?.currencyType || p?.currencyType
+                  )}{" "}
+                  {getPriceByCurrency(
+                    p?.currencyType,
+                    currentUser?.currencyType,
+                    p?.price
+                  )}
+                </p>
               </div>
             ))}
           </div>

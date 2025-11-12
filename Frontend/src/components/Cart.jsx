@@ -4,6 +4,10 @@ import "../assets/style/Cart.css";
 import API from "../utils/api";
 import { toast } from "sonner";
 import Loader from "../components/Loader";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
 import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router";
 
@@ -94,7 +98,8 @@ const Cart = () => {
   };
 
   const handleCheckout = async () => {
-       if (!cart.length) return toast.warning("Sorry your cart is currently empty.");
+    if (!cart.length)
+      return toast.warning("Sorry your cart is currently empty.");
 
     const lowStockItems = cart.filter(
       (item) => item.quantity > item.product.stock
@@ -141,14 +146,15 @@ const Cart = () => {
     navigate("/checkout");
   };
 
-  if (loading) return (
-    <Loader
-      size="100"
-      style={{ width: "100%",height:"70vh" }}
-      className="layout-loading"
-      stroke="6"
-    />
-  );
+  if (loading)
+    return (
+      <Loader
+        size="100"
+        style={{ width: "100%", height: "70vh" }}
+        className="layout-loading"
+        stroke="6"
+      />
+    );
   return (
     <>
       {cart.length > 0 ? (
@@ -170,7 +176,16 @@ const Cart = () => {
                     <p className="cart-item-cat">
                       Category: {item.product.categories?.join(", ")}
                     </p>
-                    <p className="cart-price">Rs {item.product.price}</p>
+                    <p className="cart-price">
+                      {getCurrencySymbol(
+                        currentUser?.currencyType || item?.product?.currencyType
+                      )}{" "}
+                      {getPriceByCurrency(
+                        item?.product?.currencyType,
+                        currentUser?.currencyType,
+                        item.product.price
+                      )}
+                    </p>
                   </div>
 
                   <div className="cart-qty">
@@ -202,7 +217,14 @@ const Cart = () => {
                     <Trash2 size={18} />
                   </button>
                   <p className="cart-total-price">
-                    Rs {(item.product.price * item.quantity).toFixed(2)}
+                    {getCurrencySymbol(
+                      currentUser?.currencyType || item?.product?.currencyType
+                    )}{" "}
+                    {getPriceByCurrency(
+                      item?.product?.currencyType,
+                      currentUser?.currencyType,
+                      item.product.price * item.quantity
+                    )}
                   </p>
                 </div>
               ))}
@@ -214,8 +236,14 @@ const Cart = () => {
               <div className="cart-summary-row">
                 <span>Subtotal ({cart.length} items)</span>
                 <span>
-                  Rs{" "}
-                  {cart.reduce((t, i) => t + i.product.price * i.quantity, 0)}
+                  {getCurrencySymbol(
+                    currentUser?.currencyType || item?.product?.currencyType
+                  )}{" "}
+                  {getPriceByCurrency(
+                    "PKR",
+                    currentUser?.currencyType,
+                    cart.reduce((t, i) => t + i.product.price * i.quantity, 0)
+                  )}
                 </span>
               </div>
 
@@ -226,7 +254,12 @@ const Cart = () => {
 
               <div className="cart-summary-row">
                 <span>Tax</span>
-                <span>Rs 0</span>
+                <span>
+                  {getCurrencySymbol(
+                    currentUser?.currencyType || item?.product?.currencyType
+                  )}{" "}
+                  0
+                </span>
               </div>
 
               <hr className="cart-divider" />
@@ -234,8 +267,14 @@ const Cart = () => {
               <div className="cart-summary-row total">
                 <span>Total</span>
                 <span>
-                  Rs{" "}
-                  {cart.reduce((t, i) => t + i.product.price * i.quantity, 0)}
+                  {getCurrencySymbol(
+                    currentUser?.currencyType || item?.product?.currencyType
+                  )}{" "}
+                  {getPriceByCurrency(
+                    "PKR",
+                    currentUser?.currencyType,
+                    cart.reduce((t, i) => t + i.product.price * i.quantity, 0)
+                  )}
                 </span>
               </div>
 
