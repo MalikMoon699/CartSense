@@ -21,7 +21,7 @@ router.get("/getAllProducts", getAllProducts);
 router.get("/getTotalProductsCount", getTotalProductsCount);
 router.get("/getSingleProducts/:id", getSingleProducts);
 router.get("/getSameCategoriesProducts/:category", getSameCategoriesProducts);
-router.get("/getcategories", verifyToken, getCategories);
+router.get("/getcategories", getCategories);
 router.post("/addProduct", verifyToken, upload.array("images", 10), addProduct);
 router.post("/addReview/:id", verifyToken, addProductReview);
 router.put(

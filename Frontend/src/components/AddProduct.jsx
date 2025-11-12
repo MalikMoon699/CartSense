@@ -4,11 +4,13 @@ import { productDescription } from "../services/Helpers";
 import { toast } from "sonner";
 import Loader from "./Loader";
 import API from "../utils/api";
+import { Currencies } from "../services/CurrencyHelper";
 
 const AddProduct = ({ onClose, product }) => {
   const [form, setForm] = useState({
     name: "",
     price: "",
+    currencyType: "",
     stock: "",
     description: "",
     categories: [],
@@ -29,6 +31,7 @@ const AddProduct = ({ onClose, product }) => {
       setForm({
         name: product.name || "",
         price: product.price || 0,
+        currencyType: product.currencyType || "",
         stock: product.stock || 0,
         description: product.description || "",
         categories: product.categories || [],
@@ -151,7 +154,7 @@ const AddProduct = ({ onClose, product }) => {
   };
 
   const handleSubmit = async () => {
-    if (!form.name || !form.price) {
+    if (!form.name || !form.price || !form.currencyType) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -163,6 +166,7 @@ const AddProduct = ({ onClose, product }) => {
 
       formData.append("name", form.name);
       formData.append("price", form.price);
+      formData.append("currencyType", form.currencyType);
       formData.append("stock", form.stock);
       formData.append("description", form.description);
       form.categories.forEach((cat) => formData.append("categories", cat));
@@ -221,13 +225,12 @@ const AddProduct = ({ onClose, product }) => {
   };
 
   const handleGenerateDescription = async () => {
-    if (!Validations()) return toast.error("Please fill all required fields first.");
-    console.log("Reached AI generation step...");
+    if (!Validations())
+      return toast.error("Please fill all required fields first.");
     const description = await productDescription(setDescriptionLoading, form);
     setForm((prev) => ({ ...prev, description }));
     toast.success("AI description generated successfully!");
   };
-
 
   return (
     <div className="modal-overlay">
@@ -250,15 +253,36 @@ const AddProduct = ({ onClose, product }) => {
             placeholder="Product title"
             className="login-input"
           />
-          <input
-            type="number"
-            name="price"
-            min={0}
-            value={form.price}
-            onChange={handleChange}
-            placeholder="Product price"
-            className="login-input"
-          />
+          <div
+            style={{ marginBottom: "1rem" }}
+            className="addproduct-category-input"
+          >
+            <input
+              type="number"
+              name="price"
+              min={0}
+              value={form.price}
+              onChange={handleChange}
+              placeholder="Product price"
+              className="login-input"
+            />
+            <select
+              name="currencyType"
+              value={form.currencyType}
+              onChange={handleChange}
+              style={{ cursor: "pointer" }}
+              className="login-input"
+            >
+              <option value="" disabled>
+                Select Currency
+              </option>
+              {Currencies.map((currency, index) => (
+                <option key={index} value={currency.ISOCode}>
+                  {currency.Symbol} ({currency.ISOCode})
+                </option>
+              ))}
+            </select>
+          </div>
           <input
             type="number"
             name="stock"

@@ -4,6 +4,11 @@ import Loader from "../components/Loader";
 import { RefreshCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
+import { useAuth } from "../contexts/AuthContext";
+import {
   fetchAllOrders,
   fetchAllProducts,
   fetchTotalUsersCount,
@@ -14,6 +19,7 @@ import {
 
 const AdminDashBoard = () => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +76,9 @@ const AdminDashBoard = () => {
     },
     {
       title: "Total Revenue",
-      value: `Rs:${totalRevenue}`,
+      value: `${getCurrencySymbol(
+        currentUser?.currencyType
+      )}:${getPriceByCurrency("PKR", currentUser?.currencyType, totalRevenue)}`,
       color: "#f6c23e",
       action: "orders",
     },
@@ -101,6 +109,7 @@ const AdminDashBoard = () => {
 
       setProducts(productsData || []);
       setOrders(ordersData || []);
+      toast.success("Dashboard Refresh successfully.");
     } catch (error) {
       console.error("Error refreshing dashboard:", error);
     } finally {
@@ -190,8 +199,18 @@ const AdminDashBoard = () => {
                       </span>
                     </td>
                     <td>
-                      <strong>Rs:</strong>
-                      {order.totalprice}
+                      <strong>
+                        {getCurrencySymbol(
+                          currentUser?.currencyType ||
+                            order.product?.currencyType
+                        )}
+                        :
+                      </strong>
+                      {getPriceByCurrency(
+                        order.currencyType,
+                        currentUser?.currencyType,
+                        order.totalprice
+                      )}
                     </td>
                   </tr>
                 ))
@@ -226,8 +245,18 @@ const AdminDashBoard = () => {
                   <div>
                     <h4>{p.name}</h4>
                     <p>
-                      Price: <strong>Rs:</strong>
-                      {p.price}
+                      Price:{" "}
+                      <strong>
+                        {getCurrencySymbol(
+                          currentUser?.currencyType || p?.currencyType
+                        )}
+                        :
+                      </strong>
+                      {getPriceByCurrency(
+                        p.currencyType,
+                        currentUser?.currencyType,
+                        p.price
+                      )}
                     </p>
                     <p>Stock: {p.stock}</p>
                   </div>

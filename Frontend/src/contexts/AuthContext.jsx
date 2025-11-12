@@ -47,7 +47,6 @@ export const AuthProvider = ({ children }) => {
     setIsDetail(false);
     navigate("/");
     window.location.reload();
-    if (redirect) navigate("/login");
   };
 
   useEffect(() => {

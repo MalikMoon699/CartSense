@@ -16,6 +16,7 @@ import API from "../utils/api";
 import Loader from "./Loader";
 import { stocklabel, reviewDescription } from "../services/Helpers";
 import AddProduct from "./AddProduct";
+import { getCurrencySymbol, getPriceByCurrency } from "../services/CurrencyHelper";
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -118,7 +119,6 @@ const SingleProduct = () => {
   const handleAddToCart = async () => {
     if (!currentUser) {
       toast.error("Please log in to add items to your cart.");
-      navigate("/login");
       return;
     }
     setCartLoading(true);
@@ -271,7 +271,17 @@ const SingleProduct = () => {
             </div>
           )}
 
-          <h2 className="single-product-price">Rs {product.price}</h2>
+          <h2 className="single-product-price">
+            {getCurrencySymbol(
+              currentUser?.currencyType || product?.currencyType
+            )}{" "}
+            {getPriceByCurrency(
+              product?.currencyType,
+              currentUser?.currencyType,
+              product.price
+            )}
+          </h2>
+          {/* <h2 className="single-product-price">Rs {product.price}</h2> */}
           <p
             style={{
               color: stocklabel(product.stock) === "out of Stock " ? "red" : "",
@@ -345,7 +355,9 @@ const SingleProduct = () => {
                 <span className="icon">
                   <RefreshCcw size={15} />
                 </span>{" "}
-                <span className="single-product-update-btn-inner-span">Update</span>
+                <span className="single-product-update-btn-inner-span">
+                  Update
+                </span>
               </button>
             )}
           </div>

@@ -220,7 +220,7 @@ export const getOrdersById = async (req, res) => {
   try {
     const { id } = req.params;
     const orderItems = await Orders.find({ user: id })
-      .populate("product", "name price images")
+      .populate("product", "name price currencyType images")
       .sort({ createdAt: -1 });
 
     if (!orderItems.length) {

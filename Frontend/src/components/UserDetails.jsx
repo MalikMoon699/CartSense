@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { X, Upload } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { IMAGES } from "../services/Constants";
+import { Currencies } from "../services/CurrencyHelper";
 import API from "../utils/api";
 import { toast } from "sonner";
 import Logout from "../auth/Logout";
@@ -13,6 +14,7 @@ const UserDetails = ({ setSidebarType }) => {
   const [profileImg, setProfileImg] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [currencyType, setCurrencyType] = useState("");
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -22,6 +24,7 @@ const UserDetails = ({ setSidebarType }) => {
     setProfileImg(currentUser?.profileImg || "");
     setName(currentUser?.name || "");
     setEmail(currentUser?.email || "");
+    setCurrencyType(currentUser?.currencyType || "");
   }, [currentUser]);
 
   useEffect(() => {
@@ -87,6 +90,7 @@ const UserDetails = ({ setSidebarType }) => {
 
       formData.append("name", name);
       formData.append("email", email);
+      formData.append("currencyType", currencyType);
 
       const fileInput = document.querySelector('input[type="file"]');
       if (fileInput && fileInput.files[0]) {
@@ -158,6 +162,22 @@ const UserDetails = ({ setSidebarType }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          <select
+            name="currencyType"
+            value={currencyType}
+            onChange={(e)=>{setCurrencyType(e.target.value);}}
+            style={{ cursor: "pointer" }}
+            className="login-input"
+          >
+            <option value="" disabled>
+              Select Currency
+            </option>
+            {Currencies.map((currency, index) => (
+              <option key={index} value={currency.ISOCode}>
+                {currency.Symbol} ({currency.ISOCode})
+              </option>
+            ))}
+          </select>
           <label className="upload-label">
             <input
               type="file"

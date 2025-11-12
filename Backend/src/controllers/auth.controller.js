@@ -131,7 +131,7 @@ export const updatePassword = async (req, res) => {
 export const updateUserData = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email } = req.body;
+    const { name, email, currencyType } = req.body;
 
     const user = await User.findById(id);
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -149,14 +149,14 @@ export const updateUserData = async (req, res) => {
     }
 
     if (name) user.name = name;
-      if (email && email !== user.email) {
-        const existingUser = await User.findOne({ email });
-        if (existingUser && existingUser._id.toString() !== id) {
-          return res.status(400).json({ message: "Email already in use" });
-        }
-        user.email = email;
+    if (currencyType) user.currencyType = currencyType;
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser && existingUser._id.toString() !== id) {
+        return res.status(400).json({ message: "Email already in use" });
       }
-
+      user.email = email;
+    }
 
     await user.save();
 
@@ -166,6 +166,7 @@ export const updateUserData = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        currencyType: user.currencyType,
         profileImg: user.profileImg,
       },
     });

@@ -12,6 +12,7 @@ import { useNavigate, useLocation, useOutletContext } from "react-router";
 import { stocklabel } from "../services/Helpers";
 import API from "../utils/api";
 import Loader from "../components/Loader";
+import { getCurrencySymbol, getPriceByCurrency } from "../services/CurrencyHelper";
 
 const Products = () => {
   const navigate = useNavigate();
@@ -329,7 +330,16 @@ const Products = () => {
                   >
                     {stocklabel(product?.stock)}
                   </span>
-                  <h4 className="products-page-price">Rs {product.price}</h4>
+                  <h4 className="products-page-price">
+                    {getCurrencySymbol(
+                      currentUser?.currencyType || product?.currencyType
+                    )}{" "}
+                    {getPriceByCurrency(
+                      product?.currencyType,
+                      currentUser?.currencyType,
+                      product.price
+                    )}
+                  </h4>
                 </div>
               </div>
             ))

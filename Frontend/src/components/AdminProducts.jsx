@@ -6,10 +6,11 @@ import { toast } from "sonner";
 import AddProduct from "./AddProduct";
 import { PackagePlus, RefreshCcw, Search } from "lucide-react";
 import ViewProductDetails from "./ViewProductDetails";
+import { getPriceByCurrency } from "../services/CurrencyHelper";
 
 const AdminProducts = () => {
+  
   const limit = 10;
-
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -96,8 +97,10 @@ const AdminProducts = () => {
         setProducts(fetchedProducts);
         setPage(1);
         setHasMore(fetchedProducts.length < total);
+        toast.success("Products Refresh successfully.");
       } else {
-        toast.error(res.data.message || "Failed to fetch products");
+        toast.error("Failed to fetch products");
+        console.error(res.data.message);
       }
     } catch (error) {
       console.error("Error refreshing products:", error);
@@ -197,7 +200,14 @@ const AdminProducts = () => {
               <span className="product-category">
                 {product?.categories?.join(", ")}
               </span>
-              <span className="product-price">{product?.price}</span>
+              <span className="product-price">
+                {getPriceByCurrency(
+                  product.currencyType,
+                  currentUser?.currencyType,
+                  product.price
+                )}
+              </span>
+              {/* <span className="product-price">{product?.price}</span> */}
               <span className="product-price">{product?.stock}</span>
               <span className="product-rating">
                 {Math.round(product?.rating || 0)}

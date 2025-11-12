@@ -38,15 +38,19 @@ export const addProduct = async (req, res) => {
       name,
       description,
       price,
+      currencyType,
       stock,
       categories,
       specifications = [],
       selectedImages = [],
     } = req.body;
 
+    console.log("currencyType--->", currencyType);
+    console.log("req.body--->", req.body);
+
     const user = req.user?.id;
 
-    if (!name || !price || !categories) {
+    if (!name || !price || !currencyType || !categories) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields" });
@@ -87,6 +91,7 @@ export const addProduct = async (req, res) => {
       name,
       description,
       price,
+      currencyType,
       stock,
       categories,
       filleds,
@@ -112,7 +117,9 @@ export const addProduct = async (req, res) => {
               product.description?.slice(0, 150) ||
               "Check out our latest product!"
             }</p>
-            <p><b>Price:</b> Rs ${product.price.toFixed(2)}</p>
+            <p><b>Price:</b>${product.currencyType} ${product.price.toFixed(
+        2
+      )}</p>
 
             ${
               product.images?.[0]
@@ -209,6 +216,7 @@ export const updateProduct = async (req, res) => {
       {
         name: updateData.name,
         price: updateData.price,
+        currencyType: updateData.currencyType,
         stock: updateData.stock,
         description: updateData.description,
         categories: Array.isArray(updateData.categories)

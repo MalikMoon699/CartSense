@@ -5,8 +5,14 @@ import "../assets/style/AdminOrders.css";
 import { RefreshCcw, Search } from "lucide-react";
 import Loader from "./Loader";
 import ViewOrderDetails from "./ViewOrderDetails";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
+import { useAuth } from "../contexts/AuthContext";
 
 const AdminOrders = () => {
+  const { currentUser } = useAuth();
   const limit = 10;
   const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(1);
@@ -16,7 +22,6 @@ const AdminOrders = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("All");
   const [isDetailsModel, setIsDetailsModel] = useState(null);
-
 
   useEffect(() => {
     setPage(1);
@@ -82,7 +87,6 @@ const AdminOrders = () => {
     fetchOrders(1, filter, searchToUse);
   };
 
-
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
@@ -126,6 +130,7 @@ const AdminOrders = () => {
         setOrders(fetchedOrders);
         setPage(1);
         setHasMore(fetchedOrders.length < total);
+        toast.success("Orders Refresh successfully.");
       } else {
         toast.info(res.data.message || "No orders found");
         setOrders([]);
@@ -138,6 +143,8 @@ const AdminOrders = () => {
       setRefreshLoading(false);
     }
   };
+
+
 
   return (
     <div className="admin-orders-page">
@@ -236,7 +243,16 @@ const AdminOrders = () => {
                   <td>{order.user?.name || "N/A"}</td>
                   <td>{order.product?.name || "Unknown Product"}</td>
                   <td>{order.orderquantity}</td>
-                  <td>Rs {order.totalprice?.toFixed(2)}</td>
+                  <td>
+                    {getCurrencySymbol(
+                      currentUser?.currencyType || order?.currencyType
+                    )}{" "}
+                    {getPriceByCurrency(
+                      order.product.currencyType,
+                      currentUser?.currencyType,
+                      order.totalprice
+                    )}
+                  </td>
                   <td>
                     <span
                       className={`status-tag ${order.status.toLowerCase()}`}

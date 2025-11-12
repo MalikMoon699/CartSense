@@ -5,6 +5,10 @@ import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 import Loader from "../components/Loader";
 import ViewMyOrderDetails from "../components/ViewMyOrderDetails";
+import {
+  getCurrencySymbol,
+  getPriceByCurrency,
+} from "../services/CurrencyHelper";
 
 const MyOrders = () => {
   const { currentUser } = useAuth();
@@ -72,6 +76,7 @@ const MyOrders = () => {
           (order) => order.status.toLowerCase() === filter.toLowerCase()
         );
 
+
   return (
     <div className="my-order-page">
       <h1 className="my-order-title">My Orders</h1>
@@ -135,7 +140,14 @@ const MyOrders = () => {
                   </p>
                 </div>
                 <span className="my-order-item-price">
-                  Rs {order.totalprice?.toFixed(2)}
+                  {getCurrencySymbol(
+                    currentUser?.currencyType || order.product?.currencyType
+                  )}{" "}
+                  {getPriceByCurrency(
+                    order.product?.currencyType,
+                    currentUser?.currencyType,
+                    order.product.price
+                  )}
                 </span>
               </div>
 

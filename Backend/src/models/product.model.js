@@ -24,6 +24,7 @@ const ProductSchema = new mongoose.Schema(
       },
     ],
     price: { type: Number, min: 0 },
+    currencyType: { type: String, default: "" },
     stock: { type: Number, min: 0, default: 0 },
     rating: { type: Number, default: 0 },
     reviews: [ReviewSchema],

@@ -92,6 +92,7 @@ const handleLoadMore = () => {
         setUsers(fetchedUsers);
         setPage(1);
         setHasMore(fetchedUsers.length < total);
+         toast.success("Users Refresh successfully.");
       } else {
         toast.error(res.data.message || "Failed to fetch users");
       }

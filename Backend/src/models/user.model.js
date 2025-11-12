@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
     profileImg: { type: String, default: "" },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    currencyType: { type: String, default: "PKR" },
     password: { type: String, required: true },
     role: {
       type: String,
