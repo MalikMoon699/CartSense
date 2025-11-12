@@ -7,11 +7,13 @@ import {
   CirclePlus,
   Share2,
   ShoppingCart,
+  Sparkle,
+  Sparkles,
   Star,
 } from "lucide-react";
 import API from "../utils/api";
 import Loader from "./Loader";
-import { stocklabel } from "../services/Helpers";
+import { stocklabel, reviewDescription } from "../services/Helpers";
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -25,6 +27,7 @@ const SingleProduct = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reviewLoading, setrReviewLoading] = useState(false);
+  const [reviewGenrateLoading, setReviewGenrateLoading] = useState(false);
   const [cartLoading, setCartLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [selectedFiled, setSelectedField] = useState({});
@@ -164,6 +167,12 @@ const SingleProduct = () => {
       await navigator.clipboard.writeText(shareUrl);
       toast.info("Share link copied to clipboard!");
     }
+  };
+
+  const handleGenerateReview = async () => {
+    const review = await reviewDescription(setReviewGenrateLoading, product);
+    setNewReview({ ...newReview, description: review });
+    toast.success("AI review generated successfully!");
   };
 
   if (loading)
@@ -361,14 +370,38 @@ const SingleProduct = () => {
             onSubmit={handleReviewSubmit}
           >
             <h3>Write a Review</h3>
-            <textarea
-              placeholder="Write your review..."
-              value={newReview.description}
-              onChange={(e) =>
-                setNewReview({ ...newReview, description: e.target.value })
-              }
-            ></textarea>
-
+            <div className="ai-inherance-textarea-container">
+              <button
+                onClick={handleGenerateReview}
+                style={
+                  reviewGenrateLoading
+                    ? {
+                        backgroundColor: "#858585",
+                        cursor: "not-allowed",
+                      }
+                    : {}
+                }
+                className="ai-inherance"
+              >
+                {reviewGenrateLoading ? (
+                  <span className="spark-loader">
+                    <Sparkle size={18} />
+                  </span>
+                ) : (
+                  <span className="icon">
+                    <Sparkles size={18} />
+                  </span>
+                )}
+                Inherance
+              </button>
+              <textarea
+                placeholder="Write your review..."
+                value={newReview.description}
+                onChange={(e) =>
+                  setNewReview({ ...newReview, description: e.target.value })
+                }
+              />
+            </div>
             <div className="single-product-stars-select">
               {[...Array(5)].map((_, i) => (
                 <Star
@@ -385,7 +418,7 @@ const SingleProduct = () => {
             </div>
 
             <button disabled={reviewLoading} type="submit">
-              {!reviewLoading ? (
+              {reviewLoading ? (
                 <Loader color="white" size="20" />
               ) : (
                 "Submit Review"

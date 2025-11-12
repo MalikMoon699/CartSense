@@ -116,3 +116,104 @@ export const fetchCart = async (Id, setLoading, setCart) => {
     setLoading(false);
   }
 };
+
+export const reviewDescription = async (setLoading, Product) => {
+  setLoading(true);
+  try {
+    const prompt = `
+Generate a high-quality, professional product review for an e-commerce website.
+The tone should be helpful, natural, and engaging. Avoid exaggeration.
+
+Here are the product details:
+- Name: ${Product.name}
+- Description: ${Product.description}
+- Price: Rs ${Product.price} PKR
+- Category: ${Product.categories?.join(", ") || "N/A"}
+- Stock: ${Product.stock}
+- Rating: ${Product.rating}
+- Seller ID: ${Product.user}
+- Created At: ${Product.createdAt}
+- Updated At: ${Product.updatedAt}
+- Images: ${Product.images?.join(", ") || "N/A"}
+
+Return the review as a short paragraph (3–5 sentences) describing product quality, design, usability, and why customers might like it.
+`;
+
+    const payload = {
+      contents: [
+        {
+          parts: [{ text: prompt }],
+        },
+      ],
+    };
+
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    const aiText =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+      "Could not generate review at the moment.";
+    return aiText;
+  } catch (error) {
+    console.error("❌ Error generating review:", error);
+    toast.error("Failed to generate product review.");
+    return "Error generating review. Please try again later.";
+  } finally {
+    setLoading(false);
+  }
+};
+
+export const productDescription = async (setLoading, Product) => {
+  setLoading(true);
+  try {
+    const prompt = `
+Generate a high-quality, professional product description for an e-commerce website.
+The tone should be helpful, natural, and engaging. Avoid exaggeration.
+
+Here are the product details:
+- Name: ${Product.name}
+- Price: Rs ${Product.price} PKR
+- Category: ${Product.categories?.join(", ") || "N/A"}
+${
+  Product?.specifications?.length
+    ? `- Specifications: ${Product.specifications.join(", ")}`
+    : ""
+}
+- Images: ${Product.selectedImages?.join(", ") || "N/A"}
+
+Return the description as a long paragraph (7–9 sentences) describing product quality, design, usability, and why customers might like it.
+`;
+
+    const payload = {
+      contents: [
+        {
+          parts: [{ text: prompt }],
+        },
+      ],
+    };
+
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    const aiText =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+      "Could not generate review at the moment.";
+    return aiText;
+  } catch (error) {
+    console.error("❌ Error generating review:", error);
+    toast.error("Failed to generate product review.");
+    return "Error generating review. Please try again later.";
+  } finally {
+    setLoading(false);
+  }
+};

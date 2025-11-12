@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { BadgePlus, ImageUp, X } from "lucide-react";
+import { BadgePlus, ImageUp, Sparkle, Sparkles, X } from "lucide-react";
+import { productDescription } from "../services/Helpers";
 import { toast } from "sonner";
 import Loader from "./Loader";
 import API from "../utils/api";
@@ -19,6 +20,7 @@ const AddProduct = ({ onClose, product }) => {
   const [addCategoryLoading, setAddCategoryLoading] = useState(false);
   const [newSpec, setNewSpec] = useState({ title: "", value: "" });
   const [loading, setLoading] = useState(false);
+  const [descriptionLoading, setDescriptionLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
 
@@ -210,6 +212,23 @@ const AddProduct = ({ onClose, product }) => {
     }
   };
 
+  const Validations = () => {
+    if (!form.name) return false;
+    if (!form.price) return false;
+    if (!form.categories || form.categories.length === 0) return false;
+    if (!form.selectedImages || form.selectedImages.length === 0) return false;
+    return true;
+  };
+
+  const handleGenerateDescription = async () => {
+    if (!Validations()) return toast.error("Please fill all required fields first.");
+    console.log("Reached AI generation step...");
+    const description = await productDescription(setDescriptionLoading, form);
+    setForm((prev) => ({ ...prev, description }));
+    toast.success("AI description generated successfully!");
+  };
+
+
   return (
     <div className="modal-overlay">
       <div style={{ width: "450px" }} className="modal-content">
@@ -334,15 +353,38 @@ const AddProduct = ({ onClose, product }) => {
               ))}
             </div>
           </div>
-
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            className="login-textarea"
-            placeholder="Product description"
-          />
-
+          <div className="ai-inherance-textarea-container">
+            <button
+              onClick={handleGenerateDescription}
+              style={
+                descriptionLoading
+                  ? {
+                      backgroundColor: "#858585",
+                      cursor: "not-allowed",
+                    }
+                  : {}
+              }
+              className="ai-inherance"
+            >
+              {descriptionLoading ? (
+                <span className="spark-loader">
+                  <Sparkle size={18} />
+                </span>
+              ) : (
+                <span className="icon">
+                  <Sparkles size={18} />
+                </span>
+              )}
+              Inherance
+            </button>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              className="login-textarea"
+              placeholder="Product description"
+            />
+          </div>
           <input
             type="file"
             accept="image/*"

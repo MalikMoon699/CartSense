@@ -511,6 +511,80 @@
   gap: 10px;
 }
 
+.ai-inherance-textarea-container {
+  position: relative;
+}
+
+.ai-inherance {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 7px 5px !important;
+  right: 0px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  top: 0;
+  border-radius: 0px 8px 0px 8px !important;
+  background-color: #007bff !important;
+  transition: all 0.3s ease-in-out;
+}
+.ai-inherance:hover {
+  background-color: #005dc0 !important;
+}
+
+.spark-loader {
+  position: relative;
+  display: inline-block;
+  font-size: 0px;
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spark-loader::before,
+.spark-loader::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, #fde047 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0);
+  animation: spark-drop 1.5s ease-in-out infinite;
+}
+
+.spark-loader::after {
+  animation-delay: 0.75s;
+}
+
+@keyframes spark-drop {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, 200%) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 300%) scale(0);
+  }
+}
+
 .single-product-review-form input,
 .single-product-review-form textarea {
   padding: 12px;
@@ -519,6 +593,7 @@
   font-size: 1rem;
   outline: none;
   resize: none;
+  width: 100%;
 }
 
 .single-product-review-form textarea {
