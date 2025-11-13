@@ -760,8 +760,6 @@
 .qty-btn.disabled,
 .qty-btn:disabled {
   opacity: 0.4;
-  cursor: not-allowed;
-  pointer-events: none;
 }
 
 .products-page-mobile-filter-container {
