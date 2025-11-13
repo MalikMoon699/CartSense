@@ -76,7 +76,15 @@ const SearchModal = ({ onClose, onSearchByAi }) => {
   };
 
   const handleSearchByAi = () => {
-    onSearchByAi(`can you have ${search}`);
+    const trimmedSearch = search.trim();
+    const isFullQuery =
+      trimmedSearch.includes(" ") &&
+      /(\?|what|how|which|where|when|why)/i.test(trimmedSearch);
+
+    const queryToSend = isFullQuery
+      ? trimmedSearch
+      : `can you have ${trimmedSearch}`;
+    onSearchByAi(trimmedSearch);
     onClose();
   };
 

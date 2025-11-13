@@ -68,11 +68,8 @@ export const getTotalUsersCount = async (req, res) => {
 };
 
 export const contactMail = async (req, res) => {
-  console.log("checkPoint----->");
   try {
     const { name, email, message } = req.body;
-
-    console.log("req.body----->", req.body);
 
     if (!name || !email || !message) {
       return res.status(400).json({

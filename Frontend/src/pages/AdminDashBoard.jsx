@@ -58,7 +58,7 @@ const AdminDashBoard = () => {
   const stats = [
     {
       title: "Total Users",
-      value: usersCount-1,
+      value: usersCount - 1 || 0,
       color: "#4e73df",
       action: "users",
     },
