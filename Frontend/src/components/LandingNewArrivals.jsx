@@ -14,7 +14,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 
 const LandingNewArrivals = ({ products }) => {
-  const { setSidebarType } = useOutletContext();
+  const { setSidebarType, setCartCount } = useOutletContext();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(null);
@@ -76,7 +76,8 @@ const LandingNewArrivals = ({ products }) => {
                       product,
                       currentUser,
                       setLoading,
-                      setSidebarType
+                      setSidebarType,
+                      setCartCount
                     );
                   }}
                   className="landing-new-arrival-cart-btn"

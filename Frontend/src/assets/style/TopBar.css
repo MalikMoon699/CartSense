@@ -51,6 +51,22 @@
   background: #007bff14;
 }
 
+.topbar-cart {
+  position: relative;
+}
+
+.topbar-cart-count {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: #007bff;
+  color: white;
+  padding: 1px 4px;
+  font-size: 10px;
+  border-radius: 10px;
+  z-index: 1;
+}
+
 .topbar-profile {
   background: #e8e8e88c;
   border: 1px solid #bababa;

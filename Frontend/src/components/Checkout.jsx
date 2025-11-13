@@ -9,10 +9,11 @@ import {
 import { useAuth } from "../contexts/AuthContext";
 import API from "../utils/api";
 import { toast } from "sonner";
-import { useNavigate } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import Loader from "./Loader";
 
 const Checkout = () => {
+  const { setCartCount } = useOutletContext();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
@@ -177,7 +178,7 @@ const Checkout = () => {
 
       if (res.data.success) {
         toast.success("Order placed successfully!");
-        handleEmptyCart(currentUser);
+        handleEmptyCart(currentUser, setCartCount);
         navigate(`/my-orders/${currentUser?._id}`);
       } else {
         toast.error(res.data.message || "Failed to place order");

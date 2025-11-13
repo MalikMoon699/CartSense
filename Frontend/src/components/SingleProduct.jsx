@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import API from "../utils/api";
 import Loader from "./Loader";
-import { stocklabel, reviewDescription } from "../services/Helpers";
+import { stocklabel, reviewDescription, handleAddToCart } from "../services/Helpers";
 import AddProduct from "./AddProduct";
 import {
   getCurrencySymbol,
@@ -24,7 +24,7 @@ import {
 const SingleProduct = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
-  const { setSidebarType } = useOutletContext();
+  const { setSidebarType, setCartCount } = useOutletContext();
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
@@ -118,37 +118,7 @@ const SingleProduct = () => {
       setrReviewLoading(false);
     }
   };
-
-  const handleAddToCart = async () => {
-    if (!currentUser) {
-      toast.error("Please log in to add items to your cart.");
-      return;
-    }
-    setCartLoading(true);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await API.post(
-        `/cart/addProductCart`,
-        { userId: currentUser._id, productId: product._id, quantity },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (res.data.success) {
-        toast.success(`${product.name} added to your cart!`);
-      } else {
-        toast.info(res.data.message || "Product already in cart.");
-      }
-      setSidebarType("cartsidebar");
-    } catch (error) {
-      console.error("Error adding product to cart:", error);
-      toast.error("Failed to add product to cart. Please try again.");
-    } finally {
-      setCartLoading(false);
-    }
-  };
-
+  
   const handleQuantityChange = (type) => {
     if (type === "inc") {
       setQuantity((prev) => prev + 1);
@@ -316,7 +286,16 @@ const SingleProduct = () => {
           <div className="single-product-btns">
             <button
               disabled={stocklabel(product?.stock) === "out of Stock "}
-              onClick={handleAddToCart}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddToCart(
+                  product,
+                  currentUser,
+                  setCartLoading,
+                  setSidebarType,
+                  setCartCount
+                );
+              }}
               className="single-product-btn"
             >
               {cartLoading ? (

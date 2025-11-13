@@ -58,7 +58,7 @@ const AdminDashBoard = () => {
   const stats = [
     {
       title: "Total Users",
-      value: usersCount,
+      value: usersCount-1,
       color: "#4e73df",
       action: "users",
     },
@@ -207,7 +207,7 @@ const AdminDashBoard = () => {
                         :
                       </strong>
                       {getPriceByCurrency(
-                        order.currencyType,
+                        order?.product?.currencyType,
                         currentUser?.currencyType,
                         order.totalprice
                       )}

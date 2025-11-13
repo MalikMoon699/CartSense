@@ -10,8 +10,9 @@ import API from "../utils/api";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import Loader from "./Loader";
+import { handleDeleteCartProduct, handleQuantityChange } from "../services/Helpers";
 
-const CartSideBar = ({ setSidebarType }) => {
+const CartSideBar = ({ setSidebarType, setCartCount }) => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [cart, setCart] = useState([]);
@@ -41,59 +42,6 @@ const CartSideBar = ({ setSidebarType }) => {
       toast.error("Failed to load cart");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleQuantityChange = async (item, type) => {
-    const newQty =
-      type === "inc" ? item.quantity + 1 : Math.max(1, item.quantity - 1);
-
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await API.put(
-        `/cart/updateProductCart/${item.product._id}`,
-        { userId: currentUser._id, quantity: newQty },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (res.data.success) {
-        setCart((prevCart) =>
-          prevCart.map((p) =>
-            p._id === item._id ? { ...p, quantity: newQty } : p
-          )
-        );
-        toast.success("Cart updated");
-      } else {
-        toast.error(res.data.message || "Failed to update cart");
-      }
-    } catch (error) {
-      console.error("Error updating quantity:", error);
-      toast.error("Server error updating cart");
-    }
-  };
-
-  const handleDeleteCartProduct = async (item) => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await API.delete(
-        `/cart/removeProductCart/${item.product._id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          data: { userId: currentUser._id },
-        }
-      );
-
-      if (res.data.success) {
-        setCart((prevCart) => prevCart.filter((p) => p._id !== item._id));
-        toast.success("Product removed from cart");
-      } else {
-        toast.error(res.data.message || "Failed to remove item");
-      }
-    } catch (error) {
-      console.error("Error deleting cart item:", error);
-      toast.error("Server error removing product");
     }
   };
 
@@ -200,7 +148,15 @@ const CartSideBar = ({ setSidebarType }) => {
                       <div className="cart-sidebar-controls">
                         <div className="cart-sidebar-quantity-controls">
                           <button
-                            onClick={() => handleQuantityChange(item, "dec")}
+                            onClick={() =>
+                              handleQuantityChange(
+                                item,
+                                "dec",
+                                currentUser,
+                                setCart,
+                                setCartCount
+                              )
+                            }
                             className="cart-sidebar-btn dec"
                           >
                             <Minus size={18} />
@@ -209,7 +165,15 @@ const CartSideBar = ({ setSidebarType }) => {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => handleQuantityChange(item, "inc")}
+                            onClick={() =>
+                              handleQuantityChange(
+                                item,
+                                "dec",
+                                currentUser,
+                                setCart,
+                                setCartCount
+                              )
+                            }
                             className="cart-sidebar-btn inc"
                           >
                             <Plus size={18} />
@@ -217,7 +181,14 @@ const CartSideBar = ({ setSidebarType }) => {
                         </div>
                         <button
                           className="cart-sidebar-remove"
-                          onClick={() => handleDeleteCartProduct(item)}
+                          onClick={() =>
+                            handleDeleteCartProduct(
+                              item,
+                              currentUser,
+                              setCart,
+                              setCartCount
+                            )
+                          }
                         >
                           <Trash2 size={18} />
                         </button>

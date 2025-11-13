@@ -19,6 +19,7 @@ const AppLayout = () => {
   const [isSearch, setIsSearch] = useState(false);
   const [isChatBot, setIsChatBot] = useState(false);
   const [chatPrompt, setChatPrompt] = useState("");
+  const [cartCount, setCartCount] = useState(0);
 
   return (
     <div className="main-content">
@@ -61,6 +62,8 @@ const AppLayout = () => {
         setAcountState={setAcountState}
         setIsSearch={setIsSearch}
         setSidebarType={setSidebarType}
+        cartCount={cartCount}
+        setCartCount={setCartCount}
       />
 
       <div className="main-content-wrapper">
@@ -75,11 +78,20 @@ const AppLayout = () => {
           <CartSideBar
             setAcountState={setAcountState}
             setSidebarType={setSidebarType}
+            cartCount={cartCount}
+            setCartCount={setCartCount}
           />
         ) : null}
 
         <Outlet
-          context={{ setAcountState, acountState, sidebarType, setSidebarType }}
+          context={{
+            setAcountState,
+            acountState,
+            sidebarType,
+            setSidebarType,
+            cartCount,
+            setCartCount,
+          }}
         />
         <ChatBot
           isChatBot={isChatBot}

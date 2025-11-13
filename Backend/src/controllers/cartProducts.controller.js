@@ -148,3 +148,25 @@ export const emptyCart = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const getCartCount = async (req, res) => {
+  try {
+    const { id: userId } = req.params;
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing userId" });
+    }
+
+    const cartItems = await Cart.find({ user: userId });
+    const totalCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
+    res.status(200).json({
+      success: true,
+      cartCount: totalCount,
+    });
+  } catch (error) {
+    console.error("Error fetching cart count:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

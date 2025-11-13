@@ -16,7 +16,7 @@ import { getCurrencySymbol, getPriceByCurrency } from "../services/CurrencyHelpe
 
 const Products = () => {
   const navigate = useNavigate();
-  const { setSidebarType } = useOutletContext();
+  const { setSidebarType, setCartCount } = useOutletContext();
   const location = useLocation();
   const limit = 10;
   const { currentUser } = useAuth();
@@ -295,7 +295,8 @@ const Products = () => {
                         product,
                         currentUser,
                         setCartLoading,
-                        setSidebarType
+                        setSidebarType,
+                        setCartCount
                       );
                     }}
                     className="landing-new-arrival-cart-btn"

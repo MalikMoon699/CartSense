@@ -27,7 +27,8 @@ export const handleAddToCart = async (
   product,
   currentUser,
   setLoading = null,
-  setSidebarType = null
+  setSidebarType = null,
+  setCartCount = 0
 ) => {
   if (!currentUser) {
     toast.error("Please log in to add items to your cart.");
@@ -50,6 +51,7 @@ export const handleAddToCart = async (
     } else {
       toast.info(res.data.message || "Product already in cart.");
     }
+    fetchCartCount(currentUser._id, setCartCount);
     setSidebarType("cartsidebar");
   } catch (error) {
     console.error("Error adding product to cart:", error);
@@ -59,12 +61,79 @@ export const handleAddToCart = async (
   }
 };
 
-export const handleEmptyCart = async (currentUser) => {
+export  const handleQuantityChange = async (
+  item,
+  type,
+  currentUser,
+  setCart,
+  setCartCount
+) => {
+  const newQty =
+    type === "inc" ? item.quantity + 1 : Math.max(1, item.quantity - 1);
+
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await API.put(
+      `/cart/updateProductCart/${item.product._id}`,
+      { userId: currentUser._id, quantity: newQty },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (res.data.success) {
+      setCart((prevCart) =>
+        prevCart.map((p) =>
+          p._id === item._id ? { ...p, quantity: newQty } : p
+        )
+      );
+      toast.success("Cart updated");
+      fetchCartCount(currentUser._id, setCartCount);
+    } else {
+      toast.error(res.data.message || "Failed to update cart");
+    }
+  } catch (error) {
+    console.error("Error updating quantity:", error);
+    toast.error("Server error updating cart");
+  }
+};
+
+export const handleDeleteCartProduct = async (
+  item,
+  currentUser,
+  setCart,
+  setCartCount
+) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await API.delete(
+      `/cart/removeProductCart/${item.product._id}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { userId: currentUser._id },
+      }
+    );
+
+    if (res.data.success) {
+      setCart((prevCart) => prevCart.filter((p) => p._id !== item._id));
+      toast.success("Product removed from cart");
+      fetchCartCount(currentUser._id, setCartCount);
+    } else {
+      toast.error(res.data.message || "Failed to remove item");
+    }
+  } catch (error) {
+    console.error("Error deleting cart item:", error);
+    toast.error("Server error removing product");
+  }
+};
+
+export const handleEmptyCart = async (currentUser, setCartCount = 0) => {
   try {
     const token = localStorage.getItem("token");
     const res = await API.delete(`/cart/emptyCart/${currentUser._id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    fetchCartCount(currentUser._id, setCartCount);
   } catch (error) {
     console.error("Error emptying cart:", error);
     toast.error("Server error emptying cart");
@@ -218,7 +287,12 @@ Return the description as a long paragraph (7–9 sentences) describing product 
   }
 };
 
-export const handleForget = async (email, setLoading, setAcountState, refresh) => {
+export const handleForget = async (
+  email,
+  setLoading,
+  setAcountState,
+  refresh
+) => {
   if (!email) return toast.error("email required");
   setLoading(true);
 
@@ -238,5 +312,26 @@ export const handleForget = async (email, setLoading, setAcountState, refresh) =
     toast.error("Login failed");
   } finally {
     setLoading(false);
+  }
+};
+
+export const fetchCartCount = async (Id, setCartCount) => {
+  if (!Id) return setCartCount(0);
+  try {
+    const token = localStorage.getItem("token");
+    const res = await API.get(`/cart/getCartCount/${Id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.data.success) {
+      setCartCount(res.data.cartCount);
+    } else {
+      toast.info(res.data.message || "No items in cart");
+      setCartCount(0);
+    }
+  } catch (error) {
+    console.error("Error fetching cart:", error);
+    toast.error("Failed to load cart count");
+    setCartCount(0);
   }
 };

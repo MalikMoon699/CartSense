@@ -1,5 +1,5 @@
 // components/TopBar.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../assets/style/TopBar.css";
 import {
   LayoutDashboard,
@@ -12,8 +12,15 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 import { IMAGES } from "../services/Constants";
 import { toast } from "sonner";
+import { fetchCartCount } from "../services/Helpers";
 
-const TopBar = ({ setAcountState, setSidebarType, setIsSearch }) => {
+const TopBar = ({
+  setAcountState,
+  setSidebarType,
+  setIsSearch,
+  cartCount,
+  setCartCount,
+}) => {
   const { authAllow, currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -21,6 +28,10 @@ const TopBar = ({ setAcountState, setSidebarType, setIsSearch }) => {
     setAcountState("login");
     toast.error("You need to be logged in to access this feature.");
   };
+
+  useEffect(() => {
+    fetchCartCount(currentUser?._id, setCartCount);
+  }, [currentUser]);
 
   return (
     <div className="topbar">
@@ -62,7 +73,7 @@ const TopBar = ({ setAcountState, setSidebarType, setIsSearch }) => {
         >
           <Search />
         </span>
-        <span
+        <div
           onClick={() => {
             if (currentUser?._id) {
               setSidebarType("cartsidebar");
@@ -70,10 +81,13 @@ const TopBar = ({ setAcountState, setSidebarType, setIsSearch }) => {
               authUser();
             }
           }}
-          className="icon"
+          className="topbar-cart"
         >
-          <ShoppingCart />
-        </span>
+          <span className="icon">
+            <ShoppingCart />
+          </span>
+          <span className="topbar-cart-count">{cartCount || 0}</span>
+        </div>
 
         {!authAllow ? (
           <span
