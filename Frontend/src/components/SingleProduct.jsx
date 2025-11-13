@@ -11,10 +11,15 @@ import {
   Sparkle,
   Sparkles,
   Star,
+  Trash2,
 } from "lucide-react";
 import API from "../utils/api";
 import Loader from "./Loader";
-import { stocklabel, reviewDescription, handleAddToCart } from "../services/Helpers";
+import {
+  stocklabel,
+  reviewDescription,
+  handleAddToCart,
+} from "../services/Helpers";
 import AddProduct from "./AddProduct";
 import {
   getCurrencySymbol,
@@ -118,7 +123,7 @@ const SingleProduct = () => {
       setrReviewLoading(false);
     }
   };
-  
+
   const handleQuantityChange = (type) => {
     if (type === "inc") {
       setQuantity((prev) => prev + 1);
@@ -150,6 +155,23 @@ const SingleProduct = () => {
     const review = await reviewDescription(setReviewGenrateLoading, product);
     setNewReview({ ...newReview, description: review });
     toast.success("AI review generated successfully!");
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await API.post(
+        `/adminProduct/deleteReview/${id}`,
+        { reviewId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setReviews(res.data.product.reviews);
+      toast.success("Review deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      toast.error("Failed to delete review");
+    }
   };
 
   if (loading)
@@ -361,6 +383,18 @@ const SingleProduct = () => {
                         }
                       />
                     ))}
+                    {(currentUser?.role === "admin" ||
+                      review.user?._id === currentUser?._id) && (
+                      <span
+                        onClick={() => {
+                          handleDeleteReview(review._id);
+                        }}
+                        style={{ display: "inline-block" }}
+                        className="cart-sidebar-remove"
+                      >
+                        <Trash2 size={16} />
+                      </span>
+                    )}
                   </div>
                 </div>
                 <p>{review.description}</p>
@@ -435,7 +469,9 @@ const SingleProduct = () => {
               </button>
             </form>
           ) : (
-            <p className="login-warning">Admin not allowed to write a review.</p>
+            <p className="login-warning">
+              Admin not allowed to write a review.
+            </p>
           )
         ) : (
           <p className="login-warning">Please log in to write a review.</p>

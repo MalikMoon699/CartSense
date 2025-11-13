@@ -11,6 +11,7 @@ import {
   addProductReview,
   getTotalProductsCount,
   getAllProducts,
+  deleteProductReview,
 } from "../controllers/adminProducts.controller.js";
 import upload from "../middlewares/multer.middleware.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
@@ -24,6 +25,7 @@ router.get("/getSameCategoriesProducts/:category", getSameCategoriesProducts);
 router.get("/getcategories", getCategories);
 router.post("/addProduct", verifyToken, upload.array("images", 10), addProduct);
 router.post("/addReview/:id", verifyToken, addProductReview);
+router.post("/deleteReview/:id", verifyToken, deleteProductReview);
 router.put(
   "/updateProduct/:id",
   verifyToken,
