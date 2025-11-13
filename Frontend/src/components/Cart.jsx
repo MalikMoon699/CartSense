@@ -125,6 +125,18 @@ const Cart = () => {
                     <p className="cart-item-cat">
                       Category: {item.product.categories?.join(", ")}
                     </p>
+                    {item.selectedOptions &&
+                      Object.keys(item.selectedOptions).length > 0 && (
+                        <div className="my-order-item-options">
+                          {Object.entries(item.selectedOptions).map(
+                            ([key, value]) => (
+                              <p key={key} className="my-order-item-quantity">
+                                <b>{key}:</b> {value}
+                              </p>
+                            )
+                          )}
+                        </div>
+                      )}
                     <p className="cart-price">
                       {getCurrencySymbol(
                         currentUser?.currencyType || item?.product?.currencyType

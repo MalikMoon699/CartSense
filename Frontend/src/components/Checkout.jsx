@@ -169,6 +169,7 @@ const Checkout = () => {
         items: cart.map((item) => ({
           productId: item.product._id,
           quantity: item.quantity,
+          selectedOptions: item?.selectedOptions || {},
         })),
       };
 

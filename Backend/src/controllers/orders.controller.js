@@ -39,6 +39,7 @@ export const createOrder = async (req, res) => {
           paymentMethod,
           paymentDetails,
           address,
+          selectedOptions: item.selectedOptions || {},
           status: "pending",
         });
 
@@ -70,6 +71,10 @@ export const createOrder = async (req, res) => {
               <b>${order.product.name}</b><br>
               Quantity: ${order.orderquantity}<br>
               Price: Rs ${order.totalprice.toFixed(2)}
+              <br>
+              ${Object.entries(order?.selectedOptions || {})
+                .map(([key, value]) => `<p>${key}: ${value}</p>`)
+                .join("")}
               <br>
               <a href="${Frontend_Url}/product/${order.product._id}" 
                  style="display:inline-block;margin-top:5px;padding:8px 12px;background:#000;color:#fff;text-decoration:none;border-radius:5px;">

@@ -13,6 +13,7 @@ const CartSchema = new mongoose.Schema(
       default: 1,
       min: 1,
     },
+    selectedOptions: { type: Map, of: String },
   },
   { timestamps: true, strict: false }
 );

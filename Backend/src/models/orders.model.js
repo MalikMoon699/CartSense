@@ -22,6 +22,7 @@ const OrderSchema = new mongoose.Schema(
       enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
       default: "pending",
     },
+    selectedOptions: { type: Map, of: String, default: {} },
   },
   { timestamps: true }
 );

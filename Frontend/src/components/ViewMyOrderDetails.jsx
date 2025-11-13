@@ -18,6 +18,7 @@ const ViewMyOrderDetails = ({ isDetailsModel, setIsDetailsModel }) => {
     paymentMethod,
     status,
     createdAt,
+    selectedOptions,
   } = isDetailsModel;
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -98,6 +99,17 @@ const ViewMyOrderDetails = ({ isDetailsModel, setIsDetailsModel }) => {
                 <span className="straight-line"></span>
                 <span>{new Date(createdAt).toLocaleDateString()}</span>
               </div>
+              {selectedOptions && Object.keys(selectedOptions).length > 0 && (
+                <>
+                  {Object.entries(selectedOptions).map(([key, value]) => (
+                    <div key={key} className="cart-sidebar-total-price">
+                      <strong>{key}:</strong>
+                      <span className="straight-line"></span>
+                      <span>{value}</span>
+                    </div>
+                  ))}
+                </>
+              )}
               <div className="cart-sidebar-total-price">
                 <strong>Total Price:</strong>
                 <span className="straight-line"></span>

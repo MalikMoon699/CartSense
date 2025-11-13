@@ -28,7 +28,8 @@ export const handleAddToCart = async (
   currentUser,
   setLoading = null,
   setSidebarType = null,
-  setCartCount = 0
+  setCartCount = 0,
+  selectedOptions = {}
 ) => {
   if (!currentUser) {
     toast.error("Please log in to add items to your cart.");
@@ -40,7 +41,12 @@ export const handleAddToCart = async (
     const token = localStorage.getItem("token");
     const res = await API.post(
       `/cart/addProductCart`,
-      { userId: currentUser._id, productId: product._id, quantity: 1 },
+      {
+        userId: currentUser._id,
+        productId: product._id,
+        quantity: 1,
+        selectedOptions,
+      },
       {
         headers: { Authorization: `Bearer ${token}` },
       }

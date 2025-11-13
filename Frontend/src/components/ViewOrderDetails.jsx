@@ -13,7 +13,6 @@ const ViewOrderDetails = ({ isDetailsModel, setIsDetailsModel }) => {
   const { currentUser } = useAuth();
   if (!isDetailsModel) return null;
 
-
   return (
     <div onClick={() => setIsDetailsModel(null)} className="modal-overlay">
       <div
@@ -42,6 +41,19 @@ const ViewOrderDetails = ({ isDetailsModel, setIsDetailsModel }) => {
             <p>
               <strong>Product:</strong> {isDetailsModel?.product?.name}
             </p>
+            {isDetailsModel?.selectedOptions &&
+              Object.keys(isDetailsModel?.selectedOptions).length > 0 && (
+                <>
+                  {Object.entries(isDetailsModel?.selectedOptions).map(
+                    ([key, value]) => (
+                      <p key={key} >
+                        <strong>{key}:</strong>
+                        {value}
+                      </p>
+                    )
+                  )}
+                </>
+              )}
             <p>
               <strong>Price:</strong>{" "}
               {getCurrencySymbol(

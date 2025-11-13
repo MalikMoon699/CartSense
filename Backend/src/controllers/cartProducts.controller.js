@@ -22,7 +22,7 @@ export const getCartById = async (req, res) => {
 
 export const addProductToCart = async (req, res) => {
   try {
-    const { userId, productId, quantity = 1 } = req.body;
+    const { userId, productId, quantity = 1, selectedOptions = {} } = req.body;
     if (!userId || !productId) {
       return res
         .status(400)
@@ -41,7 +41,11 @@ export const addProductToCart = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Product not found" });
 
-    let cartItem = await Cart.findOne({ user: userId, product: productId });
+    let cartItem = await Cart.findOne({
+      user: userId,
+      product: productId,
+      selectedOptions: selectedOptions
+    });
 
     if (cartItem) {
       cartItem.quantity += quantity;
@@ -51,6 +55,7 @@ export const addProductToCart = async (req, res) => {
         user: userId,
         product: productId,
         quantity,
+        selectedOptions,
       });
       user.cart.push(cartItem._id);
       await user.save();

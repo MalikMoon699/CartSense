@@ -138,6 +138,18 @@ const MyOrders = () => {
                   <p className="my-order-item-quantity">
                     Quantity: {order.orderquantity}
                   </p>
+                  {order.selectedOptions &&
+                    Object.keys(order.selectedOptions).length > 0 && (
+                      <div className="my-order-item-options">
+                        {Object.entries(order.selectedOptions).map(
+                          ([key, value]) => (
+                            <p key={key} className="my-order-item-quantity">
+                              <b>{key}:</b> {value}
+                            </p>
+                          )
+                        )}
+                      </div>
+                    )}
                 </div>
                 <span className="my-order-item-price">
                   {getCurrencySymbol(
