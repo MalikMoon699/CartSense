@@ -5,6 +5,7 @@ import User from "../models/user.model.js";
 import dotenv from "dotenv";
 import { JWT_SECRET } from "../config/env.js";
 import multer from "multer";
+import mailer from "../config/mailer.js";
 import cloudinary from "../config/cloudinary.js";
 import { Readable } from "stream";
 
@@ -65,6 +66,115 @@ export const login = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
+  }
+};
+
+export const forgetPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
+
+    const user = await User.findOne({ email });
+    if (!user)
+      return res
+        .status(404)
+        .json({ message: "User not found with this email" });
+
+    const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
+
+    user.otpCode = otpCode;
+    user.otpExpires = Date.now() + 5 * 60 * 1000;
+    user.otpVerified = false;
+    await user.save();
+
+    await mailer.sendMail({
+      from: `"Cart Sense Otp" <no-reply@cart-sense.com>`,
+      to: email,
+      subject: "Password Reset OTP",
+      html: `
+        <div style="font-family: Arial, sans-serif; color: #333;">
+          <h2>Password Reset Request</h2>
+          <p>Hi ${user.name},</p>
+          <p>Your OTP for resetting your password is:</p>
+          <div style="
+            font-size: 24px;
+            letter-spacing: 4px;
+            font-weight: bold;
+            color: #007bff;
+          ">${otpCode}</div>
+          <p>This code will expire in <strong>5 minutes</strong>.</p>
+          <p>If you didn’t request this, you can ignore this email.</p>
+          <br/>
+          <p>Best regards,<br/>Your App Team</p>
+        </div>
+      `,
+    });
+
+    res.status(200).json({
+      message: "OTP sent successfully to email",
+    });
+  } catch (error) {
+    console.error("❌ Error in forgetPassword:", error);
+    res.status(500).json({ message: "Failed to send OTP email" });
+  }
+};
+
+export const otpCheck = async (req, res) => {
+  try {
+    const { email, otpCode } = req.body;
+    if (!email || !otpCode)
+      return res.status(400).json({ message: "Email and OTP are required" });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.otpCode !== otpCode)
+      return res.status(400).json({ message: "Invalid OTP" });
+
+    if (Date.now() > user.otpExpires)
+      return res.status(400).json({ message: "OTP expired" });
+
+    user.otpVerified = true;
+    await user.save();
+
+    res.status(200).json({ message: "OTP verified successfully" });
+  } catch (error) {
+    console.error("❌ Error in otpCheck:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const newPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+    if (!email || !newPassword)
+      return res
+        .status(400)
+        .json({ message: "Email and new password are required" });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (!user.otpVerified)
+      return res
+        .status(400)
+        .json({
+          message: "OTP verification required before resetting password",
+        });
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+
+    user.otpCode = null;
+    user.otpExpires = null;
+    user.otpVerified = false;
+
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error("❌ Error in newPassword:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 

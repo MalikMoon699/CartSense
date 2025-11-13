@@ -94,9 +94,14 @@ const Login = ({ setAcountState }) => {
           </span>
         </div>
 
-        <a href="#" className="forgot-password">
+        <span
+          onClick={() => {
+            setAcountState("passwordForget");
+          }}
+          className="forgot-password"
+        >
           Forgot Password?
-        </a>
+        </span>
 
         <button
           onClick={handleLogin}

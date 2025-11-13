@@ -16,8 +16,12 @@ const userSchema = new mongoose.Schema(
     },
     cart: [{ type: mongoose.Schema.Types.ObjectId, ref: "Cart" }],
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Orders" }],
+    otpCode: { type: String, default: null },
+    otpExpires: { type: Date, default: null },
+    otpVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
 
 export default mongoose.model("User", userSchema);
+// moonawan0071@gmail.com

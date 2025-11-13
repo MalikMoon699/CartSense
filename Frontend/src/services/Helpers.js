@@ -217,3 +217,26 @@ Return the description as a long paragraph (7–9 sentences) describing product 
     setLoading(false);
   }
 };
+
+export const handleForget = async (email, setLoading, setAcountState, refresh) => {
+  if (!email) return toast.error("email required");
+  setLoading(true);
+
+  try {
+    const res = await API.post("/auth/forget-password", { email });
+    if (res.data.token) {
+      localStorage.setItem("token", res.data.token);
+      setTimeout(async () => {
+        await refresh();
+        setAcountState("otp");
+      }, 100);
+    }
+    setAcountState("otp");
+    toast.success("Login successfully.");
+  } catch (err) {
+    console.error("[Login] Login error:", err);
+    toast.error("Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
