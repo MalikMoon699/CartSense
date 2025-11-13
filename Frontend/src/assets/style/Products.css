@@ -4,7 +4,7 @@
   width: 100%;
   height: 90vh;
   overflow: hidden;
-  background: #fafafa;
+  background: var(--backGroundColor);
   font-family: "Poppins", sans-serif;
 }
 
@@ -23,7 +23,7 @@
   font-size: 1.4rem;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #111;
+  color: var(--textColor);
 }
 
 .filter-block {
@@ -33,7 +33,7 @@
 .filter-block h4 {
   font-size: 1rem;
   font-weight: 600;
-  color: #333;
+  color: var(--cardSubTitleColor);
   margin-bottom: 10px;
 }
 
@@ -82,7 +82,7 @@
   padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;
-  color: #444;
+  color: var(--cardSubTitleColor);
   transition: all 0.25s ease;
 }
 
@@ -116,12 +116,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #ccc;
+  border: 1px solid var(--borderColor);
   border-radius: 8px;
   transition: all 0.3s ease;
   overflow: hidden;
   width: 100%;
-  padding: 0px 8px 1px 0px;
+  padding: 0px 8px 0px 0px;
 }
 
 .products-page-search {
@@ -131,11 +131,13 @@
   border: none;
   outline: none;
   font-size: 1rem;
+  background-color: var(--backGroundColor);
+  color: var(--textColor);
   transition: all 0.3s ease;
 }
 
 .products-page-topbar-search-input:focus-within {
-  border-color: #111;
+  border-color: var(--borderColorFocus);
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -166,7 +168,7 @@
 }
 
 .products-page-card {
-  background: #fff;
+  background: var(--cardColor);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
@@ -204,7 +206,7 @@
 .products-page-name {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #111;
+  color: var(--textColor);
   margin-bottom: 5px;
   width: 100%;
   white-space: nowrap;
@@ -214,7 +216,7 @@
 
 .products-page-category {
   font-size: 0.9rem;
-  color: #777;
+  color: var(--cardSubTitleColor);
   margin-bottom: 8px;
 }
 
@@ -283,7 +285,7 @@
 
 .products-page-price {
   font-size: 1.1rem;
-  color: #111;
+  color: var(--textColor);
   font-weight: 600;
   margin: 10px 0px 0px 3px;
 }
@@ -368,7 +370,7 @@
 
 .single-product-container {
   padding: 60px 5%;
-  background: #fafafa;
+  background: var(--backGroundColor);
   font-family: "Poppins", sans-serif;
 }
 
@@ -401,11 +403,11 @@
 .single-product-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #222;
+  color: var(--textColor);
 }
 
 .single-product-category {
-  color: #777;
+  color: var(--cardSubTitleColor);
   font-size: 0.95rem;
   margin-bottom: 10px;
 }
@@ -430,12 +432,12 @@
 
 .single-product-description {
   margin-bottom: 20px;
-  color: #555;
+  color: var(--cardSubTitleColor);
   line-height: 1.5;
 }
 
 .single-product-price {
-  color: #111;
+  color: var(--textColor);
   font-weight: 700;
   font-size: 1.5rem;
   margin-bottom: 10px;
@@ -443,7 +445,7 @@
 
 .single-product-stock {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--cardSubTitleColor);
   margin-bottom: 20px;
 }
 
@@ -505,7 +507,7 @@
 
 .single-product-reviews {
   margin-top: 60px;
-  background: #fff;
+  background: var(--cardColor);
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
@@ -616,6 +618,8 @@
   padding: 12px;
   border-radius: 10px;
   border: 1px solid #ccc;
+  background-color: var(--backGroundColor);
+  color: var(--textColor);
   font-size: 1rem;
   outline: none;
   resize: none;
@@ -652,7 +656,7 @@
 .single-product-suggestions h2 {
   font-size: 1.8rem;
   margin-bottom: 20px;
-  color: #222;
+  color: var(--textColor);
 }
 
 .single-product-suggestion-grid {
@@ -662,7 +666,7 @@
 }
 
 .single-product-suggestion-card {
-  background: #fff;
+  background: var(--cardColor);
   border-radius: 6px;
   overflow: hidden;
   text-align: center;
@@ -698,7 +702,7 @@
 
 .single-product-suggestion-card h4 {
   font-size: 1rem;
-  color: #222;
+  color: var(--textColor);
   margin-top: 15px;
   white-space: nowrap;
   overflow: hidden;
@@ -708,7 +712,7 @@
 }
 
 .single-product-suggestion-card p {
-  color: #666;
+  color: var(--cardSubTitleColor);
   font-size: 0.9rem;
   margin-top: 8px;
 }
@@ -717,11 +721,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #f7f7f7;
+  background: var(--cardColor);
   padding: 3px;
   border-radius: 8px;
   width: max-content;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--borderColor);
   margin-bottom: 10px;
 }
 

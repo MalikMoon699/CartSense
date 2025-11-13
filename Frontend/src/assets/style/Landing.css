@@ -137,19 +137,19 @@
 .landing-category-section {
   text-align: center;
   padding: 80px 20px;
-  background-color: #ffffff;
+  background-color: var(--backGroundColor);
 }
 
 .landing-category-title {
   font-size: 2.2rem;
   font-weight: 700;
-  color: #111;
+  color: var(--textColor);
   margin-bottom: 8px;
 }
 
 .landing-category-subtitle {
   font-size: 1rem;
-  color: #666;
+  color: var(--cardSubTitleColor);
   margin-bottom: 50px;
 }
 
@@ -163,7 +163,7 @@
 }
 
 .landing-category-card {
-  background-color: #f1f7ff;
+  background-color: var(--cardColor);
   border: 1px solid #e3ecff;
   border-radius: 18px;
   width: 100%;
@@ -194,14 +194,14 @@
 .landing-category-name {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #111;
+  color: var(--textColor);
   margin-top: 5px;
 }
 
 .landing-category-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  background-color: #e8f2ff;
+  background-color: var(--cardHoverColor);
 }
 
 .landing-category-card:hover .landing-category-image {
@@ -214,7 +214,7 @@
   max-width: 1250px;
   margin: 0 auto;
   padding: 60px 20px;
-  background-color: #fff;
+  background-color: var(--backGroundColor);
 }
 
 .landing-new-arrival-header {
@@ -227,7 +227,7 @@
 .landing-new-arrival-title {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #111;
+  color: var(--textColor);
 }
 
 .landing-new-arrival-arrows {
@@ -261,7 +261,7 @@
 }
 
 .landing-new-arrival-card {
-  background: #f5f9ff;
+  background: var(--cardColor);
   border: 1px solid #e3ecff;
   border-radius: 16px;
   overflow: hidden;
@@ -281,6 +281,7 @@
   align-items: center;
   justify-content: center;
   background: #fff;
+  overflow: hidden;
 }
 
 .landing-new-arrival-img {
@@ -339,7 +340,7 @@
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 8px;
-  color: #111;
+  color: var(--textColor);
   width: 100%;
   white-space: nowrap;
   overflow: hidden;
@@ -397,12 +398,12 @@
   padding: 60px 20px;
   max-width: 1200px;
   margin: 0 auto;
-  background-color: #ffffff;
+  background-color: var(--backGroundColor);
   border-radius: 16px;
 }
 
 .landing-services-card {
-  background: #f6faff;
+  background: var(--cardColor);
   border: 1px solid #e3ecff;
   border-radius: 14px;
   padding: 25px 20px;
@@ -414,7 +415,7 @@
 
 .landing-services-card:hover {
   transform: translateY(-5px);
-  background-color: #eef6ff;
+  background-color: var(--cardHoverColor);
 }
 
 .landing-services-icon {
@@ -440,13 +441,13 @@
 .landing-services-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #111;
+  color: var(--textColor);
   margin-bottom: 6px;
 }
 
 .landing-services-subtitle {
   font-size: 0.9rem;
-  color: #555;
+ color: var(--cardSubTitleColor);
   display: block;
   line-height: 1.4;
 }

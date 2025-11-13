@@ -2,25 +2,26 @@
   max-width: 1000px;
   margin: 40px auto;
   padding: 20px;
-  background: #f9fbff;
+  background: var(--cardColor);
+  /* background: var(--backGroundColor); */
   font-family: "Inter", sans-serif;
 }
 
 .my-order-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #1b1c1f;
+  color: var(--textColor);
 }
 
 .my-order-subtitle {
-  color: #6b7280;
+  color: var(--cardSubTitleColor);
   margin-bottom: 25px;
 }
 
 .my-order-filters {
   display: flex;
   gap: 10px;
-  background: #eaf0ff;
+  background: var(--backGroundColor);
   padding: 10px;
   border-radius: 10px;
   margin-bottom: 25px;
@@ -50,7 +51,7 @@
 }
 
 .my-order-card {
-  background: white;
+  background: var(--backGroundColor);
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   padding: 20px;
@@ -70,12 +71,12 @@
 
 .my-order-id {
   font-weight: 600;
-  color: #374151;
+  color: var(--textColor);
 }
 
 .my-order-date {
   font-size: 0.9rem;
-  color: #9ca3af;
+  color: var(--cardSubTitleColor);
 }
 
 .my-order-status-total {
@@ -153,7 +154,7 @@
 
 .my-order-item-quantity {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--cardSubTitleColor);
 }
 
 .my-order-item-price {

@@ -136,7 +136,7 @@ const MyOrders = () => {
                 <div className="my-order-item-details">
                   <p className="my-order-item-name">{order.product?.name}</p>
                   <p className="my-order-item-quantity">
-                    Quantity: {order.orderquantity}
+                   <b>Quantity:</b> {order.orderquantity}
                   </p>
                   {order.selectedOptions &&
                     Object.keys(order.selectedOptions).length > 0 && (

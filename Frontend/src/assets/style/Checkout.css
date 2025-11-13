@@ -2,7 +2,7 @@
   max-width: 1100px;
   margin: 40px auto;
   padding: 20px;
-  background: #fff;
+  background: var(--cardColor);
   border-radius: 16px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
@@ -12,7 +12,7 @@
   font-weight: 600;
   text-align: center;
   margin-bottom: 30px;
-  color: #222;
+  color: var(--textColor);
 }
 
 .checkout-content {
@@ -29,7 +29,7 @@
 .checkout-summary-section {
   flex: 0.8;
   min-width: 280px;
-  background: #fafafa;
+  background: var(--backGroundColor);
   padding: 20px;
   border-radius: 12px;
   border: 1px solid #eee;
@@ -39,7 +39,7 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #333;
+  color: var(--textColor);
 }
 
 .checkout-form {
@@ -62,16 +62,17 @@
 
 .checkout-form-group label {
   font-weight: 500;
-  color: #555;
+  color: var(--textColor);
 }
 
 .checkout-form-group select {
   width: 100%;
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--borderColor);
   font-size: 0.95rem;
-  background-color: #fff;
+  background-color: var(--backGroundColor);
+  color: var(--textColor);
   cursor: pointer;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -84,9 +85,11 @@
 
 .checkout-form-group input {
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--borderColor);
   border-radius: 8px;
   font-size: 0.95rem;
+  background-color: var(--backGroundColor);
+  color: var(--textColor);
   transition: border-color 0.3s ease;
 }
 
@@ -106,7 +109,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.95rem;
-  color: #444;
+  color: var(--textColor);
 }
 
 .checkout-summary-total {
@@ -177,7 +180,7 @@
 }
 
 .checkout-quantity-mini-label{
-  color: #ccc;
+  color: var(--cardSubTitleColor);
 }
 
 @media (max-width: 768px) {

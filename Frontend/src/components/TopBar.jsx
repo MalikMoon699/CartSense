@@ -4,8 +4,10 @@ import "../assets/style/TopBar.css";
 import {
   LayoutDashboard,
   Menu,
+  Moon,
   Search,
   ShoppingCart,
+  Sun,
   User,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
@@ -23,15 +25,37 @@ const TopBar = ({
 }) => {
   const { authAllow, currentUser } = useAuth();
   const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    if (savedMode === "true") {
+      setDarkMode(true);
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      setDarkMode(false);
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.setAttribute("data-theme", "dark");
+      localStorage.setItem("darkMode", "true");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+      localStorage.setItem("darkMode", "false");
+    }
+  }, [darkMode]);
+
+  useEffect(() => {
+    fetchCartCount(currentUser?._id, setCartCount);
+  }, [currentUser]);
 
   const authUser = () => {
     setAcountState("login");
     toast.error("You need to be logged in to access this feature.");
   };
-
-  useEffect(() => {
-    fetchCartCount(currentUser?._id, setCartCount);
-  }, [currentUser]);
 
   return (
     <div className="topbar">
@@ -65,6 +89,14 @@ const TopBar = ({
             DashBoard
           </button>
         )}
+        <span
+          onClick={() => {
+            setDarkMode(!darkMode);
+          }}
+          className="icon"
+        >
+          {darkMode ? <Sun /> : <Moon />}
+        </span>
         <span
           onClick={() => {
             setIsSearch(true);

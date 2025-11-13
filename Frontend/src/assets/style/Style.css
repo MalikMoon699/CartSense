@@ -1,9 +1,37 @@
+:root {
+  --backGroundColor: #ffffff;
+  --TopbarBackGroundColor: rgba(255, 255, 255, 0.15);
+  --textColor: #000000;
+  --borderColor: #ccc;
+  --borderColorFocus: #007bff38;
+  --cardColor: #007aff0f;
+  --cardHoverColor: #eef6ff;
+  --cardSubTitleColor: #555;
+  --boxShadowColor: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] {
+  --backGroundColor: #0d1b2a;
+  --TopbarBackGroundColor:rrgba(0, 0, 0, 0.12);
+  --textColor: #ffffff;
+  --borderColor: #2a3b55;
+  --borderColorFocus: #3399ff55;
+  --cardColor: #1b263b;
+  --cardHoverColor: #1a2c47;
+  --cardSubTitleColor: #9aacc4;
+  --boxShadowColor: rgba(255, 255, 255, 0.05);
+}
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
   scrollbar-width: none;
   font-family: "Arial", sans-serif;
+}
+body {
+  background-color: var(--backGroundColor);
+  color: var(--textColor);
 }
 
 :disabled {
@@ -107,8 +135,8 @@
 }
 
 @media (max-width: 450px) {
-  .modal-overlay{
-    padding:10px;
+  .modal-overlay {
+    padding: 10px;
   }
   .modal-content {
     width: 100% !important;

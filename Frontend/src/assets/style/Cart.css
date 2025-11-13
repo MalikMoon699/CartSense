@@ -23,7 +23,7 @@
 }
 
 .cart-item-card {
-  background: #e9f3ff;
+  background: var(--cardColor);
   border-radius: 12px;
   padding: 18px;
   display: flex;
@@ -90,7 +90,7 @@
 
 .cart-summary {
   width: 30%;
-  background: #f6faff;
+  background: var(--cardColor);
   padding: 18px;
   border-radius: 12px;
 }

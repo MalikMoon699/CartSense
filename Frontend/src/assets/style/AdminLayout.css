@@ -114,8 +114,7 @@
 }
 
 @media (max-width: 768px) {
-
-  .admin-mobile-topbar{
+  .admin-mobile-topbar {
     display: flex;
   }
 
