@@ -189,7 +189,8 @@ const handleSearch = () => {
               <span className="user-date">{formatDate(user?.createdAt)}</span>
               <span className="user-action">
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     handleDelete(user._id);
                   }}
                   className="delete-btn"

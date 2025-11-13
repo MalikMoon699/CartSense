@@ -13,7 +13,6 @@ const ViewProductDetails = ({ isDetailsModel, setIsDetailsModel }) => {
   const [selectedImage, setSelectedImage] = useState(
     isDetailsModel?.images?.[0] || ""
   );
-console.log("isDetailsModel--->", isDetailsModel);
   if (!isDetailsModel) return null;
 
   return (
