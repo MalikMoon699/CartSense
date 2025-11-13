@@ -372,65 +372,71 @@ const SingleProduct = () => {
         </div>
 
         {currentUser ? (
-          <form
-            className="single-product-review-form"
-            onSubmit={handleReviewSubmit}
-          >
-            <h3>Write a Review</h3>
-            <div className="ai-inherance-textarea-container">
-              <button
-                onClick={handleGenerateReview}
-                style={
-                  reviewGenrateLoading
-                    ? {
-                        backgroundColor: "#858585",
-                      }
-                    : {}
-                }
-                className="ai-inherance"
-              >
-                {reviewGenrateLoading ? (
-                  <span className="spark-loader">
-                    <Sparkle size={18} />
-                  </span>
-                ) : (
-                  <span className="icon">
-                    <Sparkles size={18} />
-                  </span>
-                )}
-                Inherance
-              </button>
-              <textarea
-                placeholder="Write your review..."
-                value={newReview.description}
-                onChange={(e) =>
-                  setNewReview({ ...newReview, description: e.target.value })
-                }
-              />
-            </div>
-            <div className="single-product-stars-select">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={22}
-                  onClick={() => setNewReview({ ...newReview, rating: i + 1 })}
-                  className={
-                    i < newReview.rating
-                      ? "single-product-star-filled"
-                      : "single-product-star"
+          currentUser?.role !== "admin" ? (
+            <form
+              className="single-product-review-form"
+              onSubmit={handleReviewSubmit}
+            >
+              <h3>Write a Review</h3>
+              <div className="ai-inherance-textarea-container">
+                <button
+                  onClick={handleGenerateReview}
+                  style={
+                    reviewGenrateLoading
+                      ? {
+                          backgroundColor: "#858585",
+                        }
+                      : {}
+                  }
+                  className="ai-inherance"
+                >
+                  {reviewGenrateLoading ? (
+                    <span className="spark-loader">
+                      <Sparkle size={18} />
+                    </span>
+                  ) : (
+                    <span className="icon">
+                      <Sparkles size={18} />
+                    </span>
+                  )}
+                  Inherance
+                </button>
+                <textarea
+                  placeholder="Write your review..."
+                  value={newReview.description}
+                  onChange={(e) =>
+                    setNewReview({ ...newReview, description: e.target.value })
                   }
                 />
-              ))}
-            </div>
+              </div>
+              <div className="single-product-stars-select">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    size={22}
+                    onClick={() =>
+                      setNewReview({ ...newReview, rating: i + 1 })
+                    }
+                    className={
+                      i < newReview.rating
+                        ? "single-product-star-filled"
+                        : "single-product-star"
+                    }
+                  />
+                ))}
+              </div>
 
-            <button disabled={reviewLoading} type="submit">
-              {reviewLoading ? (
-                <Loader color="white" size="20" />
-              ) : (
-                "Submit Review"
-              )}
-            </button>
-          </form>
+              <button disabled={reviewLoading} type="submit">
+                {reviewLoading ? (
+                  <Loader color="white" size="20" />
+                ) : (
+                  "Submit Review"
+                )}
+              </button>
+            </form>
+          ) : (
+            <p className="login-warning">Admin not allowed to write a review.</p>
+          )
         ) : (
           <p className="login-warning">Please log in to write a review.</p>
         )}
