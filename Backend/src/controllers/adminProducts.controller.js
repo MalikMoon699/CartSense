@@ -45,9 +45,6 @@ export const addProduct = async (req, res) => {
       selectedImages = [],
     } = req.body;
 
-    console.log("currencyType--->", currencyType);
-    console.log("req.body--->", req.body);
-
     const user = req.user?.id;
 
     if (!name || !price || !currencyType || !categories) {

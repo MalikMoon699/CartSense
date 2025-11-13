@@ -9,14 +9,14 @@ import {
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 
-const SearchModal = ({ onClose }) => {
+const SearchModal = ({ onClose, onSearchByAi }) => {
   const { currentUser } = useAuth();
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-    const navigate = useNavigate("");
+  const navigate = useNavigate("");
 
   const limit = 10;
 
@@ -75,6 +75,11 @@ const SearchModal = ({ onClose }) => {
     fetchProducts(nextPage);
   };
 
+  const handleSearchByAi = () => {
+    onSearchByAi(`can you have ${search}`);
+    onClose();
+  };
+
   return (
     <div onClick={onClose} className="modal-overlay">
       <div
@@ -114,6 +119,16 @@ const SearchModal = ({ onClose }) => {
             }}
           >
             Start typing to search products...
+          </p>
+        )}
+
+        {search.length !== 0 && products.length === 0 && !loading && (
+          <p className="no-results">
+            Start search by ai{" "}
+            <span onClick={handleSearchByAi} className="contact-link">
+              {search}
+            </span>
+            ...
           </p>
         )}
         {loading && products.length === 0 ? (

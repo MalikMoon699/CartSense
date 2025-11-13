@@ -17,6 +17,8 @@ const AppLayout = () => {
   const [sidebarType, setSidebarType] = useState(null);
   const [email, setEmail] = useState("");
   const [isSearch, setIsSearch] = useState(false);
+  const [isChatBot, setIsChatBot] = useState(false);
+  const [chatPrompt, setChatPrompt] = useState("");
 
   return (
     <div className="main-content">
@@ -48,6 +50,10 @@ const AppLayout = () => {
           onClose={() => {
             setIsSearch(false);
           }}
+          onSearchByAi={(prompt) => {
+            setChatPrompt(prompt);
+            setIsChatBot(true);
+          }}
         />
       )}
 
@@ -75,7 +81,12 @@ const AppLayout = () => {
         <Outlet
           context={{ setAcountState, acountState, sidebarType, setSidebarType }}
         />
-        <ChatBot />
+        <ChatBot
+          isChatBot={isChatBot}
+          setIsChatBot={setIsChatBot}
+          chatPrompt={chatPrompt}
+          setChatPrompt={setChatPrompt}
+        />
       </div>
     </div>
   );

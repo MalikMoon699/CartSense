@@ -17,10 +17,9 @@ import {
   PublicRoutes,
 } from "../services/Constants";
 
-const ChatBot = () => {
+const ChatBot = ({ isChatBot, setIsChatBot, chatPrompt, setChatPrompt }) => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-  const [isChatBot, setIsChatBot] = useState(false);
   const [sendLoading, setSendLoading] = useState(false);
   const [responseLoading, setResponseLoading] = useState(false);
   const [input, setInput] = useState("");
@@ -72,6 +71,14 @@ const ChatBot = () => {
       fetchCategories();
     }
   }, [isChatBot]);
+
+  useEffect(() => {
+    if (chatPrompt && isChatBot) {
+      setInput(chatPrompt);
+      handleSend(chatPrompt);
+      setChatPrompt("");
+    }
+  }, [chatPrompt, isChatBot]);
 
   const fetchProducts = async () => {
     try {
@@ -129,28 +136,9 @@ const ChatBot = () => {
     .map((r, i) => `${i + 1}. ${r.name} → ${r.path}`)
     .join("\n");
 
-  const infoText = `
-
-${
-  currentUser
-    ? `
-CurrentUser Details:
-- _Id: ${currentUser._id || ""}
-- Name: ${currentUser.name || ""}
-- Email: ${currentUser.email || ""}
-- createdAt: ${currentUser.createdAt || ""}
-- updatedAt: ${currentUser.updatedAt || ""}
-- orders: ${currentUser.orders?.length || 0}
-- cart: ${currentUser.cart?.length || 0}
-`
-    : "No current user information available."
-}
-
-📍 Available Routes:
-${routesText}
-
+const infoText = `
 Introduction:
-I'm your friendly  Cart Sense chatbot where every click makes perfect sense, here to assist you with anything you need related to our store! Whether you're looking for information about our products, business hours, or tech guidance, I'm here to help.
+I'm your friendly Cart Sense chatbot where every click makes perfect sense, here to assist you with anything you need related to our store! Whether you're looking for information about our products, business hours, or tech guidance, I'm here to help.
 
 Owner Details:
 - Name: Jhone Doe
@@ -162,12 +150,12 @@ Developer Details:
 - Email: malikmoon.developer061@gmail.com
 - Phone: 03197166872
 
-Full Form:  Cart Sense
+Full Form: Cart Sense
 
 Details:
- Cart Sense is your ultimate destination for high-quality electronic devices and accessories. 
+Cart Sense is your ultimate destination for high-quality electronic devices and accessories. 
 
-📍 Location: Pakistan,Lahore,Kareem Block
+📍 Location: Pakistan, Lahore, Kareem Block
 🕒 Regular Hours: 10:00 AM to 11:00 PM
 🕌 Friday Hours: 02:00 AM to 12:00 PM
 💬 Note: We're always here to assist you!
@@ -183,6 +171,24 @@ Email: CartSense@gmail.com
 Phone: +1 (555) 123-4567
 
 
+${
+  currentUser
+    ? `
+============================
+CurrentUser Details:
+- _Id: ${currentUser._id || ""}
+- Name: ${currentUser.name || ""}
+- Email: ${currentUser.email || ""}
+- createdAt: ${currentUser.createdAt || ""}
+- updatedAt: ${currentUser.updatedAt || ""}
+- orders: ${currentUser.orders?.length || 0}
+- cart: ${currentUser.cart?.length || 0}
+`
+    : "No current user information available."
+}
+============================
+Available Routes:
+${routesText}
 
 
 ============================
@@ -203,7 +209,7 @@ ${
                 p?.currencyType,
                 currentUser?.currencyType,
                 p.price
-              )|| "N/A"
+              ) || "N/A"
             }`
         )
         .slice(0, 20)
@@ -229,7 +235,9 @@ ${i + 1}. ${p.name || "Unnamed Product"}
                 .map(
                   (f) =>
                     `   • ${f.title || "Field"}: ${
-                      f.value?.join(", ") || "N/A"
+                      Array.isArray(f.value)
+                        ? f.value.join(", ")
+                        : f.value || "N/A"
                     }`
                 )
                 .join("\n")
@@ -255,7 +263,7 @@ ${i + 1}. ${p.name || "Unnamed Product"}
               p?.currencyType,
               currentUser?.currencyType,
               p.price
-            )|| "N/A"
+            ) || "N/A"
           }
    • Description: ${p.description || "No description available."}
    • Images: ${p.images?.length ? p.images.join(", ") : "No images"}
@@ -270,12 +278,13 @@ ${reviewDetails}`;
 ============================
 `;
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+  const handleSend = async (customMessage) => {
+    const messageToSend = customMessage || input;
+    if (!messageToSend.trim()) return;
 
     const userMessage = {
       by: "user",
-      message: input,
+      message: messageToSend,
       createdAt: new Date().toString(),
     };
 
@@ -294,7 +303,7 @@ ${reviewDetails}`;
           {
             parts: [
               {
-                text: `You are Cart Sense AI assistant. Use the following information to answer the user's question:\n${infoText}\n\nUser: ${input}`,
+                text: `You are Cart Sense AI assistant. Use the following information to answer the user's question:\n${infoText}\n\nUser: ${messageToSend}`,
               },
             ],
           },
@@ -312,16 +321,11 @@ ${reviewDetails}`;
         data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
 
       const fallbackText =
-        "Sorry, I couldn't understand that. How can I help you today? Do you have any questions about our products, store hours, location, or anything else related to Cart Sense?";
-
-      const lowerText = rawAiText.toLowerCase();
+        "Sorry, I couldn't understand that. How can I help you today?";
 
       const aiMessageText =
         !rawAiText ||
-        lowerText.includes("outside my area of expertise") ||
-        lowerText.includes("beyond my capabilities") ||
-        lowerText.includes("can't help you") ||
-        lowerText.includes("cannot help")
+        /outside my area|beyond my capabilities|can't help/i.test(rawAiText)
           ? fallbackText
           : rawAiText;
 
@@ -329,7 +333,6 @@ ${reviewDetails}`;
         ...prev,
         { by: "bot", message: aiMessageText, createdAt: new Date().toString() },
       ]);
-      setResponseLoading(false);
     } catch (error) {
       console.error("Error:", error);
       setChats((prev) => [
@@ -340,9 +343,11 @@ ${reviewDetails}`;
           createdAt: new Date().toString(),
         },
       ]);
+    } finally {
       setResponseLoading(false);
     }
   };
+
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {

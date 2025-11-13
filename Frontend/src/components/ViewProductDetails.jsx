@@ -5,14 +5,15 @@ import {
   getPriceByCurrency,
 } from "../services/CurrencyHelper";
 import { useAuth } from "../contexts/AuthContext";
-
+import { useNavigate } from "react-router";
 
 const ViewProductDetails = ({ isDetailsModel, setIsDetailsModel }) => {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(
     isDetailsModel?.images?.[0] || ""
   );
-
+console.log("isDetailsModel--->", isDetailsModel);
   if (!isDetailsModel) return null;
 
   return (
@@ -95,6 +96,14 @@ const ViewProductDetails = ({ isDetailsModel, setIsDetailsModel }) => {
               </span>
             ))}
           </div>
+          <button
+            onClick={() => {
+              navigate(`/product/${isDetailsModel?._id}`);
+            }}
+            className="go-product-btn"
+          >
+            View Product
+          </button>
         </div>
       </div>
     </div>
