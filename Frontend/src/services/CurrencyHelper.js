@@ -25,7 +25,7 @@ export const getPriceByCurrency = (fromISOCode, toISOCode, amount) => {
   if (!fromRate || !toRate) return 0;
   const amountInPKR = amount * fromRate;
   const convertedAmount = amountInPKR / toRate;
-  return convertedAmount.toFixed(2);
+  return convertedAmount;
 };
 
 export const getCurrencySymbol = (ISOCode) => {

@@ -1,6 +1,6 @@
 .admin-orders-page {
   padding: 2rem;
-  background: #fafafa;
+  background: var(--cardColor);
   overflow: auto;
 }
 
@@ -11,7 +11,7 @@
 }
 
 .admin-orders-subtitle {
-  color: #777;
+  color: var(--cardSubTitleColor);
 }
 
 .admin-orders-filters {
@@ -23,7 +23,7 @@
 
 .admin-filter-btn {
   background: #e4e4e4;
-  border: none;
+  border: 0.5px solid #ffffff40;
   padding: 6px 14px;
   border-radius: 6px;
   cursor: pointer;
@@ -31,15 +31,18 @@
 }
 
 .admin-filter-btn.active {
-  background: #222;
-  color: #fff;
+  background-color: var(--backGroundColor);
+  color: var(--textColor);
 }
 
+.admin-orders-table-outer{
+ border-radius: 8px;
+ overflow: hidden;
+}
 .admin-orders-table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
-  border-radius: 8px;
+  background: var(--backGroundColor);
   overflow: auto hidden;
 }
 
@@ -55,7 +58,8 @@
 }
 
 .admin-orders-table th {
-  background: #f0f0f0;
+  background: var(--tableHeadColor);
+  color: #374151;
 }
 
 .admin-orders-table > tbody tr {

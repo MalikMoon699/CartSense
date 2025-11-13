@@ -16,11 +16,11 @@
 .admin-users-info h2 {
   font-size: 1.75rem;
   margin: 0;
-  color: #111827;
+  color: var(--textColor);
 }
 
 .admin-users-subtitle {
-  color: #6b7280;
+  color: var(--cardSubTitleColor);
   margin-top: 0.25rem;
 }
 
@@ -85,7 +85,7 @@
 }
 
 .users-table {
-  background: #fff;
+  background: var(--cardColor);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   overflow: auto hidden;
@@ -118,7 +118,7 @@
 }
 
 .user-table-row:hover {
-  background-color: #f9fafb;
+  background-color: var(--cardHoverColor);
   transform: scale(1.01);
 }
 
@@ -131,16 +131,12 @@
 
 .user-name {
   font-weight: 500;
-  color: #111827;
+  color: var(--textColor);
 }
 
-.user-email {
-  color: #4b5563;
+.user-email,.user-date {
+  color: var(--cardSubTitleColor);
   font-size: 0.95rem;
-}
-
-.user-date {
-  color: #6b7280;
 }
 
 .delete-btn {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   LayoutList,
@@ -16,6 +16,28 @@ const AdminSideBar = () => {
   const navigate = useNavigate();
   const [isSidebar, setIsSidebar] = useState(false);
   const [isLogout, setIsLogout] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    if (savedMode === "true") {
+      setDarkMode(true);
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      setDarkMode(false);
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.setAttribute("data-theme", "dark");
+      localStorage.setItem("darkMode", "true");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+      localStorage.setItem("darkMode", "false");
+    }
+  }, [darkMode]);
 
   return (
     <>

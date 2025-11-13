@@ -2,6 +2,7 @@
   --backGroundColor: #ffffff;
   --TopbarBackGroundColor: rgba(255, 255, 255, 0.15);
   --textColor: #000000;
+  --tableHeadColor: #d6ebfd;
   --borderColor: #ccc;
   --borderColorFocus: #007bff38;
   --cardColor: #007aff0f;
@@ -12,8 +13,9 @@
 
 [data-theme="dark"] {
   --backGroundColor: #0d1b2a;
-  --TopbarBackGroundColor:rrgba(0, 0, 0, 0.12);
+  --TopbarBackGroundColor: rrgba(0, 0, 0, 0.12);
   --textColor: #ffffff;
+  --tableHeadColor: #d6ebfd;
   --borderColor: #2a3b55;
   --borderColorFocus: #3399ff55;
   --cardColor: #1b263b;

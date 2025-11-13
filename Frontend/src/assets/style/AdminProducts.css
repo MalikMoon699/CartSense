@@ -1,5 +1,5 @@
 .products-table {
-  background: #fff;
+  background: var(--cardColor);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   overflow: auto hidden;
@@ -11,7 +11,7 @@
   display: grid;
   grid-template-columns: 1fr 2fr 2fr 1fr 1fr 1fr 2fr;
   align-items: center;
-  background-color: #d6ebfd;
+  background-color: var(--tableHeadColor);
   padding: 1rem;
   font-weight: 600;
   color: #374151;
@@ -35,7 +35,7 @@
 }
 
 .product-table-row:hover {
-  background-color: #f9fafb;
+  background-color: var(--cardHoverColor);
 }
 
 .product-avatar img {
@@ -48,7 +48,7 @@
 
 .product-name {
   font-weight: 500;
-  color: #111827;
+  color: var(--textColor);
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -59,7 +59,7 @@
 .product-category,
 .product-price,
 .product-rating {
-  color: #4b5563;
+  color: var(--cardSubTitleColor);
   font-size: 0.95rem;
   width: 100%;
   overflow: hidden;

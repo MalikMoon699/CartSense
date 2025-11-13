@@ -152,3 +152,9 @@
   width: 100%;
   flex-wrap: wrap;
 }
+
+@media (max-width: 375px) {
+  .topbar-profile {
+    display: none;
+  }
+}

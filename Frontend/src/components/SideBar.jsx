@@ -8,6 +8,7 @@ import {
   Phone,
   ShoppingCart,
   List,
+  CircleUser,
 } from "lucide-react";
 import "../assets/style/Sidebar.css";
 import { useNavigate } from "react-router-dom";
@@ -157,6 +158,21 @@ const SideBar = ({ setSidebarType, setAcountState }) => {
             </span>
             My Orders
           </div>
+          {currentUser && (
+            <div
+              onClick={() => {
+                setSidebarType("userDetails");
+              }}
+              className={`normalSidebar-link sidebar-userdetails-go ${
+                location.pathname.startsWith(`/my-orders/`) ? "active" : ""
+              }`}
+            >
+              <span className="icon">
+                <CircleUser />
+              </span>
+              My Profile
+            </div>
+          )}
         </div>
       </div>
     </div>

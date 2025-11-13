@@ -218,74 +218,76 @@ const AdminOrders = () => {
         <p className="admin-orders-empty">No orders found</p>
       ) : (
         <>
-          <table className="admin-orders-table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>User</th>
-                <th>Product</th>
-                <th>Qty</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Update</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => (
-                <tr
-                  key={order._id}
-                  onClick={() => {
-                    setIsDetailsModel(order);
-                  }}
-                >
-                  <td>#{order._id.slice(-6).toUpperCase()}</td>
-                  <td>{order.user?.name || "N/A"}</td>
-                  <td>{order.product?.name || "Unknown Product"}</td>
-                  <td>{order.orderquantity}</td>
-                  <td>
-                    {getCurrencySymbol(
-                      currentUser?.currencyType || order?.currencyType
-                    )}{" "}
-                    {getPriceByCurrency(
-                      order.product.currencyType,
-                      currentUser?.currencyType,
-                      order.totalprice
-                    )}
-                  </td>
-                  <td>
-                    <span
-                      className={`status-tag ${order.status.toLowerCase()}`}
-                    >
-                      {order.status}
-                    </span>
-                  </td>
-                  <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                  <td onClick={(e) => e.stopPropagation()}>
-                    <select
-                      value={order.status}
-                      onChange={(e) =>
-                        handleStatusChange(order._id, e.target.value)
-                      }
-                      className="status-selector"
-                    >
-                      {[
-                        "pending",
-                        "processing",
-                        "shipped",
-                        "delivered",
-                        "cancelled",
-                      ].map((status) => (
-                        <option key={status} value={status}>
-                          {status.charAt(0).toUpperCase() + status.slice(1)}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
+          <div className="admin-orders-table-outer">
+            <table className="admin-orders-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>User</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Update</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr
+                    key={order._id}
+                    onClick={() => {
+                      setIsDetailsModel(order);
+                    }}
+                  >
+                    <td>#{order._id.slice(-6).toUpperCase()}</td>
+                    <td>{order.user?.name || "N/A"}</td>
+                    <td>{order.product?.name || "Unknown Product"}</td>
+                    <td>{order.orderquantity}</td>
+                    <td>
+                      {getCurrencySymbol(
+                        currentUser?.currencyType || order?.currencyType
+                      )}{" "}
+                      {getPriceByCurrency(
+                        order.product.currencyType,
+                        currentUser?.currencyType,
+                        order.totalprice
+                      )}
+                    </td>
+                    <td>
+                      <span
+                        className={`status-tag ${order.status.toLowerCase()}`}
+                      >
+                        {order.status}
+                      </span>
+                    </td>
+                    <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                    <td onClick={(e) => e.stopPropagation()}>
+                      <select
+                        value={order.status}
+                        onChange={(e) =>
+                          handleStatusChange(order._id, e.target.value)
+                        }
+                        className="status-selector"
+                      >
+                        {[
+                          "pending",
+                          "processing",
+                          "shipped",
+                          "delivered",
+                          "cancelled",
+                        ].map((status) => (
+                          <option key={status} value={status}>
+                            {status.charAt(0).toUpperCase() + status.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           {(loading || hasMore) && (
             <div className="loadMore-container">
               {loading ? (
