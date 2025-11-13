@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { Eye, EyeClosed, X } from "lucide-react";
 import "../assets/style/Auth.css";
 import { useAuth } from "../contexts/AuthContext";
@@ -9,6 +9,7 @@ import API from "../utils/api";
 
 const Login = ({ setAcountState }) => {
   const navigate = useNavigate();
+  const location =useLocation();
   const { refresh } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({ email: "", password: "" });
@@ -39,6 +40,9 @@ const Login = ({ setAcountState }) => {
     }
   };
 
+ const Authrized =
+   location.pathname === "/cart" || location.pathname.startsWith(`/my-orders/`);
+
   return (
     <div
       onClick={() => {
@@ -59,10 +63,15 @@ const Login = ({ setAcountState }) => {
           <h2 className="modal-title">Welcome Back</h2>
           <button
             onClick={() => {
-              navigate("/");
-              setTimeout(() => {
+              if (Authrized) {
+                navigate("/");
+                setTimeout(() => {
+                  setAcountState(null);
+                }, 100);
+              } else {
                 setAcountState(null);
-              }, 100);
+              }
+
             }}
             className="modal-close-btn"
           >

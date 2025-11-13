@@ -101,6 +101,10 @@ const AdminOrders = () => {
         setOrders((prev) =>
           prev.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o))
         );
+        setPage(1);
+        setOrders([]);
+        setHasMore(true);
+        fetchOrders(1, filter, searchTerm);
       } else {
         toast.error(res.data.message || "Failed to update");
       }
@@ -143,8 +147,6 @@ const AdminOrders = () => {
       setRefreshLoading(false);
     }
   };
-
-
 
   return (
     <div className="admin-orders-page">
