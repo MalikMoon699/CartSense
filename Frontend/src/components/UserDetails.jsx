@@ -117,6 +117,7 @@ const UserDetails = ({ setSidebarType }) => {
 
       if (res.status === 200) {
         toast.success("Profile updated successfully!");
+        window.location.reload();
       } else {
         toast.error(res.data.message || "Failed to update profile");
       }
