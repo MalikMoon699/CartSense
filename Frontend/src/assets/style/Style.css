@@ -13,7 +13,7 @@
 
 [data-theme="dark"] {
   --backGroundColor: #0d1b2a;
-  --TopbarBackGroundColor: rrgba(0, 0, 0, 0.12);
+  --TopbarBackGroundColor: rgba(0, 0, 0, 0.12);
   --textColor: #ffffff;
   --tableHeadColor: #d6ebfd;
   --borderColor: #2a3b55;
